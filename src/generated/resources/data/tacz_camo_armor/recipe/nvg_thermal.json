@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "A": {
+      "item": "minecraft:amethyst_shard"
+    },
+    "B": {
+      "item": "tacz_camo_armor:battery"
+    },
+    "D": {
+      "tag": "c:gems/diamond"
+    },
+    "I": {
+      "tag": "c:ingots/iron"
+    },
+    "R": {
+      "tag": "c:dusts/redstone"
+    }
+  },
+  "pattern": [
+    "IAI",
+    "RDR",
+    "IBI"
+  ],
+  "result": {
+    "count": 1,
+    "id": "tacz_camo_armor:nvg_thermal"
+  }
+}

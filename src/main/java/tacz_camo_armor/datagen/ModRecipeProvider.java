@@ -59,7 +59,7 @@ public class ModRecipeProvider extends RecipeProvider {
             case US_SNOW -> List.of(Tags.Items.DYES_WHITE, Tags.Items.DYES_LIGHT_GRAY);
             case RU_EMR -> List.of(Tags.Items.DYES_GREEN, Tags.Items.DYES_BROWN, Tags.Items.DYES_BLACK);
             case SWAT -> List.of(Tags.Items.DYES_BLACK);
-            case GHILLIE -> List.of();
+            case GHILLIE, GHILLIE_SNOW -> List.of();
         };
     }
 
@@ -72,6 +72,16 @@ public class ModRecipeProvider extends RecipeProvider {
                         .requires(Tags.Items.STRINGS)
                         .requires(Tags.Items.STRINGS)
                         .unlockedBy("has_olive_fabric", has(ModItems.fabric(ArmorSet.US_GREEN)))
+                        .save(output);
+                continue;
+            }
+            if (set == ArmorSet.GHILLIE_SNOW) {
+                ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.fabric(set), 2)
+                        .requires(ModItems.fabric(ArmorSet.US_SNOW))
+                        .requires(Ingredient.of(Items.WHITE_WOOL), 2)
+                        .requires(Tags.Items.STRINGS)
+                        .requires(Tags.Items.STRINGS)
+                        .unlockedBy("has_snow_fabric", has(ModItems.fabric(ArmorSet.US_SNOW)))
                         .save(output);
                 continue;
             }
@@ -117,6 +127,17 @@ public class ModRecipeProvider extends RecipeProvider {
                 .pattern("RBR")
                 .define('I', Tags.Items.INGOTS_IRON)
                 .define('G', Tags.Items.GLASS_PANES)
+                .define('D', Tags.Items.GEMS_DIAMOND)
+                .define('R', Tags.Items.DUSTS_REDSTONE)
+                .define('B', ModItems.BATTERY)
+                .unlockedBy("has_battery", has(ModItems.BATTERY))
+                .save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.device(DeviceKind.THERMAL))
+                .pattern("IAI")
+                .pattern("RDR")
+                .pattern("IBI")
+                .define('I', Tags.Items.INGOTS_IRON)
+                .define('A', Items.AMETHYST_SHARD)
                 .define('D', Tags.Items.GEMS_DIAMOND)
                 .define('R', Tags.Items.DUSTS_REDSTONE)
                 .define('B', ModItems.BATTERY)

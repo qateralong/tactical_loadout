@@ -4,6 +4,7 @@ import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 import tacz_camo_armor.TaczCamoArmor;
 import tacz_camo_armor.device.DeviceKind;
+import tacz_camo_armor.item.ArmorForm;
 import tacz_camo_armor.item.ArmorPiece;
 import tacz_camo_armor.item.ArmorSet;
 import tacz_camo_armor.item.ArmorTier;
@@ -42,6 +43,7 @@ public abstract class ModLanguageProvider extends LanguageProvider {
             case US_SNOW -> "US Snow";
             case RU_EMR -> "Ratnik EMR";
             case GHILLIE -> "Ghillie";
+            case GHILLIE_SNOW -> "Snow Ghillie";
             case SWAT -> "SWAT";
         };
     }
@@ -90,6 +92,7 @@ public abstract class ModLanguageProvider extends LanguageProvider {
                 case US_SNOW -> "Snow Camo Fabric";
                 case RU_EMR -> "EMR Digital Fabric";
                 case GHILLIE -> "Ghillie Fabric";
+                case GHILLIE_SNOW -> "Snow Ghillie Fabric";
                 case SWAT -> "Black Fabric";
             };
         }
@@ -101,7 +104,7 @@ public abstract class ModLanguageProvider extends LanguageProvider {
                 case MEDIUM -> "Medium";
                 case HEAVY -> "Heavy";
             };
-            boolean ghillie = set == ArmorSet.GHILLIE;
+            boolean ghillie = set.form() == ArmorForm.GHILLIE;
             String pieceName = switch (piece) {
                 case HELMET -> set == ArmorSet.T ? "Balaclava" : ghillie ? "Hood" : "Helmet";
                 case PLATE_CARRIER -> set == ArmorSet.RU_EMR ? "Body Armor" : ghillie ? "Jacket" : "Plate Carrier";
@@ -109,7 +112,7 @@ public abstract class ModLanguageProvider extends LanguageProvider {
                 case BOOTS -> "Boots";
             };
             if (ghillie) {
-                return "Ghillie " + pieceName;
+                return setName(set) + " " + pieceName;
             }
             return setName(set) + " " + tierName + " " + pieceName;
         }
@@ -127,6 +130,8 @@ public abstract class ModLanguageProvider extends LanguageProvider {
             add(ModItems.GAS_FILTER.get(), "Gas Mask Filter");
             add(ModItems.device(DeviceKind.PVS14).get(), "PVS-14 Night Vision Monocular");
             add(ModItems.device(DeviceKind.GPNVG18).get(), "GPNVG-18 Panoramic Night Vision");
+            add(ModItems.device(DeviceKind.THERMAL).get(), "Thermal Imaging Monocular");
+            add("jei.tacz_camo_armor.thermal", "White-hot thermal imager: living creatures in your line of sight glow, even through camouflage.");
             add(ModItems.device(DeviceKind.GAS_MASK).get(), "Gas Mask");
             add("key.tacz_camo_armor.nvg", "Flip NVG");
             add("key.categories.tacz_camo_armor", "Tactical Camo Armor");
@@ -176,6 +181,7 @@ public abstract class ModLanguageProvider extends LanguageProvider {
             tooltip("camo_biome.us_snow", "Only works well in snowy biomes");
             tooltip("camo_biome.ru_emr", "Best in forests, taiga and plains");
             tooltip("camo_biome.ghillie", "Strongest camo, best among vegetation");
+            tooltip("camo_biome.ghillie_snow", "Strongest camo in snowy biomes, weak elsewhere");
         }
 
         @Override
@@ -226,19 +232,21 @@ public abstract class ModLanguageProvider extends LanguageProvider {
                 case US_SNOW -> "Снежная камуфляжная ткань";
                 case RU_EMR -> "Цифровая ткань ЕМР";
                 case GHILLIE -> "Маскировочная ткань гилли";
+                case GHILLIE_SNOW -> "Снежная маскировочная ткань гилли";
                 case SWAT -> "Чёрная ткань";
             };
         }
 
         @Override
         protected String armorName(ArmorSet set, ArmorTier tier, ArmorPiece piece) {
-            if (set == ArmorSet.GHILLIE) {
+            if (set.form() == ArmorForm.GHILLIE) {
+                String suffix = set == ArmorSet.GHILLIE_SNOW ? " снежного гилли" : " гилли";
                 return switch (piece) {
-                    case HELMET -> "Капюшон гилли";
-                    case PLATE_CARRIER -> "Куртка гилли";
-                    case LEGGINGS -> "Штаны гилли";
-                    case BOOTS -> "Ботинки гилли";
-                };
+                    case HELMET -> "Капюшон";
+                    case PLATE_CARRIER -> "Куртка";
+                    case LEGGINGS -> "Штаны";
+                    case BOOTS -> "Ботинки";
+                } + suffix;
             }
             boolean feminine = (piece == ArmorPiece.PLATE_CARRIER && set != ArmorSet.RU_EMR)
                     || (piece == ArmorPiece.HELMET && set == ArmorSet.T);
@@ -270,6 +278,8 @@ public abstract class ModLanguageProvider extends LanguageProvider {
             add(ModItems.GAS_FILTER.get(), "Фильтр противогаза");
             add(ModItems.device(DeviceKind.PVS14).get(), "Монокуляр ночного видения PVS-14");
             add(ModItems.device(DeviceKind.GPNVG18).get(), "Панорамный ПНВ GPNVG-18");
+            add(ModItems.device(DeviceKind.THERMAL).get(), "Тепловизионный монокуляр");
+            add("jei.tacz_camo_armor.thermal", "Тепловизор в режиме «белое — горячее»: живые существа в прямой видимости подсвечиваются, даже в камуфляже.");
             add(ModItems.device(DeviceKind.GAS_MASK).get(), "Противогаз");
             add("key.tacz_camo_armor.nvg", "Опустить/поднять ПНВ");
             add("key.categories.tacz_camo_armor", "Тактическая камуфляжная броня");
@@ -319,6 +329,7 @@ public abstract class ModLanguageProvider extends LanguageProvider {
             tooltip("camo_biome.us_snow", "Хорош только в снежных биомах");
             tooltip("camo_biome.ru_emr", "Лучше всего в лесах, тайге и на равнинах");
             tooltip("camo_biome.ghillie", "Самый сильный камуфляж, лучше всего среди растительности");
+            tooltip("camo_biome.ghillie_snow", "Самый сильный камуфляж в снегу, слабый в остальных биомах");
         }
 
         @Override

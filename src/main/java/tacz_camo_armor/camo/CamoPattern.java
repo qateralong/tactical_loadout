@@ -14,7 +14,8 @@ public enum CamoPattern {
     MULTICAM(ModTags.MULTICAM_FAVORED, ModTags.MULTICAM_UNFAVORED, false),
     SNOW(ModTags.SNOW_FAVORED, null, true),
     EMR(ModTags.EMR_FAVORED, ModTags.EMR_UNFAVORED, false),
-    GHILLIE(ModTags.GHILLIE_FAVORED, ModTags.GHILLIE_UNFAVORED, false);
+    GHILLIE(ModTags.GHILLIE_FAVORED, ModTags.GHILLIE_UNFAVORED, false),
+    GHILLIE_SNOW(ModTags.SNOW_FAVORED, null, true);
 
     @Nullable
     private final TagKey<Biome> favored;
@@ -29,7 +30,7 @@ public enum CamoPattern {
     }
 
     public double strength() {
-        return this == GHILLIE ? ServerConfig.ghillieStrength() : 1.0;
+        return this == GHILLIE || this == GHILLIE_SNOW ? ServerConfig.ghillieStrength() : 1.0;
     }
 
     public double biomeFactor(Holder<Biome> biome) {

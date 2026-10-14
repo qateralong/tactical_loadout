@@ -44,3 +44,6 @@ Bullet-resistant tactical armor for TaCZ: CS2-style CT and T kits and US Woodlan
     versionRange="[19,)"
     ordering="NONE"
     side="BOTH"
+
+[[mixins]]
+    config="${mod_id}.mixins.json"

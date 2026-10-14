@@ -36,6 +36,7 @@ public final class ClientEvents {
 
     @SubscribeEvent
     static void onClientTick(ClientTickEvent.Post event) {
+        ThermalVision.updateShader();
         while (TOGGLE_NVG.consumeClick()) {
             if (Minecraft.getInstance().player != null) {
                 PacketDistributor.sendToServer(new ToggleNvgPayload());

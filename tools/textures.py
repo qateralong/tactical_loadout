@@ -8,11 +8,12 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parent.parent
 ITEM_DIR = ROOT / "src/main/resources/assets/tacz_camo_armor/textures/item"
 
-SETS = ["ct", "t", "us_woodland", "us_desert", "us_green", "us_multicam", "us_snow", "ru_emr", "ghillie", "swat"]
+SETS = ["ct", "t", "us_woodland", "us_desert", "us_green", "us_multicam", "us_snow", "ru_emr", "ghillie", "ghillie_snow", "swat"]
 TIERS = ["light", "medium", "heavy"]
 PIECES = ["helmet", "plate_carrier", "leggings", "boots"]
 FABRIC_IDS = {"ct": "blue", "t": "beige", "us_woodland": "woodland", "us_desert": "sand", "us_green": "olive",
-              "us_multicam": "multicam", "us_snow": "snow", "ru_emr": "emr", "ghillie": "ghillie", "swat": "black"}
+              "us_multicam": "multicam", "us_snow": "snow", "ru_emr": "emr", "ghillie": "ghillie",
+              "ghillie_snow": "snow_ghillie", "swat": "black"}
 
 
 def hex_rgb(value):
@@ -93,6 +94,9 @@ def pattern(set_id, w, h, scale, seed=1):
     if set_id == "ghillie":
         palette = [hex_rgb("525c33"), hex_rgb("6d6b3d"), hex_rgb("3a4224"), hex_rgb("6b583a")]
         return layered(w, h, max(1, scale // 2), rng, palette, [0.45, 0.65, 0.85])
+    if set_id == "ghillie_snow":
+        palette = [hex_rgb("e6eaea"), hex_rgb("cdd3d5"), hex_rgb("b2babd"), hex_rgb("a3ab9c")]
+        return layered(w, h, max(1, scale // 2), rng, palette, [0.45, 0.68, 0.88])
     if set_id == "swat":
         return speckle(w, h, rng, hex_rgb("26282b"), hex_rgb("1f2023"), 0.3)
     if set_id == "ct":
@@ -179,17 +183,13 @@ def helmet(set_id, level):
     elif set_id == "ru_emr":
         s.rect(2, 8, 13, 8, "w")
     elif set_id == "swat":
-        s.rect(4, 9, 11, 12, "n").rect(5, 10, 10, 10, "e").rect(6, 10, 6, 10, "E").rect(9, 10, 9, 10, "E")
+        if level >= 2:
+            s.rect(4, 9, 11, 12, "n").rect(5, 10, 10, 10, "e").rect(6, 10, 6, 10, "E").rect(9, 10, 9, 10, "E")
     else:
         s.rect(7, 3, 8, 5, "m")
-    if set_id == "swat" and level >= 2:
-        s.rect(3, 8, 12, 12, "v")
-        if level >= 1:
-            s.rect(1, 8, 2, 11, "k").rect(13, 8, 14, 11, "k")
-        return s
     if level >= 1:
         s.rect(1, 8, 2, 11, "k").rect(13, 8, 14, 11, "k").rect(2, 7, 13, 7, "k")
-    if level >= 2:
+    if level >= 2 and set_id != "swat":
         s.rect(3, 12, 12, 13, "M").rect(2, 11, 3, 12, "M").rect(12, 11, 13, 12, "M")
     return s
 
@@ -268,7 +268,7 @@ def boots(level):
 GEAR_BLACK = hex_rgb("2c2e30")
 SKIN = hex_rgb("c99a78")
 BOOT = {"ct": "232323", "t": "5b4632", "us_woodland": "3b3a33", "us_desert": "a08560", "us_green": "514e36",
-        "us_multicam": "8b7355", "us_snow": "bfc1c2", "ru_emr": "2e2c28", "ghillie": "4a4232", "swat": "1d1d1f"}
+        "us_multicam": "8b7355", "us_snow": "bfc1c2", "ru_emr": "2e2c28", "ghillie": "4a4232", "ghillie_snow": "cfd2d3", "swat": "1d1d1f"}
 KNEE = {"ct": "1e1f21", "t": "4a3a2a", "swat": "1b1b1d", "us_snow": "d9dcdc"}
 
 
@@ -335,6 +335,10 @@ def colorize(rows, fill, set_id=None):
                 rgb = hex_rgb("3f4538") * shade
             elif c == "L":
                 rgb = hex_rgb("7fd39a") if above in ".#d" else hex_rgb("24503a")
+            elif c == "T":
+                rgb = hex_rgb("55595c") * shade
+            elif c == "Y":
+                rgb = hex_rgb("b38cff") if above in ".#" else hex_rgb("2a2633")
             elif c == "g":
                 rgb = fill[y, x] * (0.75 if (x * 7 + y) % 2 else 1.2)
             else:
@@ -381,6 +385,8 @@ def device_sprite(name):
         s.rect(4, 4, 11, 5, "d").rect(7, 2, 8, 3, "m")
         s.rect(1, 7, 3, 10, "d").rect(4, 6, 7, 10, "d").rect(8, 6, 11, 10, "d").rect(12, 7, 14, 10, "d")
         s.rect(2, 8, 2, 9, "L").rect(5, 7, 6, 9, "L").rect(9, 7, 10, 9, "L").rect(13, 8, 13, 9, "L")
+    elif name == "nvg_thermal":
+        s.rect(2, 5, 11, 11, "T").rect(1, 6, 1, 10, "Y").rect(12, 7, 13, 9, "r").rect(8, 3, 9, 4, "m").rect(4, 4, 6, 4, "d")
     elif name == "gas_mask":
         s.rect(4, 2, 11, 12, "r").rect(3, 4, 12, 9, "r").rect(4, 5, 6, 7, "l").rect(9, 5, 11, 7, "l")
         s.rect(7, 10, 8, 11, "m").rect(10, 10, 13, 13, "f")
@@ -410,9 +416,19 @@ def overlays():
     vignette(256, 256, [(128, 128)], 124).save(misc / "nvg_pvs14.png")
     vignette(512, 256, [(186, 128), (326, 128)], 122).save(misc / "nvg_gpnvg18.png")
 
+    w, h, r = 384, 216, 40
+    ys, xs = np.mgrid[0:h, 0:w].astype(np.float64)
+    qx = np.maximum(np.abs(xs - w / 2) - (w / 2 - r - 8), 0)
+    qy = np.maximum(np.abs(ys - h / 2) - (h / 2 - r - 8), 0)
+    dist = np.hypot(qx, qy) - r
+    alpha = np.clip((dist + 6) / 10, 0, 1)
+    img = np.zeros((h, w, 4), dtype=np.uint8)
+    img[..., 3] = (alpha * 255).astype(np.uint8)
+    Image.fromarray(img, "RGBA").save(misc / "nvg_thermal.png")
+
 
 def sprite(set_id, piece, level):
-    if set_id == "ghillie":
+    if set_id.startswith("ghillie"):
         return ghillie(piece).outlined()
     if piece == "helmet":
         s = balaclava(level) if set_id == "t" else helmet(set_id, level)
@@ -438,7 +454,7 @@ def main():
         if set_id == "swat":
             icon_fill = icon_fill * 1.7
         for level, tier in enumerate(TIERS):
-            if set_id == "ghillie" and level > 0:
+            if set_id.startswith("ghillie") and level > 0:
                 continue
             for piece in PIECES:
                 save(colorize(sprite(set_id, piece, level), icon_fill, set_id), f"{set_id}_{tier}_{piece}")
@@ -451,7 +467,7 @@ def main():
     save(colorize(PLATE_MASK, kevlar), "kevlar_insert")
     save(colorize(PLATE_MASK, solid("9a8f86")), "raw_ceramic_plate")
     save(colorize(PLATE_MASK, solid("ddd8cc")), "ceramic_plate")
-    for name in ("battery", "gas_filter", "nvg_pvs14", "nvg_gpnvg18", "gas_mask"):
+    for name in ("battery", "gas_filter", "nvg_pvs14", "nvg_gpnvg18", "nvg_thermal", "gas_mask"):
         save(colorize(device_sprite(name), solid("6d7073")), name)
     overlays()
     print(f"wrote {len(list(ITEM_DIR.glob('*.png')))} textures to {ITEM_DIR.relative_to(ROOT)}")

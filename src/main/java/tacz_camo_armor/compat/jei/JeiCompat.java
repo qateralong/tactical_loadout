@@ -56,6 +56,9 @@ public class JeiCompat implements IModPlugin {
         registration.addItemStackInfo(new ItemStack(ModItems.device(DeviceKind.GPNVG18).get()),
                 Component.translatable(INFO + "nvg", key, seconds), Component.translatable(INFO + "gpnvg18"),
                 Component.translatable(INFO + "detach"));
+        registration.addItemStackInfo(new ItemStack(ModItems.device(DeviceKind.THERMAL).get()),
+                Component.translatable(INFO + "nvg", key, seconds), Component.translatable(INFO + "thermal"),
+                Component.translatable(INFO + "detach"));
         registration.addItemStackInfo(new ItemStack(ModItems.device(DeviceKind.GAS_MASK).get()),
                 Component.translatable(INFO + "gas_mask", ServerConfig.gasFilterSeconds()), Component.translatable(INFO + "detach"));
         registration.addItemStackInfo(new ItemStack(ModItems.BATTERY.get()), Component.translatable(INFO + "battery"));

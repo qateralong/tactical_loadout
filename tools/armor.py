@@ -23,7 +23,7 @@ FORMS = {
     "t": ["t"],
     "us": ["us_woodland", "us_desert", "us_green", "us_multicam", "us_snow"],
     "ru": ["ru_emr"],
-    "ghillie": ["ghillie"],
+    "ghillie": ["ghillie", "ghillie_snow"],
     "swat": ["swat"],
 }
 
@@ -265,15 +265,13 @@ def ghillie_suit(m):
 
 def helmet_swat(m):
     h = "armorHead"
-    m.add(h, "light", (-4, 24, -4), (4, 32, 4), "knit", inflate=0.6)
+    m.add(h, "heavy", (-4, 24, -4), (4, 32, 4), "knit", inflate=0.6)
     m.add(h, "light", (-4.75, 32, -4.75), (4.75, 33.5, 4.75), "shell")
     m.add(h, "light", (-5, 28.5, -5), (5, 32, 5), "shell")
     m.add(h, "light", (-5, 26, -1), (-4.5, 28.5, 5), "shell", sym=True)
     m.add(h, "light", (-4.5, 26.5, 4.5), (4.5, 28.5, 5), "shell")
     m.add(h, "medium", (-5.5, 29, -3.5), (-5, 30, 3), "polymer", sym=True)
     m.add(h, "medium", (-5.75, 25.5, -1.5), (-5, 28.5, 1.5), "polymer", sym=True)
-    m.add(h, "heavy", (-4.75, 24.25, -5.75), (4.75, 31.25, -5.25), "visor")
-    m.add(h, "heavy", (-5.5, 30, -5.6), (-5, 31.5, -4), "polymer", sym=True)
 
 
 def vest_swat(m):
@@ -304,6 +302,13 @@ def nvg_devices(m, mz):
     m.add_to(quad, (-5.25, 27, mz - 3.75), (-3.25, 28.5, mz - 1.25), "nvg", sym=True)
     m.add_to(quad, (-5.1, 27.15, mz - 3.85), (-3.4, 28.35, mz - 3.75), "nvg_lens", sym=True)
     m.add_to(quad, (-3, 27, mz - 1.25), (-1, 28.75, mz - 0.5), "rubber", sym=True)
+    thermal = m.extra("nvg_thermal", h, pivot)
+    m.add_to(thermal, (-0.6, 28.75, mz - 1.5), (0.6, 31.25, mz - 0.5), "nvg")
+    m.add_to(thermal, (-2.25, 28.5, mz - 1.75), (0.25, 29.5, mz - 0.75), "nvg")
+    m.add_to(thermal, (-3.75, 26.25, mz - 4.25), (-0.25, 29.75, mz - 1.25), "thermal")
+    m.add_to(thermal, (-3.25, 26.75, mz - 4.35), (-0.75, 29.25, mz - 4.25), "thermal_lens")
+    m.add_to(thermal, (-3, 27, mz - 1.25), (-1, 29, mz - 0.5), "rubber")
+    m.add_to(thermal, (-0.25, 28.5, mz - 3), (0.25, 29.25, mz - 2), "nvg")
     battery = m.extra("nvg_battery", h, [0, 24, 0])
     m.add_to(battery, (-2, 29, 5), (2, 31.5, 6.25), "nvg")
 
@@ -426,7 +431,7 @@ def build(form):
 
 def palette(set_id):
     boot = {"ct": "232323", "t": "5b4632", "us_woodland": "3b3a33", "us_desert": "a08560", "us_green": "514e36",
-            "us_multicam": "8b7355", "us_snow": "bfc1c2", "ru_emr": "2e2c28", "ghillie": "4a4232", "swat": "1d1d1f"}[set_id]
+            "us_multicam": "8b7355", "us_snow": "bfc1c2", "ru_emr": "2e2c28", "ghillie": "4a4232", "ghillie_snow": "cfd2d3", "swat": "1d1d1f"}[set_id]
     shell = {"ct": "1f2a3d", "t": "4a4a40", "swat": "202124"}.get(set_id)
     knee = {"ct": "1e1f21", "t": "4a3a2a", "swat": "1b1b1d", "us_snow": "d9dcdc"}.get(set_id)
     knit = {"swat": "1a1a1c"}.get(set_id)
@@ -523,6 +528,14 @@ def paint(set_id, faces, height):
         elif mat == "nvg":
             rgb = np.ones_like(region) * hex_rgb("3b4034")
             rgb[0] *= 1.3
+        elif mat == "thermal":
+            rgb = np.ones_like(region) * hex_rgb("4f5356")
+            rgb[0] *= 1.3
+            if face in sides and h >= 4:
+                rgb[h // 2, 1:-1] *= 0.75
+        elif mat == "thermal_lens":
+            rgb = np.ones_like(region) * hex_rgb("2a2633")
+            rgb[:max(1, h // 3), :max(1, w // 3)] = hex_rgb("b38cff")
         elif mat == "nvg_lens":
             rgb = np.ones_like(region) * hex_rgb("1d3a2a")
             rgb[:max(1, h // 3), :max(1, w // 3)] = hex_rgb("6fbf8a")

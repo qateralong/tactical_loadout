@@ -15,6 +15,7 @@ public enum ArmorSet {
     US_SNOW("us_snow", ArmorForm.US, "snow", CamoPattern.SNOW),
     RU_EMR("ru_emr", ArmorForm.RU, "emr", CamoPattern.EMR),
     GHILLIE("ghillie", ArmorForm.GHILLIE, "ghillie", CamoPattern.GHILLIE),
+    GHILLIE_SNOW("ghillie_snow", ArmorForm.GHILLIE, "snow_ghillie", CamoPattern.GHILLIE_SNOW),
     SWAT("swat", ArmorForm.SWAT, "black", null);
 
     private final String id;
@@ -52,6 +53,6 @@ public enum ArmorSet {
     }
 
     public List<ArmorTier> tiers() {
-        return this == GHILLIE ? List.of(ArmorTier.LIGHT) : List.of(ArmorTier.values());
+        return form == ArmorForm.GHILLIE ? List.of(ArmorTier.LIGHT) : List.of(ArmorTier.values());
     }
 }

@@ -42,6 +42,7 @@ public class TacticalArmorRenderer extends GeoArmorRenderer<TacticalArmorItem> {
         setVisible(model, "nvg_mount", nvg != null);
         setVisible(model, "nvg_pvs14", nvg != null && nvg.kind() == DeviceKind.PVS14);
         setVisible(model, "nvg_gpnvg18", nvg != null && nvg.kind() == DeviceKind.GPNVG18);
+        setVisible(model, "nvg_thermal", nvg != null && nvg.kind() == DeviceKind.THERMAL);
         setVisible(model, "nvg_battery", nvg != null && nvg.kind() == DeviceKind.GPNVG18);
         setVisible(model, "gas_mask", mask);
         if (nvg != null) {
@@ -80,7 +81,8 @@ public class TacticalArmorRenderer extends GeoArmorRenderer<TacticalArmorItem> {
     public void renderRecursively(PoseStack poseStack, TacticalArmorItem animatable, GeoBone bone, RenderType renderType,
                                   MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick,
                                   int packedLight, int packedOverlay, int colour) {
-        if (bone.getName().equals("nvg_pvs14") || bone.getName().equals("nvg_gpnvg18")) {
+        String name = bone.getName();
+        if (name.equals("nvg_pvs14") || name.equals("nvg_gpnvg18") || name.equals("nvg_thermal")) {
             bone.setRotX(nvgAngle);
         }
         super.renderRecursively(poseStack, animatable, bone, renderType, bufferSource, buffer, isReRender, partialTick,
