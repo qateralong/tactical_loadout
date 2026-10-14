@@ -65,6 +65,18 @@ class Cube:
 class Model:
     def __init__(self):
         self.parts = {(bone, tier): [] for bone in PIVOTS for tier in TIERS}
+        self.extras = []
+
+    def extra(self, name, parent, pivot):
+        bone = {"name": name, "parent": parent, "pivot": pivot, "cubes": []}
+        self.extras.append(bone)
+        return bone
+
+    def add_to(self, bone, lo, hi, mat, sym=False):
+        cube = Cube(lo, hi, mat)
+        bone["cubes"].append(cube)
+        if sym:
+            bone["cubes"].append(cube.mirrored())
 
     def add(self, bone, tier, lo, hi, mat, inflate=0.0, rotation=None, pivot=None, mirror=False, sym=False):
         cube = Cube(lo, hi, mat, inflate, rotation, pivot)
@@ -273,13 +285,45 @@ def vest_swat(m):
     m.add(b, "light", (1.5, 21.5, -3.75), (3.5, 23.5, -3.25), "pouch")
 
 
+def nvg_devices(m, mz):
+    h = "armorHead"
+    mount = m.extra("nvg_mount", h, [0, 24, 0])
+    m.add_to(mount, (-1.1, 30.5, mz - 0.75), (1.1, 32, mz), "nvg")
+    pivot = [0, 31.25, mz - 0.75]
+    pvs = m.extra("nvg_pvs14", h, pivot)
+    m.add_to(pvs, (-0.6, 28.75, mz - 1.5), (0.6, 31.25, mz - 0.5), "nvg")
+    m.add_to(pvs, (-2.25, 28.5, mz - 1.75), (0.25, 29.5, mz - 0.75), "nvg")
+    m.add_to(pvs, (-3.25, 26.75, mz - 4.5), (-0.75, 29.25, mz - 1.25), "nvg")
+    m.add_to(pvs, (-3, 27, mz - 1.25), (-1, 29, mz - 0.5), "rubber")
+    m.add_to(pvs, (-3, 27, mz - 4.6), (-1, 29, mz - 4.5), "nvg_lens")
+    quad = m.extra("nvg_gpnvg18", h, pivot)
+    m.add_to(quad, (-0.6, 28.75, mz - 1.5), (0.6, 31.25, mz - 0.5), "nvg")
+    m.add_to(quad, (-3.5, 28.25, mz - 2), (3.5, 29.75, mz - 0.9), "nvg")
+    m.add_to(quad, (-3, 26.75, mz - 4.25), (-1, 28.75, mz - 1.25), "nvg", sym=True)
+    m.add_to(quad, (-2.85, 26.9, mz - 4.35), (-1.15, 28.6, mz - 4.25), "nvg_lens", sym=True)
+    m.add_to(quad, (-5.25, 27, mz - 3.75), (-3.25, 28.5, mz - 1.25), "nvg", sym=True)
+    m.add_to(quad, (-5.1, 27.15, mz - 3.85), (-3.4, 28.35, mz - 3.75), "nvg_lens", sym=True)
+    m.add_to(quad, (-3, 27, mz - 1.25), (-1, 28.75, mz - 0.5), "rubber", sym=True)
+    battery = m.extra("nvg_battery", h, [0, 24, 0])
+    m.add_to(battery, (-2, 29, 5), (2, 31.5, 6.25), "nvg")
+
+
+def gas_mask(m):
+    mask = m.extra("gas_mask", "armorHead", [0, 24, 0])
+    m.add_to(mask, (-3.5, 24.25, -5.2), (3.5, 29.5, -4.5), "rubber")
+    m.add_to(mask, (-3.1, 26.9, -5.45), (-0.7, 28.9, -5.2), "lens", sym=True)
+    m.add_to(mask, (-1, 24.5, -6), (1, 26, -5.2), "metal")
+    m.add_to(mask, (1.25, 23.75, -7.25), (3.75, 26.25, -5.2), "filter")
+    m.add_to(mask, (-4.75, 27.25, -4.75), (4.75, 28, 4.75), "rubber")
+
+
 BUILDERS = {
-    "us": [helmet_us, carrier_us, leggings, boots],
-    "ct": [helmet_ct, carrier_ct, leggings, boots],
-    "t": [balaclava_t, rig_t, leggings, boots],
-    "ru": [helmet_ru, vest_ru, leggings, boots],
-    "ghillie": [ghillie_suit, boots],
-    "swat": [helmet_swat, vest_swat, leggings, boots],
+    "us": [helmet_us, carrier_us, leggings, boots, lambda m: nvg_devices(m, -5.0), gas_mask],
+    "ct": [helmet_ct, carrier_ct, leggings, boots, lambda m: nvg_devices(m, -5.85), gas_mask],
+    "t": [balaclava_t, rig_t, leggings, boots, gas_mask],
+    "ru": [helmet_ru, vest_ru, leggings, boots, lambda m: nvg_devices(m, -5.0), gas_mask],
+    "ghillie": [ghillie_suit, boots, gas_mask],
+    "swat": [helmet_swat, vest_swat, leggings, boots, lambda m: nvg_devices(m, -5.0), gas_mask],
 }
 
 
@@ -348,6 +392,20 @@ def build(form):
                     entry["rotation"] = cube.rotation
                     entry["pivot"] = cube.pivot
                 target["cubes"].append(entry)
+    for extra in model.extras:
+        bone = {"name": extra["name"], "parent": extra["parent"], "pivot": extra["pivot"], "cubes": []}
+        for cube in extra["cubes"]:
+            uv = {}
+            for name, (w, h) in face_sizes(cube).items():
+                u, v = packer.place(w, h)
+                uv[name] = {"uv": [u, v], "uv_size": [w, h]}
+                faces.append((cube.mat, name, u, v, w, h))
+            bone["cubes"].append({
+                "origin": [round(c, 4) for c in cube.lo],
+                "size": [round(cube.hi[i] - cube.lo[i], 4) for i in range(3)],
+                "uv": uv,
+            })
+        bones.append(bone)
     height = 1 << max(0, (packer.height() - 1).bit_length())
     geo = {
         "format_version": "1.12.0",
@@ -462,6 +520,19 @@ def paint(set_id, faces, height):
         elif mat == "polymer":
             rgb = np.ones_like(region) * hex_rgb("2c2e30")
             rgb[0] *= 1.35
+        elif mat == "nvg":
+            rgb = np.ones_like(region) * hex_rgb("3b4034")
+            rgb[0] *= 1.3
+        elif mat == "nvg_lens":
+            rgb = np.ones_like(region) * hex_rgb("1d3a2a")
+            rgb[:max(1, h // 3), :max(1, w // 3)] = hex_rgb("6fbf8a")
+        elif mat == "rubber":
+            rgb = np.ones_like(region) * hex_rgb("2a2c26")
+            rgb[0] *= 1.2
+        elif mat == "filter":
+            rgb = np.ones_like(region) * hex_rgb("4b5233")
+            if face in sides:
+                rgb[ys[:, 0] % 2 == 1] *= 0.8
         elif mat == "metal":
             rgb = np.ones_like(region) * hex_rgb("6d7073")
             rgb[0] *= 1.3

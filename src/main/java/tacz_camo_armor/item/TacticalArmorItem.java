@@ -2,6 +2,7 @@ package tacz_camo_armor.item;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.EquipmentSlotGroup;
@@ -21,6 +22,10 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import tacz_camo_armor.TaczCamoArmor;
 import tacz_camo_armor.client.TacticalArmorRenderer;
 import tacz_camo_armor.config.ServerConfig;
+import tacz_camo_armor.device.Devices;
+import tacz_camo_armor.device.MountedDevice;
+import tacz_camo_armor.registry.ModDataComponents;
+import tacz_camo_armor.registry.ModItems;
 import tacz_camo_armor.registry.ModArmorMaterials;
 
 import java.util.List;
@@ -74,6 +79,7 @@ public class TacticalArmorItem extends ArmorItem implements GeoItem {
         Component zone = Component.translatable("tooltip." + TaczCamoArmor.MOD_ID + ".zone." + piece.id());
         tooltip.add(Component.translatable("tooltip." + TaczCamoArmor.MOD_ID + ".bullet_protection", percent, zone)
                 .withStyle(ChatFormatting.GRAY));
+        appendDevices(stack, tooltip);
         if (set.camo() != null) {
             double strength = set.camo().strength();
             long normal = Math.round(Math.min(0.95, ServerConfig.detectionReduction() * strength) * 100);
@@ -108,5 +114,27 @@ public class TacticalArmorItem extends ArmorItem implements GeoItem {
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return cache;
+    }
+
+    private static void appendDevices(ItemStack stack, List<Component> tooltip) {
+        String prefix = "tooltip." + TaczCamoArmor.MOD_ID + ".helmet.";
+        boolean any = false;
+        for (DataComponentType<MountedDevice> type : List.of(ModDataComponents.NVG.get(), ModDataComponents.GAS_MASK.get())) {
+            MountedDevice device = stack.get(type);
+            if (device == null) {
+                continue;
+            }
+            any = true;
+            Component name = Component.translatable(ModItems.device(device.kind()).get().getDescriptionId());
+            tooltip.add(Component.translatable(prefix + "mounted", name).withStyle(ChatFormatting.AQUA)
+                    .append(" ").append(Devices.chargeLine(device)));
+            if (device.kind().isNvg()) {
+                tooltip.add(Component.translatable(prefix + "nvg_key", Component.keybind("key." + TaczCamoArmor.MOD_ID + ".nvg"))
+                        .withStyle(ChatFormatting.GRAY));
+            }
+        }
+        if (any) {
+            tooltip.add(Component.translatable(prefix + "detach_hint").withStyle(ChatFormatting.DARK_GRAY));
+        }
     }
 }

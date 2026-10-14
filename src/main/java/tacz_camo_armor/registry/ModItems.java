@@ -5,6 +5,8 @@ import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jetbrains.annotations.Nullable;
 import tacz_camo_armor.TaczCamoArmor;
+import tacz_camo_armor.device.DeviceItem;
+import tacz_camo_armor.device.DeviceKind;
 import tacz_camo_armor.item.ArmorPiece;
 import tacz_camo_armor.item.ArmorSet;
 import tacz_camo_armor.item.ArmorTier;
@@ -21,6 +23,10 @@ public final class ModItems {
     public static final DeferredItem<Item> KEVLAR_INSERT = ITEMS.registerSimpleItem("kevlar_insert");
     public static final DeferredItem<Item> RAW_CERAMIC_PLATE = ITEMS.registerSimpleItem("raw_ceramic_plate");
     public static final DeferredItem<Item> CERAMIC_PLATE = ITEMS.registerSimpleItem("ceramic_plate");
+    public static final DeferredItem<Item> BATTERY = ITEMS.registerSimpleItem("battery");
+    public static final DeferredItem<Item> GAS_FILTER = ITEMS.registerSimpleItem("gas_filter");
+
+    private static final Map<DeviceKind, DeferredItem<DeviceItem>> DEVICES = new EnumMap<>(DeviceKind.class);
 
     private static final Map<ArmorSet, DeferredItem<Item>> FABRICS = new EnumMap<>(ArmorSet.class);
     private static final Map<ArmorSet, Map<ArmorTier, Map<ArmorPiece, DeferredItem<TacticalArmorItem>>>> ARMOR =
@@ -28,6 +34,9 @@ public final class ModItems {
     private static final List<DeferredItem<TacticalArmorItem>> ALL_ARMOR = new ArrayList<>();
 
     static {
+        for (DeviceKind kind : DeviceKind.values()) {
+            DEVICES.put(kind, ITEMS.register(kind.id(), () -> new DeviceItem(kind, new Item.Properties())));
+        }
         for (ArmorSet set : ArmorSet.values()) {
             FABRICS.put(set, ITEMS.registerSimpleItem(set.fabricId()));
         }
@@ -49,6 +58,10 @@ public final class ModItems {
     }
 
     private ModItems() {
+    }
+
+    public static DeferredItem<DeviceItem> device(DeviceKind kind) {
+        return DEVICES.get(kind);
     }
 
     public static DeferredItem<Item> fabric(ArmorSet set) {

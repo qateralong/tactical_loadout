@@ -17,6 +17,9 @@ public final class ServerConfig {
     private static final ModConfigSpec.DoubleValue FAVORED_BIOME_FACTOR;
     private static final ModConfigSpec.DoubleValue UNFAVORED_BIOME_FACTOR;
     private static final ModConfigSpec.DoubleValue GHILLIE_STRENGTH;
+    private static final ModConfigSpec.BooleanValue NVG_USES_BATTERY;
+    private static final ModConfigSpec.IntValue NVG_BATTERY_SECONDS;
+    private static final ModConfigSpec.IntValue GAS_FILTER_SECONDS;
 
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
@@ -70,6 +73,21 @@ public final class ServerConfig {
                 .comment("Extra multiplier for the ghillie suit camo effect.")
                 .translation(key("ghillieStrength"))
                 .defineInRange("ghillieStrength", 1.5, 1.0, 3.0);
+        builder.pop();
+
+        builder.translation(key("devices")).push("devices");
+        NVG_USES_BATTERY = builder
+                .comment("Whether night vision devices drain a battery while flipped down.")
+                .translation(key("nvgUsesBattery"))
+                .define("nvgUsesBattery", true);
+        NVG_BATTERY_SECONDS = builder
+                .comment("Seconds of night vision from a full battery.")
+                .translation(key("nvgBatterySeconds"))
+                .defineInRange("nvgBatterySeconds", 1200, 60, 36000);
+        GAS_FILTER_SECONDS = builder
+                .comment("Seconds of poison/wither a fresh gas mask filter can block.")
+                .translation(key("gasFilterSeconds"))
+                .defineInRange("gasFilterSeconds", 600, 30, 36000);
         builder.pop();
 
         SPEC = builder.build();
@@ -135,5 +153,17 @@ public final class ServerConfig {
 
     public static double ghillieStrength() {
         return get(GHILLIE_STRENGTH);
+    }
+
+    public static boolean nvgUsesBattery() {
+        return SPEC.isLoaded() ? NVG_USES_BATTERY.get() : NVG_USES_BATTERY.getDefault();
+    }
+
+    public static int nvgBatterySeconds() {
+        return SPEC.isLoaded() ? NVG_BATTERY_SECONDS.get() : NVG_BATTERY_SECONDS.getDefault();
+    }
+
+    public static int gasFilterSeconds() {
+        return SPEC.isLoaded() ? GAS_FILTER_SECONDS.get() : GAS_FILTER_SECONDS.getDefault();
     }
 }

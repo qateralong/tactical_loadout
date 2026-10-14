@@ -26,6 +26,14 @@ repositories {
             includeGroup('com.eliotlash.mclib')
         }
     }
+    maven {
+        name = 'BlameJared'
+        url = 'https://maven.blamejared.com'
+        content {
+            includeGroup('mezz.jei')
+            includeGroupByRegex('net\\.mezzdev.*')
+        }
+    }
     exclusiveContent {
         forRepository {
             maven {
@@ -92,6 +100,8 @@ configurations {
 dependencies {
     implementation "software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
     implementation "maven.modrinth:tacz-1.21.1:${tacz_version}"
+    compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
+    runtimeOnly "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
 }
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {

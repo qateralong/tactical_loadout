@@ -10,7 +10,9 @@ import org.slf4j.Logger;
 import tacz_camo_armor.config.ServerConfig;
 import tacz_camo_armor.registry.ModArmorMaterials;
 import tacz_camo_armor.registry.ModCreativeTabs;
+import tacz_camo_armor.registry.ModDataComponents;
 import tacz_camo_armor.registry.ModItems;
+import tacz_camo_armor.registry.ModRecipes;
 
 @Mod(TaczCamoArmor.MOD_ID)
 public class TaczCamoArmor {
@@ -19,7 +21,9 @@ public class TaczCamoArmor {
 
     public TaczCamoArmor(IEventBus modBus, ModContainer container) {
         ModArmorMaterials.ARMOR_MATERIALS.register(modBus);
+        ModDataComponents.COMPONENTS.register(modBus);
         ModItems.ITEMS.register(modBus);
+        ModRecipes.SERIALIZERS.register(modBus);
         ModCreativeTabs.TABS.register(modBus);
         container.registerConfig(ModConfig.Type.SERVER, ServerConfig.SPEC);
     }

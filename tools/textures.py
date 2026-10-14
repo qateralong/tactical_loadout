@@ -325,6 +325,16 @@ def colorize(rows, fill, set_id=None):
                 rgb = hex_rgb("161618")
             elif c == "v":
                 rgb = hex_rgb("6f97a3") if (x + y) % 5 == 0 else hex_rgb("1c3038")
+            elif c == "u":
+                rgb = hex_rgb("b87333") * shade
+            elif c == "f":
+                rgb = hex_rgb("4b5233") * (0.8 if y % 2 else 1.0) * shade
+            elif c == "r":
+                rgb = hex_rgb("2f312b") * shade
+            elif c == "d":
+                rgb = hex_rgb("3f4538") * shade
+            elif c == "L":
+                rgb = hex_rgb("7fd39a") if above in ".#d" else hex_rgb("24503a")
             elif c == "g":
                 rgb = fill[y, x] * (0.75 if (x * 7 + y) % 2 else 1.2)
             else:
@@ -357,6 +367,48 @@ def ghillie(piece):
     for x, y in GHILLIE_STRANDS[piece]:
         s.grid[y][x] = "g"
     return s
+
+
+def device_sprite(name):
+    s = Sprite()
+    if name == "battery":
+        s.rect(6, 2, 9, 2, "u").rect(5, 3, 10, 13, "k").rect(5, 8, 10, 9, "u")
+    elif name == "gas_filter":
+        s.rect(6, 2, 9, 3, "m").rect(4, 4, 11, 12, "f").rect(5, 13, 10, 13, "f")
+    elif name == "nvg_pvs14":
+        s.rect(2, 6, 11, 10, "d").rect(1, 6, 1, 10, "L").rect(12, 7, 13, 9, "r").rect(8, 3, 9, 5, "m").rect(4, 4, 6, 5, "d")
+    elif name == "nvg_gpnvg18":
+        s.rect(4, 4, 11, 5, "d").rect(7, 2, 8, 3, "m")
+        s.rect(1, 7, 3, 10, "d").rect(4, 6, 7, 10, "d").rect(8, 6, 11, 10, "d").rect(12, 7, 14, 10, "d")
+        s.rect(2, 8, 2, 9, "L").rect(5, 7, 6, 9, "L").rect(9, 7, 10, 9, "L").rect(13, 8, 13, 9, "L")
+    elif name == "gas_mask":
+        s.rect(4, 2, 11, 12, "r").rect(3, 4, 12, 9, "r").rect(4, 5, 6, 7, "l").rect(9, 5, 11, 7, "l")
+        s.rect(7, 10, 8, 11, "m").rect(10, 10, 13, 13, "f")
+    return s.outlined()
+
+
+def overlays():
+    misc = ROOT / "src/main/resources/assets/tacz_camo_armor/textures/misc"
+    misc.mkdir(parents=True, exist_ok=True)
+    Image.new("RGBA", (16, 16), (255, 255, 255, 255)).save(misc / "white.png")
+    rng = np.random.default_rng(9)
+    noise = (rng.random((256, 256)) * 255).astype(np.uint8)
+    Image.fromarray(np.dstack([noise, noise, noise, np.full_like(noise, 255)]), "RGBA").save(misc / "nvg_noise.png")
+
+    def vignette(w, h, centers, radius):
+        ys, xs = np.mgrid[0:h, 0:w].astype(np.float64)
+        dist = np.full((h, w), np.inf)
+        for cx, cy in centers:
+            dist = np.minimum(dist, np.hypot(xs - cx, ys - cy))
+        alpha = np.clip((dist - radius * 0.86) / (radius * 0.14), 0, 1)
+        ring = np.exp(-((dist - radius * 0.97) / (radius * 0.03)) ** 2) * 0.35
+        alpha = np.clip(alpha + ring, 0, 1)
+        img = np.zeros((h, w, 4), dtype=np.uint8)
+        img[..., 3] = (alpha * 255).astype(np.uint8)
+        return Image.fromarray(img, "RGBA")
+
+    vignette(256, 256, [(128, 128)], 124).save(misc / "nvg_pvs14.png")
+    vignette(512, 256, [(186, 128), (326, 128)], 122).save(misc / "nvg_gpnvg18.png")
 
 
 def sprite(set_id, piece, level):
@@ -399,6 +451,9 @@ def main():
     save(colorize(PLATE_MASK, kevlar), "kevlar_insert")
     save(colorize(PLATE_MASK, solid("9a8f86")), "raw_ceramic_plate")
     save(colorize(PLATE_MASK, solid("ddd8cc")), "ceramic_plate")
+    for name in ("battery", "gas_filter", "nvg_pvs14", "nvg_gpnvg18", "gas_mask"):
+        save(colorize(device_sprite(name), solid("6d7073")), name)
+    overlays()
     print(f"wrote {len(list(ITEM_DIR.glob('*.png')))} textures to {ITEM_DIR.relative_to(ROOT)}")
 
 

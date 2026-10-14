@@ -6,6 +6,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import tacz_camo_armor.TaczCamoArmor;
+import tacz_camo_armor.device.DeviceKind;
 import tacz_camo_armor.item.ArmorPiece;
 import tacz_camo_armor.item.ArmorSet;
 import tacz_camo_armor.item.ArmorTier;
@@ -25,6 +26,11 @@ public final class ModCreativeTabs {
                         output.accept(ModItems.KEVLAR_INSERT);
                         output.accept(ModItems.RAW_CERAMIC_PLATE);
                         output.accept(ModItems.CERAMIC_PLATE);
+                        output.accept(ModItems.BATTERY);
+                        output.accept(ModItems.GAS_FILTER);
+                        for (DeviceKind kind : DeviceKind.values()) {
+                            output.accept(ModItems.device(kind));
+                        }
                         ModItems.allArmor().forEach(output::accept);
                     })
                     .build());

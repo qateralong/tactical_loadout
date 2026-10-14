@@ -8,6 +8,7 @@ import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
+import net.minecraft.data.recipes.SpecialRecipeBuilder;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -15,6 +16,10 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.neoforged.neoforge.common.Tags;
 import tacz_camo_armor.TaczCamoArmor;
+import tacz_camo_armor.device.AttachDeviceRecipe;
+import tacz_camo_armor.device.DetachDeviceRecipe;
+import tacz_camo_armor.device.DeviceKind;
+import tacz_camo_armor.device.RechargeDeviceRecipe;
 import tacz_camo_armor.item.ArmorPiece;
 import tacz_camo_armor.item.ArmorSet;
 import tacz_camo_armor.item.ArmorTier;
@@ -33,6 +38,7 @@ public class ModRecipeProvider extends RecipeProvider {
     protected void buildRecipes(RecipeOutput output) {
         buildFabrics(output);
         buildComponents(output);
+        buildDevices(output);
         for (ArmorSet set : ArmorSet.values()) {
             for (ArmorTier tier : set.tiers()) {
                 for (ArmorPiece piece : ArmorPiece.values()) {
@@ -79,6 +85,56 @@ public class ModRecipeProvider extends RecipeProvider {
             }
             builder.unlockedBy("has_wool", has(ItemTags.WOOL)).save(output);
         }
+    }
+
+    private void buildDevices(RecipeOutput output) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.BATTERY, 2)
+                .pattern("C")
+                .pattern("R")
+                .pattern("C")
+                .define('C', Tags.Items.INGOTS_COPPER)
+                .define('R', Tags.Items.DUSTS_REDSTONE)
+                .unlockedBy("has_copper", has(Tags.Items.INGOTS_COPPER))
+                .save(output);
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.GAS_FILTER)
+                .requires(Items.CHARCOAL)
+                .requires(Items.PAPER)
+                .requires(Tags.Items.NUGGETS_IRON)
+                .unlockedBy("has_charcoal", has(Items.CHARCOAL))
+                .save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.device(DeviceKind.PVS14))
+                .pattern("IGI")
+                .pattern("RBR")
+                .define('I', Tags.Items.INGOTS_IRON)
+                .define('G', Tags.Items.GLASS_PANES)
+                .define('R', Tags.Items.DUSTS_REDSTONE)
+                .define('B', ModItems.BATTERY)
+                .unlockedBy("has_battery", has(ModItems.BATTERY))
+                .save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.device(DeviceKind.GPNVG18))
+                .pattern("GIG")
+                .pattern("GDG")
+                .pattern("RBR")
+                .define('I', Tags.Items.INGOTS_IRON)
+                .define('G', Tags.Items.GLASS_PANES)
+                .define('D', Tags.Items.GEMS_DIAMOND)
+                .define('R', Tags.Items.DUSTS_REDSTONE)
+                .define('B', ModItems.BATTERY)
+                .unlockedBy("has_battery", has(ModItems.BATTERY))
+                .save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.device(DeviceKind.GAS_MASK))
+                .pattern(" L ")
+                .pattern("GIG")
+                .pattern("LFL")
+                .define('L', Tags.Items.LEATHERS)
+                .define('G', Tags.Items.GLASS_PANES)
+                .define('I', Tags.Items.INGOTS_IRON)
+                .define('F', ModItems.GAS_FILTER)
+                .unlockedBy("has_gas_filter", has(ModItems.GAS_FILTER))
+                .save(output);
+        SpecialRecipeBuilder.special(AttachDeviceRecipe::new).save(output, TaczCamoArmor.id("attach_device"));
+        SpecialRecipeBuilder.special(DetachDeviceRecipe::new).save(output, TaczCamoArmor.id("detach_device"));
+        SpecialRecipeBuilder.special(RechargeDeviceRecipe::new).save(output, TaczCamoArmor.id("recharge_device"));
     }
 
     private void buildComponents(RecipeOutput output) {
