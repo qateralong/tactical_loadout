@@ -4,6 +4,11 @@
     "tacz_camo_armor:beige_fabric",
     "tacz_camo_armor:woodland_fabric",
     "tacz_camo_armor:sand_fabric",
-    "tacz_camo_armor:olive_fabric"
+    "tacz_camo_armor:olive_fabric",
+    "tacz_camo_armor:multicam_fabric",
+    "tacz_camo_armor:snow_fabric",
+    "tacz_camo_armor:emr_fabric",
+    "tacz_camo_armor:ghillie_fabric",
+    "tacz_camo_armor:black_fabric"
   ]
 }

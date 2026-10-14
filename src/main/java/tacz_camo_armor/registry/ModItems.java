@@ -3,6 +3,7 @@ package tacz_camo_armor.registry;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import org.jetbrains.annotations.Nullable;
 import tacz_camo_armor.TaczCamoArmor;
 import tacz_camo_armor.item.ArmorPiece;
 import tacz_camo_armor.item.ArmorSet;
@@ -32,7 +33,7 @@ public final class ModItems {
         }
         for (ArmorSet set : ArmorSet.values()) {
             Map<ArmorTier, Map<ArmorPiece, DeferredItem<TacticalArmorItem>>> byTier = new EnumMap<>(ArmorTier.class);
-            for (ArmorTier tier : ArmorTier.values()) {
+            for (ArmorTier tier : set.tiers()) {
                 Map<ArmorPiece, DeferredItem<TacticalArmorItem>> byPiece = new EnumMap<>(ArmorPiece.class);
                 for (ArmorPiece piece : ArmorPiece.values()) {
                     String name = set.id() + "_" + tier.id() + "_" + piece.id();
@@ -54,8 +55,10 @@ public final class ModItems {
         return FABRICS.get(set);
     }
 
+    @Nullable
     public static DeferredItem<TacticalArmorItem> armor(ArmorSet set, ArmorTier tier, ArmorPiece piece) {
-        return ARMOR.get(set).get(tier).get(piece);
+        Map<ArmorPiece, DeferredItem<TacticalArmorItem>> byPiece = ARMOR.get(set).get(tier);
+        return byPiece == null ? null : byPiece.get(piece);
     }
 
     public static List<DeferredItem<TacticalArmorItem>> allArmor() {

@@ -14,6 +14,19 @@
     "tacz_camo_armor:us_desert_heavy_boots",
     "tacz_camo_armor:us_green_light_boots",
     "tacz_camo_armor:us_green_medium_boots",
-    "tacz_camo_armor:us_green_heavy_boots"
+    "tacz_camo_armor:us_green_heavy_boots",
+    "tacz_camo_armor:us_multicam_light_boots",
+    "tacz_camo_armor:us_multicam_medium_boots",
+    "tacz_camo_armor:us_multicam_heavy_boots",
+    "tacz_camo_armor:us_snow_light_boots",
+    "tacz_camo_armor:us_snow_medium_boots",
+    "tacz_camo_armor:us_snow_heavy_boots",
+    "tacz_camo_armor:ru_emr_light_boots",
+    "tacz_camo_armor:ru_emr_medium_boots",
+    "tacz_camo_armor:ru_emr_heavy_boots",
+    "tacz_camo_armor:ghillie_light_boots",
+    "tacz_camo_armor:swat_light_boots",
+    "tacz_camo_armor:swat_medium_boots",
+    "tacz_camo_armor:swat_heavy_boots"
   ]
 }

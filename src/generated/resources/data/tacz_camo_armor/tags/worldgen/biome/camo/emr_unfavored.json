@@ -1,0 +1,9 @@
+{
+  "values": [
+    "#c:is_desert",
+    "#c:is_badlands",
+    "#c:is_beach",
+    "#c:is_snowy",
+    "#c:is_icy"
+  ]
+}

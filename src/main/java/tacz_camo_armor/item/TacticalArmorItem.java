@@ -74,9 +74,10 @@ public class TacticalArmorItem extends ArmorItem implements GeoItem {
         Component zone = Component.translatable("tooltip." + TaczCamoArmor.MOD_ID + ".zone." + piece.id());
         tooltip.add(Component.translatable("tooltip." + TaczCamoArmor.MOD_ID + ".bullet_protection", percent, zone)
                 .withStyle(ChatFormatting.GRAY));
-        if (set.hasCamouflage()) {
-            long normal = Math.round(ServerConfig.detectionReduction() * 100);
-            long sneaking = Math.round(ServerConfig.sneakingDetectionReduction() * 100);
+        if (set.camo() != null) {
+            double strength = set.camo().strength();
+            long normal = Math.round(Math.min(0.95, ServerConfig.detectionReduction() * strength) * 100);
+            long sneaking = Math.round(Math.min(0.95, ServerConfig.sneakingDetectionReduction() * strength) * 100);
             tooltip.add(Component.translatable("tooltip." + TaczCamoArmor.MOD_ID + ".camo", normal, sneaking)
                     .withStyle(ChatFormatting.DARK_GREEN));
             tooltip.add(Component.translatable("tooltip." + TaczCamoArmor.MOD_ID + ".camo_biome." + set.id())

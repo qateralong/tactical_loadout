@@ -34,7 +34,7 @@ public class ModRecipeProvider extends RecipeProvider {
         buildFabrics(output);
         buildComponents(output);
         for (ArmorSet set : ArmorSet.values()) {
-            for (ArmorTier tier : ArmorTier.values()) {
+            for (ArmorTier tier : set.tiers()) {
                 for (ArmorPiece piece : ArmorPiece.values()) {
                     buildArmor(output, set, tier, piece);
                 }
@@ -49,11 +49,26 @@ public class ModRecipeProvider extends RecipeProvider {
             case US_WOODLAND -> List.of(Tags.Items.DYES_GREEN, Tags.Items.DYES_BROWN);
             case US_DESERT -> List.of(Tags.Items.DYES_YELLOW, Tags.Items.DYES_BROWN);
             case US_GREEN -> List.of(Tags.Items.DYES_GREEN);
+            case US_MULTICAM -> List.of(Tags.Items.DYES_YELLOW, Tags.Items.DYES_GREEN, Tags.Items.DYES_BROWN);
+            case US_SNOW -> List.of(Tags.Items.DYES_WHITE, Tags.Items.DYES_LIGHT_GRAY);
+            case RU_EMR -> List.of(Tags.Items.DYES_GREEN, Tags.Items.DYES_BROWN, Tags.Items.DYES_BLACK);
+            case SWAT -> List.of(Tags.Items.DYES_BLACK);
+            case GHILLIE -> List.of();
         };
     }
 
     private void buildFabrics(RecipeOutput output) {
         for (ArmorSet set : ArmorSet.values()) {
+            if (set == ArmorSet.GHILLIE) {
+                ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.fabric(set), 2)
+                        .requires(ModItems.fabric(ArmorSet.US_GREEN))
+                        .requires(Ingredient.of(ItemTags.LEAVES), 4)
+                        .requires(Tags.Items.STRINGS)
+                        .requires(Tags.Items.STRINGS)
+                        .unlockedBy("has_olive_fabric", has(ModItems.fabric(ArmorSet.US_GREEN)))
+                        .save(output);
+                continue;
+            }
             ShapelessRecipeBuilder builder = ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.fabric(set), 2)
                     .requires(ItemTags.WOOL)
                     .requires(ItemTags.WOOL)

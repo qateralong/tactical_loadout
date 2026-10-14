@@ -23,5 +23,15 @@ public class ModBiomeTagsProvider extends BiomeTagsProvider {
                 Tags.Biomes.IS_SNOWY, Tags.Biomes.IS_ICY);
         tag(ModTags.DESERT_FAVORED).addTags(Tags.Biomes.IS_DESERT, Tags.Biomes.IS_BADLANDS, Tags.Biomes.IS_BEACH);
         tag(ModTags.DESERT_UNFAVORED).addTags(Tags.Biomes.IS_FOREST, Tags.Biomes.IS_TAIGA, Tags.Biomes.IS_JUNGLE, Tags.Biomes.IS_SWAMP);
+        tag(ModTags.MULTICAM_FAVORED).addTags(Tags.Biomes.IS_FOREST, Tags.Biomes.IS_PLAINS, Tags.Biomes.IS_SAVANNA);
+        tag(ModTags.MULTICAM_UNFAVORED).addTags(Tags.Biomes.IS_SNOWY, Tags.Biomes.IS_ICY);
+        tag(ModTags.SNOW_FAVORED).addTags(Tags.Biomes.IS_SNOWY, Tags.Biomes.IS_ICY);
+        tag(ModTags.EMR_FAVORED).addTags(Tags.Biomes.IS_FOREST, Tags.Biomes.IS_TAIGA, Tags.Biomes.IS_PLAINS);
+        tag(ModTags.EMR_UNFAVORED).addTags(Tags.Biomes.IS_DESERT, Tags.Biomes.IS_BADLANDS, Tags.Biomes.IS_BEACH,
+                Tags.Biomes.IS_SNOWY, Tags.Biomes.IS_ICY);
+        tag(ModTags.GHILLIE_FAVORED).addTags(Tags.Biomes.IS_FOREST, Tags.Biomes.IS_TAIGA, Tags.Biomes.IS_JUNGLE,
+                Tags.Biomes.IS_SWAMP, Tags.Biomes.IS_PLAINS, Tags.Biomes.IS_SAVANNA);
+        tag(ModTags.GHILLIE_UNFAVORED).addTags(Tags.Biomes.IS_DESERT, Tags.Biomes.IS_BADLANDS, Tags.Biomes.IS_BEACH,
+                Tags.Biomes.IS_SNOWY, Tags.Biomes.IS_ICY);
     }
 }

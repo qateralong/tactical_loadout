@@ -1,0 +1,10 @@
+{
+  "values": [
+    "#c:is_forest",
+    "#c:is_taiga",
+    "#c:is_jungle",
+    "#c:is_swamp",
+    "#c:is_plains",
+    "#c:is_savanna"
+  ]
+}

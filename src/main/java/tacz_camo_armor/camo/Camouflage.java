@@ -1,7 +1,6 @@
 package tacz_camo_armor.camo;
 
 import net.minecraft.core.Holder;
-import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -14,7 +13,6 @@ import tacz_camo_armor.TaczCamoArmor;
 import tacz_camo_armor.config.ServerConfig;
 import tacz_camo_armor.item.ArmorSet;
 import tacz_camo_armor.item.TacticalArmorItem;
-import tacz_camo_armor.registry.ModTags;
 
 @EventBusSubscriber(modid = TaczCamoArmor.MOD_ID)
 public final class Camouflage {
@@ -53,29 +51,11 @@ public final class Camouflage {
     }
 
     public static double reduction(ArmorSet set, boolean sneaking, Holder<Biome> biome) {
+        CamoPattern camo = set.camo();
+        if (camo == null) {
+            return 0.0;
+        }
         double base = sneaking ? ServerConfig.sneakingDetectionReduction() : ServerConfig.detectionReduction();
-        return Mth.clamp(base * biomeFactor(set, biome), 0.0, MAX_REDUCTION);
-    }
-
-    public static double biomeFactor(ArmorSet set, Holder<Biome> biome) {
-        TagKey<Biome> favored;
-        TagKey<Biome> unfavored;
-        switch (set) {
-            case US_WOODLAND -> {
-                favored = ModTags.WOODLAND_FAVORED;
-                unfavored = ModTags.WOODLAND_UNFAVORED;
-            }
-            case US_DESERT -> {
-                favored = ModTags.DESERT_FAVORED;
-                unfavored = ModTags.DESERT_UNFAVORED;
-            }
-            default -> {
-                return 1.0;
-            }
-        }
-        if (biome.is(favored)) {
-            return ServerConfig.favoredBiomeFactor();
-        }
-        return biome.is(unfavored) ? ServerConfig.unfavoredBiomeFactor() : 1.0;
+        return Mth.clamp(base * camo.strength() * camo.biomeFactor(biome), 0.0, MAX_REDUCTION);
     }
 }

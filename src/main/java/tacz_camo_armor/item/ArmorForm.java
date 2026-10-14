@@ -3,7 +3,10 @@ package tacz_camo_armor.item;
 public enum ArmorForm {
     CT("ct"),
     T("t"),
-    US("us");
+    US("us"),
+    RU("ru"),
+    GHILLIE("ghillie"),
+    SWAT("swat");
 
     private final String id;
 

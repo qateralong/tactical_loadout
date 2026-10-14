@@ -16,6 +16,7 @@ public final class ServerConfig {
     private static final ModConfigSpec.DoubleValue SNEAKING_DETECTION_REDUCTION;
     private static final ModConfigSpec.DoubleValue FAVORED_BIOME_FACTOR;
     private static final ModConfigSpec.DoubleValue UNFAVORED_BIOME_FACTOR;
+    private static final ModConfigSpec.DoubleValue GHILLIE_STRENGTH;
 
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
@@ -65,6 +66,10 @@ public final class ServerConfig {
                 .comment("Multiplier for the camo effect in biomes clashing with the pattern (biome tags tacz_camo_armor:camo/*_unfavored).")
                 .translation(key("unfavoredBiomeFactor"))
                 .defineInRange("unfavoredBiomeFactor", 0.5, 0.0, 1.0);
+        GHILLIE_STRENGTH = builder
+                .comment("Extra multiplier for the ghillie suit camo effect.")
+                .translation(key("ghillieStrength"))
+                .defineInRange("ghillieStrength", 1.5, 1.0, 3.0);
         builder.pop();
 
         SPEC = builder.build();
@@ -126,5 +131,9 @@ public final class ServerConfig {
 
     public static double unfavoredBiomeFactor() {
         return get(UNFAVORED_BIOME_FACTOR);
+    }
+
+    public static double ghillieStrength() {
+        return get(GHILLIE_STRENGTH);
     }
 }

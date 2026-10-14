@@ -18,7 +18,14 @@ ANIM_DIR = ASSETS / "animations"
 TEXELS = 2
 ATLAS_W = 256
 
-FORMS = {"ct": ["ct"], "t": ["t"], "us": ["us_woodland", "us_desert", "us_green"]}
+FORMS = {
+    "ct": ["ct"],
+    "t": ["t"],
+    "us": ["us_woodland", "us_desert", "us_green", "us_multicam", "us_snow"],
+    "ru": ["ru_emr"],
+    "ghillie": ["ghillie"],
+    "swat": ["swat"],
+}
 
 PIVOTS = {
     "armorHead": [0, 24, 0],
@@ -177,10 +184,102 @@ def boots(m):
     m.add(r, "heavy", (-3.9, 1.5, -2.85), (0.1, 4.5, -2.5), "kneepad", mirror=True)
 
 
+def helmet_ru(m):
+    h = "armorHead"
+    m.add(h, "light", (-4.75, 32, -4.75), (4.75, 33.75, 4.75), "shell")
+    m.add(h, "light", (-5, 28.25, -5), (5, 32, 5), "shell")
+    m.add(h, "light", (-5, 25.5, -1.5), (-4.5, 28.25, 5), "shell", sym=True)
+    m.add(h, "light", (-4.5, 25.5, 4.5), (4.5, 28.25, 5), "shell")
+    m.add(h, "light", (-5.15, 28.25, -5.15), (5.15, 28.75, 5.15), "strap")
+    m.add(h, "light", (-4.75, 24.5, 0), (-4.5, 25.5, 1), "strap", sym=True)
+    m.add(h, "light", (-3, 29.5, 5), (3, 30.75, 5.4), "strap")
+    m.add(h, "medium", (-5.5, 29, -3.5), (-5, 30, 3), "polymer", sym=True)
+    m.add(h, "medium", (-5.75, 25.5, -1.5), (-5, 28.5, 1.5), "polymer", sym=True)
+    m.add(h, "heavy", (-4.75, 23.75, -5.25), (4.75, 26.25, -4.5), "shell")
+    m.add(h, "heavy", (-5.25, 23.75, -4.75), (-4.5, 26.25, -1.5), "shell", sym=True)
+    m.add(h, "heavy", (-5, 23.5, 4.5), (5, 25.5, 5.5), "plate")
+
+
+def vest_ru(m):
+    b = "armorBody"
+    m.add(b, "light", (-4.5, 13, -3.25), (4.5, 23.5, -2.25), "fabric")
+    m.add(b, "light", (-4.5, 13, 2.25), (4.5, 23.5, 3.25), "fabric")
+    m.add(b, "light", (-3.5, 23.5, -3), (-1.5, 24.5, 3), "webbing", sym=True)
+    m.add(b, "light", (-4.6, 13.5, -2.5), (4.6, 19, 2.5), "fabric")
+    for i in range(4):
+        x0 = -4 + i * 2.05
+        m.add(b, "light", (x0, 13.75, -4.5), (x0 + 1.85, 17.75, -3.25), "pouch")
+    m.add(b, "light", (-3.5, 18.25, -4), (-1.5, 20, -3.25), "pouch", sym=True)
+    m.add(b, "light", (-2.5, 14, 3.25), (2.5, 21.5, 4.5), "pouch")
+    m.add(b, "medium", (-5.25, 14, -1.75), (-4.6, 19.5, 1.75), "plate", sym=True)
+    m.add(b, "heavy", (-4.75, 22.75, -3.75), (4.75, 25, 3.75), "plate")
+    m.add(b, "heavy", (-3, 9, -3.25), (3, 13.25, -2.25), "plate")
+    m.add("armorRightArm", "heavy", (-8.75, 18.5, -2.75), (-3.75, 24.5, 2.75), "plate", mirror=True)
+    m.add("armorRightArm", "heavy", (-8.85, 20.5, -2.85), (-3.65, 21, 2.85), "strap", mirror=True)
+
+
+def strands(m, bone, count, box, seed, length=(1.5, 3.0), mirror=False):
+    rng = np.random.default_rng(seed)
+    (x0, y0, z0), (x1, y1, z1) = box
+    for _ in range(count):
+        face = rng.integers(0, 3)
+        x = rng.uniform(x0, x1)
+        y = rng.uniform(y0, y1)
+        z = rng.uniform(z0, z1)
+        if face == 0:
+            z = z0 if rng.random() < 0.5 else z1
+        elif face == 1:
+            x = x0
+        else:
+            y = y1
+        ln = round(rng.uniform(*length) * 2) / 2
+        rx, rz = (round(float(a)) for a in rng.uniform(-20, 20, 2))
+        m.add(bone, "light", (round(x * 4) / 4 - 0.25, round(y * 4) / 4 - ln, round(z * 4) / 4 - 0.25),
+              (round(x * 4) / 4 + 0.25, round(y * 4) / 4, round(z * 4) / 4 + 0.25), "strand",
+              rotation=[rx, 0, rz], pivot=[round(x * 4) / 4, round(y * 4) / 4, round(z * 4) / 4], mirror=mirror)
+
+
+def ghillie_suit(m):
+    h, b, ra, rl = "armorHead", "armorBody", "armorRightArm", "armorRightLeg"
+    m.add(h, "light", (-4, 24, -4), (4, 32, 4), "hood", inflate=0.7)
+    strands(m, h, 26, ((-4.7, 26, -4.7), (4.7, 32.7, 4.7)), 1)
+    m.add(b, "light", (-4, 12, -2), (4, 24, 2), "ghillie", inflate=0.55)
+    strands(m, b, 22, ((-4.55, 13, -2.55), (4.55, 24.55, 2.55)), 2, length=(2.0, 4.0))
+    m.add(ra, "light", (-8, 12, -2), (-4, 24, 2), "ghillie", inflate=0.55, mirror=True)
+    strands(m, ra, 10, ((-8.55, 14, -2.55), (-3.9, 24.55, 2.55)), 3, mirror=True)
+    m.add(rl, "light", (-3.9, 1.5, -2), (0.1, 12, 2), "ghillie", inflate=0.45, mirror=True)
+    strands(m, rl, 10, ((-4.35, 3, -2.45), (0.2, 12, 2.45)), 4, mirror=True)
+
+
+def helmet_swat(m):
+    h = "armorHead"
+    m.add(h, "light", (-4, 24, -4), (4, 32, 4), "knit", inflate=0.6)
+    m.add(h, "light", (-4.75, 32, -4.75), (4.75, 33.5, 4.75), "shell")
+    m.add(h, "light", (-5, 28.5, -5), (5, 32, 5), "shell")
+    m.add(h, "light", (-5, 26, -1), (-4.5, 28.5, 5), "shell", sym=True)
+    m.add(h, "light", (-4.5, 26.5, 4.5), (4.5, 28.5, 5), "shell")
+    m.add(h, "medium", (-5.5, 29, -3.5), (-5, 30, 3), "polymer", sym=True)
+    m.add(h, "medium", (-5.75, 25.5, -1.5), (-5, 28.5, 1.5), "polymer", sym=True)
+    m.add(h, "heavy", (-4.75, 24.25, -5.75), (4.75, 31.25, -5.25), "visor")
+    m.add(h, "heavy", (-5.5, 30, -5.6), (-5, 31.5, -4), "polymer", sym=True)
+
+
+def vest_swat(m):
+    b = "armorBody"
+    carrier_common(m)
+    m.add(b, "light", (-3.5, 15, -4.25), (-0.5, 18, -3.25), "pouch", sym=True)
+    m.add(b, "light", (-3.5, 19, -3.6), (3.5, 21.5, -3.25), "police")
+    m.add(b, "light", (-3.5, 17, 3.25), (3.5, 21, 3.75), "police")
+    m.add(b, "light", (1.5, 21.5, -3.75), (3.5, 23.5, -3.25), "pouch")
+
+
 BUILDERS = {
     "us": [helmet_us, carrier_us, leggings, boots],
     "ct": [helmet_ct, carrier_ct, leggings, boots],
     "t": [balaclava_t, rig_t, leggings, boots],
+    "ru": [helmet_ru, vest_ru, leggings, boots],
+    "ghillie": [ghillie_suit, boots],
+    "swat": [helmet_swat, vest_swat, leggings, boots],
 }
 
 
@@ -268,11 +367,13 @@ def build(form):
 
 
 def palette(set_id):
-    boot = {"ct": "232323", "t": "5b4632", "us_woodland": "3b3a33", "us_desert": "a08560", "us_green": "514e36"}[set_id]
-    shell = {"ct": "1f2a3d", "t": "4a4a40"}.get(set_id)
-    knee = {"ct": "1e1f21", "t": "4a3a2a"}.get(set_id)
+    boot = {"ct": "232323", "t": "5b4632", "us_woodland": "3b3a33", "us_desert": "a08560", "us_green": "514e36",
+            "us_multicam": "8b7355", "us_snow": "bfc1c2", "ru_emr": "2e2c28", "ghillie": "4a4232", "swat": "1d1d1f"}[set_id]
+    shell = {"ct": "1f2a3d", "t": "4a4a40", "swat": "202124"}.get(set_id)
+    knee = {"ct": "1e1f21", "t": "4a3a2a", "swat": "1b1b1d", "us_snow": "d9dcdc"}.get(set_id)
+    knit = {"swat": "1a1a1c"}.get(set_id)
     return {"boot": hex_rgb(boot), "shell": None if shell is None else hex_rgb(shell),
-            "knee": None if knee is None else hex_rgb(knee)}
+            "knee": None if knee is None else hex_rgb(knee), "knit": None if knit is None else hex_rgb(knit)}
 
 
 def paint(set_id, faces, height):
@@ -296,7 +397,8 @@ def paint(set_id, faces, height):
             rgb = region * (1.0 - 0.03 * ((xs + ys) % 2))[..., None]
             outline = False
         elif mat == "knit":
-            rgb = region * (1.0 - 0.08 * (xs % 2))[..., None]
+            knit = region if pal["knit"] is None else pal["knit"] * np.ones_like(region)
+            rgb = knit * (1.0 - 0.08 * (xs % 2))[..., None]
             outline = False
             if face == "north":
                 y0, y1 = int(h * 0.42), int(h * 0.56)
@@ -306,6 +408,29 @@ def paint(set_id, faces, height):
                 rgb[y1:y1 + 1, x0 - 1:x1 + 1] *= 0.6
                 rgb[y0:y1, x0 - 1:x0] *= 0.6
                 rgb[y0:y1, x1:x1 + 1] *= 0.6
+        elif mat in ("ghillie", "hood"):
+            tufts = rng.random((h, w))
+            rgb = region * (0.85 + 0.3 * tufts)[..., None]
+            outline = False
+            if mat == "hood" and face == "north":
+                y0, y1 = int(h * 0.3), int(h * 0.82)
+                x0, x1 = int(w * 0.16), int(w * 0.84)
+                alpha[y0:y1, x0:x1] = 0
+        elif mat == "strand":
+            tone = rng.choice([0.7, 0.85, 1.0, 1.15, 1.3])
+            rgb = np.ones_like(region) * region.reshape(-1, 3).mean(axis=0) * tone
+            outline = False
+        elif mat == "visor":
+            rgb = np.ones_like(region) * hex_rgb("16262c")
+            if face == "north":
+                rgb[1:3, 1:max(2, w // 3)] = hex_rgb("6f97a3")
+                rgb[ys[:, 0] > h - 3] = hex_rgb("2a2c2e")
+        elif mat == "police":
+            rgb = np.ones_like(region) * hex_rgb("161618")
+            if face in ("north", "south") and h >= 3 and w >= 6:
+                row = slice(h // 2 - 1, h // 2 + 1)
+                letters = (xs[0] % 3 != 2) & (xs[0] > 0) & (xs[0] < w - 1)
+                rgb[row, letters] = hex_rgb("e6e6e6")
         elif mat == "webbing":
             rgb = region * 0.8
             rgb[(ys % 3 == 2).repeat(w, axis=1)] *= 0.62

@@ -18,7 +18,7 @@ public abstract class ModLanguageProvider extends LanguageProvider {
         add("itemGroup." + TaczCamoArmor.MOD_ID, modName());
         for (ArmorSet set : ArmorSet.values()) {
             add(ModItems.fabric(set).get(), fabricName(set));
-            for (ArmorTier tier : ArmorTier.values()) {
+            for (ArmorTier tier : set.tiers()) {
                 for (ArmorPiece piece : ArmorPiece.values()) {
                     add(ModItems.armor(set, tier, piece).get(), armorName(set, tier, piece));
                 }
@@ -29,13 +29,18 @@ public abstract class ModLanguageProvider extends LanguageProvider {
         addConfig();
     }
 
-    protected static String setName(ArmorSet set) {
+    protected String setName(ArmorSet set) {
         return switch (set) {
             case CT -> "CT";
             case T -> "T";
             case US_WOODLAND -> "US Woodland";
             case US_DESERT -> "US Desert";
             case US_GREEN -> "US Green";
+            case US_MULTICAM -> "US Multicam";
+            case US_SNOW -> "US Snow";
+            case RU_EMR -> "Ratnik EMR";
+            case GHILLIE -> "Ghillie";
+            case SWAT -> "SWAT";
         };
     }
 
@@ -77,6 +82,11 @@ public abstract class ModLanguageProvider extends LanguageProvider {
                 case US_WOODLAND -> "Woodland Camo Fabric";
                 case US_DESERT -> "Sand Fabric";
                 case US_GREEN -> "Olive Drab Fabric";
+                case US_MULTICAM -> "Multicam Fabric";
+                case US_SNOW -> "Snow Camo Fabric";
+                case RU_EMR -> "EMR Digital Fabric";
+                case GHILLIE -> "Ghillie Fabric";
+                case SWAT -> "Black Fabric";
             };
         }
 
@@ -87,12 +97,16 @@ public abstract class ModLanguageProvider extends LanguageProvider {
                 case MEDIUM -> "Medium";
                 case HEAVY -> "Heavy";
             };
+            boolean ghillie = set == ArmorSet.GHILLIE;
             String pieceName = switch (piece) {
-                case HELMET -> set == ArmorSet.T ? "Balaclava" : "Helmet";
-                case PLATE_CARRIER -> "Plate Carrier";
-                case LEGGINGS -> "Leggings with Knee Pads";
+                case HELMET -> set == ArmorSet.T ? "Balaclava" : ghillie ? "Hood" : "Helmet";
+                case PLATE_CARRIER -> set == ArmorSet.RU_EMR ? "Body Armor" : ghillie ? "Jacket" : "Plate Carrier";
+                case LEGGINGS -> ghillie ? "Pants" : "Leggings with Knee Pads";
                 case BOOTS -> "Boots";
             };
+            if (ghillie) {
+                return "Ghillie " + pieceName;
+            }
             return setName(set) + " " + tierName + " " + pieceName;
         }
 
@@ -114,6 +128,10 @@ public abstract class ModLanguageProvider extends LanguageProvider {
             tooltip("camo_biome.us_woodland", "Best in forests, jungles and swamps");
             tooltip("camo_biome.us_desert", "Best in deserts, badlands and beaches");
             tooltip("camo_biome.us_green", "Works the same in every biome");
+            tooltip("camo_biome.us_multicam", "Best in forests, plains and savannas");
+            tooltip("camo_biome.us_snow", "Only works well in snowy biomes");
+            tooltip("camo_biome.ru_emr", "Best in forests, taiga and plains");
+            tooltip("camo_biome.ghillie", "Strongest camo, best among vegetation");
         }
 
         @Override
@@ -133,12 +151,18 @@ public abstract class ModLanguageProvider extends LanguageProvider {
             add(configKey("sneakingDetectionReduction"), "Detection range reduction while sneaking");
             add(configKey("favoredBiomeFactor"), "Matching biome multiplier");
             add(configKey("unfavoredBiomeFactor"), "Clashing biome multiplier");
+            add(configKey("ghillieStrength"), "Ghillie suit camo multiplier");
         }
     }
 
     public static final class Russian extends ModLanguageProvider {
         public Russian(PackOutput output) {
             super(output, "ru_ru");
+        }
+
+        @Override
+        protected String setName(ArmorSet set) {
+            return set == ArmorSet.RU_EMR ? "Ратник" : super.setName(set);
         }
 
         @Override
@@ -154,12 +178,26 @@ public abstract class ModLanguageProvider extends LanguageProvider {
                 case US_WOODLAND -> "Камуфляжная ткань Woodland";
                 case US_DESERT -> "Песочная ткань";
                 case US_GREEN -> "Оливковая ткань";
+                case US_MULTICAM -> "Ткань Multicam";
+                case US_SNOW -> "Снежная камуфляжная ткань";
+                case RU_EMR -> "Цифровая ткань ЕМР";
+                case GHILLIE -> "Маскировочная ткань гилли";
+                case SWAT -> "Чёрная ткань";
             };
         }
 
         @Override
         protected String armorName(ArmorSet set, ArmorTier tier, ArmorPiece piece) {
-            boolean feminine = piece == ArmorPiece.PLATE_CARRIER || (piece == ArmorPiece.HELMET && set == ArmorSet.T);
+            if (set == ArmorSet.GHILLIE) {
+                return switch (piece) {
+                    case HELMET -> "Капюшон гилли";
+                    case PLATE_CARRIER -> "Куртка гилли";
+                    case LEGGINGS -> "Штаны гилли";
+                    case BOOTS -> "Ботинки гилли";
+                };
+            }
+            boolean feminine = (piece == ArmorPiece.PLATE_CARRIER && set != ArmorSet.RU_EMR)
+                    || (piece == ArmorPiece.HELMET && set == ArmorSet.T);
             boolean plural = piece == ArmorPiece.LEGGINGS || piece == ArmorPiece.BOOTS;
             String tierName = switch (tier) {
                 case LIGHT -> plural ? "Лёгкие" : feminine ? "Лёгкая" : "Лёгкий";
@@ -168,7 +206,7 @@ public abstract class ModLanguageProvider extends LanguageProvider {
             };
             String pieceName = switch (piece) {
                 case HELMET -> set == ArmorSet.T ? "балаклава" : "шлем";
-                case PLATE_CARRIER -> "плитоноска";
+                case PLATE_CARRIER -> set == ArmorSet.RU_EMR ? "бронежилет" : "плитоноска";
                 case LEGGINGS -> "поножи с наколенниками";
                 case BOOTS -> "ботинки";
             };
@@ -193,6 +231,10 @@ public abstract class ModLanguageProvider extends LanguageProvider {
             tooltip("camo_biome.us_woodland", "Лучше всего в лесах, джунглях и болотах");
             tooltip("camo_biome.us_desert", "Лучше всего в пустынях, бэдлендах и на пляжах");
             tooltip("camo_biome.us_green", "Одинаково во всех биомах");
+            tooltip("camo_biome.us_multicam", "Лучше всего в лесах, на равнинах и в саваннах");
+            tooltip("camo_biome.us_snow", "Хорош только в снежных биомах");
+            tooltip("camo_biome.ru_emr", "Лучше всего в лесах, тайге и на равнинах");
+            tooltip("camo_biome.ghillie", "Самый сильный камуфляж, лучше всего среди растительности");
         }
 
         @Override
@@ -212,6 +254,7 @@ public abstract class ModLanguageProvider extends LanguageProvider {
             add(configKey("sneakingDetectionReduction"), "Снижение дальности обнаружения крадучись");
             add(configKey("favoredBiomeFactor"), "Множитель в подходящем биоме");
             add(configKey("unfavoredBiomeFactor"), "Множитель в неподходящем биоме");
+            add(configKey("ghillieStrength"), "Множитель камуфляжа гилли");
         }
     }
 }

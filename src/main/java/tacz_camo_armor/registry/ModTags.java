@@ -15,6 +15,13 @@ public final class ModTags {
     public static final TagKey<Biome> WOODLAND_UNFAVORED = biome("camo/woodland_unfavored");
     public static final TagKey<Biome> DESERT_FAVORED = biome("camo/desert_favored");
     public static final TagKey<Biome> DESERT_UNFAVORED = biome("camo/desert_unfavored");
+    public static final TagKey<Biome> MULTICAM_FAVORED = biome("camo/multicam_favored");
+    public static final TagKey<Biome> MULTICAM_UNFAVORED = biome("camo/multicam_unfavored");
+    public static final TagKey<Biome> SNOW_FAVORED = biome("camo/snow_favored");
+    public static final TagKey<Biome> EMR_FAVORED = biome("camo/emr_favored");
+    public static final TagKey<Biome> EMR_UNFAVORED = biome("camo/emr_unfavored");
+    public static final TagKey<Biome> GHILLIE_FAVORED = biome("camo/ghillie_favored");
+    public static final TagKey<Biome> GHILLIE_UNFAVORED = biome("camo/ghillie_unfavored");
 
     private ModTags() {
     }
