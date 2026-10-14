@@ -31,5 +31,6 @@ public final class DataGenerators {
         generator.addProvider(event.includeClient(), new ModLanguageProvider.Russian(output));
         generator.addProvider(event.includeServer(), new ModItemTagsProvider(output, lookup, noBlockTags, fileHelper));
         generator.addProvider(event.includeServer(), new ModRecipeProvider(output, lookup));
+        generator.addProvider(event.includeServer(), new ModBiomeTagsProvider(output, lookup, fileHelper));
     }
 }

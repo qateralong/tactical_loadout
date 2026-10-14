@@ -110,6 +110,10 @@ public abstract class ModLanguageProvider extends LanguageProvider {
             tooltip("zone.plate_carrier", "torso");
             tooltip("zone.leggings", "legs");
             tooltip("zone.boots", "feet");
+            tooltip("camo", "Full set camouflage: -%s%% detection range (-%s%% sneaking)");
+            tooltip("camo_biome.us_woodland", "Best in forests, jungles and swamps");
+            tooltip("camo_biome.us_desert", "Best in deserts, badlands and beaches");
+            tooltip("camo_biome.us_green", "Works the same in every biome");
         }
 
         @Override
@@ -124,6 +128,11 @@ public abstract class ModLanguageProvider extends LanguageProvider {
             add(configKey("legsZoneTop"), "Leggings zone top (fraction of height)");
             add(configKey("mobility"), "Mobility");
             add(configKey("heavySlowdownPerPiece"), "Heavy armor slowdown per piece");
+            add(configKey("camouflage"), "Camouflage");
+            add(configKey("detectionReduction"), "Detection range reduction");
+            add(configKey("sneakingDetectionReduction"), "Detection range reduction while sneaking");
+            add(configKey("favoredBiomeFactor"), "Matching biome multiplier");
+            add(configKey("unfavoredBiomeFactor"), "Clashing biome multiplier");
         }
     }
 
@@ -180,6 +189,10 @@ public abstract class ModLanguageProvider extends LanguageProvider {
             tooltip("zone.plate_carrier", "торс");
             tooltip("zone.leggings", "ноги");
             tooltip("zone.boots", "ступни");
+            tooltip("camo", "Камуфляж полного комплекта: дальность обнаружения -%s%% (-%s%% крадучись)");
+            tooltip("camo_biome.us_woodland", "Лучше всего в лесах, джунглях и болотах");
+            tooltip("camo_biome.us_desert", "Лучше всего в пустынях, бэдлендах и на пляжах");
+            tooltip("camo_biome.us_green", "Одинаково во всех биомах");
         }
 
         @Override
@@ -194,6 +207,11 @@ public abstract class ModLanguageProvider extends LanguageProvider {
             add(configKey("legsZoneTop"), "Верх зоны поножей (доля роста)");
             add(configKey("mobility"), "Подвижность");
             add(configKey("heavySlowdownPerPiece"), "Замедление за каждую тяжёлую деталь");
+            add(configKey("camouflage"), "Камуфляж");
+            add(configKey("detectionReduction"), "Снижение дальности обнаружения");
+            add(configKey("sneakingDetectionReduction"), "Снижение дальности обнаружения крадучись");
+            add(configKey("favoredBiomeFactor"), "Множитель в подходящем биоме");
+            add(configKey("unfavoredBiomeFactor"), "Множитель в неподходящем биоме");
         }
     }
 }

@@ -12,6 +12,10 @@ public final class ServerConfig {
     private static final ModConfigSpec.DoubleValue BOOTS_ZONE_TOP;
     private static final ModConfigSpec.DoubleValue LEGS_ZONE_TOP;
     private static final ModConfigSpec.DoubleValue HEAVY_SLOWDOWN_PER_PIECE;
+    private static final ModConfigSpec.DoubleValue DETECTION_REDUCTION;
+    private static final ModConfigSpec.DoubleValue SNEAKING_DETECTION_REDUCTION;
+    private static final ModConfigSpec.DoubleValue FAVORED_BIOME_FACTOR;
+    private static final ModConfigSpec.DoubleValue UNFAVORED_BIOME_FACTOR;
 
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
@@ -42,6 +46,25 @@ public final class ServerConfig {
                 .comment("Movement speed penalty for each worn heavy-tier piece, as a fraction of base speed (0.03 = -3%).")
                 .translation(key("heavySlowdownPerPiece"))
                 .defineInRange("heavySlowdownPerPiece", 0.03, 0.0, 0.25);
+        builder.pop();
+
+        builder.translation(key("camouflage")).push("camouflage");
+        DETECTION_REDUCTION = builder
+                .comment("How much a full US camo set shrinks the distance at which mobs notice the wearer (0.3 = -30%).")
+                .translation(key("detectionReduction"))
+                .defineInRange("detectionReduction", 0.30, 0.0, 0.95);
+        SNEAKING_DETECTION_REDUCTION = builder
+                .comment("Same as detectionReduction, but while sneaking. Stacks with the vanilla sneaking bonus.")
+                .translation(key("sneakingDetectionReduction"))
+                .defineInRange("sneakingDetectionReduction", 0.50, 0.0, 0.95);
+        FAVORED_BIOME_FACTOR = builder
+                .comment("Multiplier for the camo effect in biomes matching the pattern (biome tags tacz_camo_armor:camo/*_favored).")
+                .translation(key("favoredBiomeFactor"))
+                .defineInRange("favoredBiomeFactor", 1.3, 1.0, 3.0);
+        UNFAVORED_BIOME_FACTOR = builder
+                .comment("Multiplier for the camo effect in biomes clashing with the pattern (biome tags tacz_camo_armor:camo/*_unfavored).")
+                .translation(key("unfavoredBiomeFactor"))
+                .defineInRange("unfavoredBiomeFactor", 0.5, 0.0, 1.0);
         builder.pop();
 
         SPEC = builder.build();
@@ -87,5 +110,21 @@ public final class ServerConfig {
 
     public static double heavySlowdownPerPiece() {
         return get(HEAVY_SLOWDOWN_PER_PIECE);
+    }
+
+    public static double detectionReduction() {
+        return get(DETECTION_REDUCTION);
+    }
+
+    public static double sneakingDetectionReduction() {
+        return get(SNEAKING_DETECTION_REDUCTION);
+    }
+
+    public static double favoredBiomeFactor() {
+        return get(FAVORED_BIOME_FACTOR);
+    }
+
+    public static double unfavoredBiomeFactor() {
+        return get(UNFAVORED_BIOME_FACTOR);
     }
 }

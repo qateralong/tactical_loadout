@@ -62,5 +62,13 @@ public class TacticalArmorItem extends ArmorItem {
         Component zone = Component.translatable("tooltip." + TaczCamoArmor.MOD_ID + ".zone." + piece.id());
         tooltip.add(Component.translatable("tooltip." + TaczCamoArmor.MOD_ID + ".bullet_protection", percent, zone)
                 .withStyle(ChatFormatting.GRAY));
+        if (set.hasCamouflage()) {
+            long normal = Math.round(ServerConfig.detectionReduction() * 100);
+            long sneaking = Math.round(ServerConfig.sneakingDetectionReduction() * 100);
+            tooltip.add(Component.translatable("tooltip." + TaczCamoArmor.MOD_ID + ".camo", normal, sneaking)
+                    .withStyle(ChatFormatting.DARK_GREEN));
+            tooltip.add(Component.translatable("tooltip." + TaczCamoArmor.MOD_ID + ".camo_biome." + set.id())
+                    .withStyle(ChatFormatting.DARK_GRAY));
+        }
     }
 }
