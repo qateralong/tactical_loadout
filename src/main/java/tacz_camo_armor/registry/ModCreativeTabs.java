@@ -7,6 +7,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import tacz_camo_armor.TaczCamoArmor;
 import tacz_camo_armor.device.DeviceKind;
+import tacz_camo_armor.grenade.GrenadeKind;
 import tacz_camo_armor.item.ArmorPiece;
 import tacz_camo_armor.item.ArmorSet;
 import tacz_camo_armor.item.ArmorTier;
@@ -30,6 +31,9 @@ public final class ModCreativeTabs {
                         output.accept(ModItems.GAS_FILTER);
                         for (DeviceKind kind : DeviceKind.values()) {
                             output.accept(ModItems.device(kind));
+                        }
+                        for (GrenadeKind kind : GrenadeKind.values()) {
+                            output.accept(ModItems.grenade(kind));
                         }
                         ModItems.allArmor().forEach(output::accept);
                     })

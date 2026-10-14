@@ -18,6 +18,7 @@ import tacz_camo_armor.config.ServerConfig;
 import tacz_camo_armor.device.DeviceKind;
 import tacz_camo_armor.device.Devices;
 import tacz_camo_armor.device.MountedDevice;
+import tacz_camo_armor.grenade.GrenadeKind;
 import tacz_camo_armor.item.ArmorPiece;
 import tacz_camo_armor.item.ArmorSet;
 import tacz_camo_armor.item.ArmorTier;
@@ -56,12 +57,19 @@ public class JeiCompat implements IModPlugin {
         registration.addItemStackInfo(new ItemStack(ModItems.device(DeviceKind.GPNVG18).get()),
                 Component.translatable(INFO + "nvg", key, seconds), Component.translatable(INFO + "gpnvg18"),
                 Component.translatable(INFO + "detach"));
+        registration.addItemStackInfo(new ItemStack(ModItems.device(DeviceKind.GPNVG18_GREEN).get()),
+                Component.translatable(INFO + "nvg", key, seconds), Component.translatable(INFO + "gpnvg18_green"),
+                Component.translatable(INFO + "detach"));
         registration.addItemStackInfo(new ItemStack(ModItems.device(DeviceKind.THERMAL).get()),
                 Component.translatable(INFO + "nvg", key, seconds), Component.translatable(INFO + "thermal"),
                 Component.translatable(INFO + "detach"));
         registration.addItemStackInfo(new ItemStack(ModItems.device(DeviceKind.GAS_MASK).get()),
                 Component.translatable(INFO + "gas_mask", ServerConfig.gasFilterSeconds()), Component.translatable(INFO + "detach"));
         registration.addItemStackInfo(new ItemStack(ModItems.BATTERY.get()), Component.translatable(INFO + "battery"));
+        for (GrenadeKind kind : GrenadeKind.values()) {
+            registration.addItemStackInfo(new ItemStack(ModItems.grenade(kind).get()),
+                    Component.translatable(INFO + "grenade." + kind.id()), Component.translatable(INFO + "grenade_throw"));
+        }
         registration.addItemStackInfo(new ItemStack(ModItems.GAS_FILTER.get()), Component.translatable(INFO + "gas_filter"));
         registration.addRecipes(RecipeTypes.CRAFTING, deviceRecipes());
     }

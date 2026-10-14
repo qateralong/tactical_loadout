@@ -335,6 +335,18 @@ def colorize(rows, fill, set_id=None):
                 rgb = hex_rgb("3f4538") * shade
             elif c == "L":
                 rgb = hex_rgb("7fd39a") if above in ".#d" else hex_rgb("24503a")
+            elif c == "G":
+                rgb = hex_rgb("56603a") * (0.82 if (x + y) % 2 else 1.0) * shade
+            elif c == "H":
+                rgb = hex_rgb("9e2b25") * shade
+            elif c == "J":
+                rgb = hex_rgb("7b8085") * shade
+            elif c == "Q":
+                rgb = hex_rgb("5d6656") * shade
+            elif c == "V":
+                rgb = hex_rgb("e8e8e8") * shade
+            elif c == "W":
+                rgb = hex_rgb("e4f3fa") if above in ".#d" else hex_rgb("33424d")
             elif c == "T":
                 rgb = hex_rgb("55595c") * shade
             elif c == "Y":
@@ -381,12 +393,24 @@ def device_sprite(name):
         s.rect(6, 2, 9, 3, "m").rect(4, 4, 11, 12, "f").rect(5, 13, 10, 13, "f")
     elif name == "nvg_pvs14":
         s.rect(2, 6, 11, 10, "d").rect(1, 6, 1, 10, "L").rect(12, 7, 13, 9, "r").rect(8, 3, 9, 5, "m").rect(4, 4, 6, 5, "d")
-    elif name == "nvg_gpnvg18":
+    elif name.startswith("nvg_gpnvg18"):
+        lens = "L" if name.endswith("green") else "W"
         s.rect(4, 4, 11, 5, "d").rect(7, 2, 8, 3, "m")
         s.rect(1, 7, 3, 10, "d").rect(4, 6, 7, 10, "d").rect(8, 6, 11, 10, "d").rect(12, 7, 14, 10, "d")
-        s.rect(2, 8, 2, 9, "L").rect(5, 7, 6, 9, "L").rect(9, 7, 10, 9, "L").rect(13, 8, 13, 9, "L")
+        s.rect(2, 8, 2, 9, lens).rect(5, 7, 6, 9, lens).rect(9, 7, 10, 9, lens).rect(13, 8, 13, 9, lens)
     elif name == "nvg_thermal":
         s.rect(2, 5, 11, 11, "T").rect(1, 6, 1, 10, "Y").rect(12, 7, 13, 9, "r").rect(8, 3, 9, 4, "m").rect(4, 4, 6, 4, "d")
+    elif name in ("frag_grenade", "he_grenade"):
+        s.rect(5, 5, 10, 14, "G").rect(4, 6, 11, 13, "G").rect(6, 3, 8, 4, "m").rect(9, 3, 10, 3, "m").rect(10, 4, 10, 8, "m")
+        s.rect(11, 1, 12, 1, "m").rect(11, 3, 12, 3, "m").rect(13, 2, 13, 2, "m").rect(10, 2, 10, 2, "m")
+        if name == "he_grenade":
+            s.rect(4, 9, 11, 10, "H")
+    elif name == "flashbang":
+        s.rect(5, 4, 10, 14, "J").rect(6, 2, 9, 3, "m").rect(11, 3, 11, 9, "m").rect(12, 2, 12, 2, "m")
+        for y in (6, 9, 12):
+            s.rect(6, y, 6, y, "k").rect(9, y, 9, y, "k")
+    elif name == "smoke_grenade":
+        s.rect(5, 4, 10, 14, "Q").rect(5, 7, 10, 8, "V").rect(6, 2, 9, 3, "m").rect(11, 3, 11, 9, "m").rect(12, 2, 12, 2, "m")
     elif name == "gas_mask":
         s.rect(4, 2, 11, 12, "r").rect(3, 4, 12, 9, "r").rect(4, 5, 6, 7, "l").rect(9, 5, 11, 7, "l")
         s.rect(7, 10, 8, 11, "m").rect(10, 10, 13, 13, "f")
@@ -467,7 +491,8 @@ def main():
     save(colorize(PLATE_MASK, kevlar), "kevlar_insert")
     save(colorize(PLATE_MASK, solid("9a8f86")), "raw_ceramic_plate")
     save(colorize(PLATE_MASK, solid("ddd8cc")), "ceramic_plate")
-    for name in ("battery", "gas_filter", "nvg_pvs14", "nvg_gpnvg18", "nvg_thermal", "gas_mask"):
+    for name in ("battery", "gas_filter", "nvg_pvs14", "nvg_gpnvg18", "nvg_gpnvg18_green", "nvg_thermal", "gas_mask",
+                 "frag_grenade", "he_grenade", "flashbang", "smoke_grenade"):
         save(colorize(device_sprite(name), solid("6d7073")), name)
     overlays()
     print(f"wrote {len(list(ITEM_DIR.glob('*.png')))} textures to {ITEM_DIR.relative_to(ROOT)}")

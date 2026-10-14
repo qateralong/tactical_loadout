@@ -5,6 +5,7 @@ import tacz_camo_armor.config.ServerConfig;
 public enum DeviceKind {
     PVS14("nvg_pvs14", true),
     GPNVG18("nvg_gpnvg18", true),
+    GPNVG18_GREEN("nvg_gpnvg18_green", true),
     THERMAL("nvg_thermal", true),
     GAS_MASK("gas_mask", false);
 

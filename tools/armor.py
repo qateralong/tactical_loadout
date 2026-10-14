@@ -294,14 +294,15 @@ def nvg_devices(m, mz):
     m.add_to(pvs, (-3.25, 26.75, mz - 4.5), (-0.75, 29.25, mz - 1.25), "nvg")
     m.add_to(pvs, (-3, 27, mz - 1.25), (-1, 29, mz - 0.5), "rubber")
     m.add_to(pvs, (-3, 27, mz - 4.6), (-1, 29, mz - 4.5), "nvg_lens")
-    quad = m.extra("nvg_gpnvg18", h, pivot)
-    m.add_to(quad, (-0.6, 28.75, mz - 1.5), (0.6, 31.25, mz - 0.5), "nvg")
-    m.add_to(quad, (-3.5, 28.25, mz - 2), (3.5, 29.75, mz - 0.9), "nvg")
-    m.add_to(quad, (-3, 26.75, mz - 4.25), (-1, 28.75, mz - 1.25), "nvg", sym=True)
-    m.add_to(quad, (-2.85, 26.9, mz - 4.35), (-1.15, 28.6, mz - 4.25), "nvg_lens", sym=True)
-    m.add_to(quad, (-5.25, 27, mz - 3.75), (-3.25, 28.5, mz - 1.25), "nvg", sym=True)
-    m.add_to(quad, (-5.1, 27.15, mz - 3.85), (-3.4, 28.35, mz - 3.75), "nvg_lens", sym=True)
-    m.add_to(quad, (-3, 27, mz - 1.25), (-1, 28.75, mz - 0.5), "rubber", sym=True)
+    for name, lens in (("nvg_gpnvg18", "nvg_lens_white"), ("nvg_gpnvg18_green", "nvg_lens")):
+        quad = m.extra(name, h, pivot)
+        m.add_to(quad, (-0.6, 28.75, mz - 1.5), (0.6, 31.25, mz - 0.5), "nvg")
+        m.add_to(quad, (-3.5, 28.25, mz - 2), (3.5, 29.75, mz - 0.9), "nvg")
+        m.add_to(quad, (-3, 26.75, mz - 4.25), (-1, 28.75, mz - 1.25), "nvg", sym=True)
+        m.add_to(quad, (-2.85, 26.9, mz - 4.35), (-1.15, 28.6, mz - 4.25), lens, sym=True)
+        m.add_to(quad, (-5.25, 27, mz - 3.75), (-3.25, 28.5, mz - 1.25), "nvg", sym=True)
+        m.add_to(quad, (-5.1, 27.15, mz - 3.85), (-3.4, 28.35, mz - 3.75), lens, sym=True)
+        m.add_to(quad, (-3, 27, mz - 1.25), (-1, 28.75, mz - 0.5), "rubber", sym=True)
     thermal = m.extra("nvg_thermal", h, pivot)
     m.add_to(thermal, (-0.6, 28.75, mz - 1.5), (0.6, 31.25, mz - 0.5), "nvg")
     m.add_to(thermal, (-2.25, 28.5, mz - 1.75), (0.25, 29.5, mz - 0.75), "nvg")
@@ -536,6 +537,9 @@ def paint(set_id, faces, height):
         elif mat == "thermal_lens":
             rgb = np.ones_like(region) * hex_rgb("2a2633")
             rgb[:max(1, h // 3), :max(1, w // 3)] = hex_rgb("b38cff")
+        elif mat == "nvg_lens_white":
+            rgb = np.ones_like(region) * hex_rgb("1f2a33")
+            rgb[:max(1, h // 3), :max(1, w // 3)] = hex_rgb("cfe6f0")
         elif mat == "nvg_lens":
             rgb = np.ones_like(region) * hex_rgb("1d3a2a")
             rgb[:max(1, h // 3), :max(1, w // 3)] = hex_rgb("6fbf8a")

@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "tag": "c:ingots/iron"
+    },
+    "N": {
+      "tag": "c:nuggets/iron"
+    },
+    "T": {
+      "item": "minecraft:tnt"
+    }
+  },
+  "pattern": [
+    " N ",
+    "ITI",
+    " I "
+  ],
+  "result": {
+    "count": 2,
+    "id": "tacz_camo_armor:he_grenade"
+  }
+}

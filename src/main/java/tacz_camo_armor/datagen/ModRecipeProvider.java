@@ -20,6 +20,7 @@ import tacz_camo_armor.device.AttachDeviceRecipe;
 import tacz_camo_armor.device.DetachDeviceRecipe;
 import tacz_camo_armor.device.DeviceKind;
 import tacz_camo_armor.device.RechargeDeviceRecipe;
+import tacz_camo_armor.grenade.GrenadeKind;
 import tacz_camo_armor.item.ArmorPiece;
 import tacz_camo_armor.item.ArmorSet;
 import tacz_camo_armor.item.ArmorTier;
@@ -132,6 +133,17 @@ public class ModRecipeProvider extends RecipeProvider {
                 .define('B', ModItems.BATTERY)
                 .unlockedBy("has_battery", has(ModItems.BATTERY))
                 .save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.device(DeviceKind.GPNVG18_GREEN))
+                .pattern("GIG")
+                .pattern("GEG")
+                .pattern("RBR")
+                .define('I', Tags.Items.INGOTS_IRON)
+                .define('G', Tags.Items.GLASS_PANES)
+                .define('E', Tags.Items.GEMS_EMERALD)
+                .define('R', Tags.Items.DUSTS_REDSTONE)
+                .define('B', ModItems.BATTERY)
+                .unlockedBy("has_battery", has(ModItems.BATTERY))
+                .save(output);
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.device(DeviceKind.THERMAL))
                 .pattern("IAI")
                 .pattern("RDR")
@@ -153,9 +165,30 @@ public class ModRecipeProvider extends RecipeProvider {
                 .define('F', ModItems.GAS_FILTER)
                 .unlockedBy("has_gas_filter", has(ModItems.GAS_FILTER))
                 .save(output);
+        grenade(output, GrenadeKind.FRAG, 'G', Ingredient.of(Tags.Items.GUNPOWDERS), "I");
+        grenade(output, GrenadeKind.HE, 'T', Ingredient.of(Items.TNT), "I");
+        grenade(output, GrenadeKind.FLASH, 'G', Ingredient.of(Tags.Items.GUNPOWDERS), "IDI");
+        grenade(output, GrenadeKind.SMOKE, 'C', Ingredient.of(ItemTags.COALS), "IGI");
         SpecialRecipeBuilder.special(AttachDeviceRecipe::new).save(output, TaczCamoArmor.id("attach_device"));
         SpecialRecipeBuilder.special(DetachDeviceRecipe::new).save(output, TaczCamoArmor.id("detach_device"));
         SpecialRecipeBuilder.special(RechargeDeviceRecipe::new).save(output, TaczCamoArmor.id("recharge_device"));
+    }
+
+    private void grenade(RecipeOutput output, GrenadeKind kind, char core, Ingredient coreItem, String bottom) {
+        ShapedRecipeBuilder builder = ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.grenade(kind), 2)
+                .pattern(" N ")
+                .pattern("I" + core + "I")
+                .pattern(bottom.length() == 1 ? " " + bottom + " " : bottom)
+                .define('N', Tags.Items.NUGGETS_IRON)
+                .define('I', Tags.Items.INGOTS_IRON)
+                .define(core, coreItem);
+        if (bottom.indexOf('D') >= 0) {
+            builder.define('D', Tags.Items.DUSTS_GLOWSTONE);
+        }
+        if (bottom.indexOf('G') >= 0) {
+            builder.define('G', Tags.Items.GUNPOWDERS);
+        }
+        builder.unlockedBy("has_gunpowder", has(Tags.Items.GUNPOWDERS)).save(output);
     }
 
     private void buildComponents(RecipeOutput output) {

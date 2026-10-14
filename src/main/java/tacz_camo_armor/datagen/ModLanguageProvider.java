@@ -4,6 +4,7 @@ import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 import tacz_camo_armor.TaczCamoArmor;
 import tacz_camo_armor.device.DeviceKind;
+import tacz_camo_armor.grenade.GrenadeKind;
 import tacz_camo_armor.item.ArmorForm;
 import tacz_camo_armor.item.ArmorPiece;
 import tacz_camo_armor.item.ArmorSet;
@@ -129,7 +130,9 @@ public abstract class ModLanguageProvider extends LanguageProvider {
             add(ModItems.BATTERY.get(), "Battery");
             add(ModItems.GAS_FILTER.get(), "Gas Mask Filter");
             add(ModItems.device(DeviceKind.PVS14).get(), "PVS-14 Night Vision Monocular");
-            add(ModItems.device(DeviceKind.GPNVG18).get(), "GPNVG-18 Panoramic Night Vision");
+            add(ModItems.device(DeviceKind.GPNVG18).get(), "GPNVG-18 Panoramic NVG (White Phosphor)");
+            add(ModItems.device(DeviceKind.GPNVG18_GREEN).get(), "GPNVG-18 Panoramic NVG (Green Phosphor)");
+            add("jei.tacz_camo_armor.gpnvg18_green", "Four green-phosphor tubes with a wide panoramic view.");
             add(ModItems.device(DeviceKind.THERMAL).get(), "Thermal Imaging Monocular");
             add("jei.tacz_camo_armor.thermal", "White-hot thermal imager: living creatures in your line of sight glow, even through camouflage.");
             add(ModItems.device(DeviceKind.GAS_MASK).get(), "Gas Mask");
@@ -164,6 +167,27 @@ public abstract class ModLanguageProvider extends LanguageProvider {
             add("tacz_camo_armor.configuration.nvgUsesBattery", "NVG uses battery");
             add("tacz_camo_armor.configuration.nvgBatterySeconds", "NVG battery life (seconds)");
             add("tacz_camo_armor.configuration.gasFilterSeconds", "Gas mask filter capacity (seconds)");
+            add(ModItems.grenade(GrenadeKind.FLASH).get(), "Flashbang");
+            add("tooltip.tacz_camo_armor.grenade.flashbang", "Blinds everyone who looks at it; walls protect");
+            add("jei.tacz_camo_armor.grenade.flashbang", "Goes off 1.5 s after the throw. The flash is strongest up close and when you look straight at it; anything behind a wall is safe. Players see a white screen, mobs lose their target and slow down.");
+            add(ModItems.grenade(GrenadeKind.SMOKE).get(), "Smoke Grenade");
+            add("tooltip.tacz_camo_armor.grenade.smoke_grenade", "Thick smoke that mobs can't see through");
+            add("jei.tacz_camo_armor.grenade.smoke_grenade", "Starts smoking 2 s after the throw. Mobs can't see anyone inside the cloud or through it. A thermal imager still sees living things in the smoke.");
+            add(ModItems.grenade(GrenadeKind.FRAG).get(), "Frag Grenade");
+            add("tooltip.tacz_camo_armor.grenade.frag_grenade", "Explodes after 3 s without breaking blocks");
+            add("jei.tacz_camo_armor.grenade.frag_grenade", "Explodes 3 s after the throw. Hurts everything nearby but never breaks blocks.");
+            add(ModItems.grenade(GrenadeKind.HE).get(), "HE Grenade");
+            add("tooltip.tacz_camo_armor.grenade.he_grenade", "Explodes after 3 s and breaks blocks");
+            add("jei.tacz_camo_armor.grenade.he_grenade", "Explodes 3 s after the throw and destroys blocks like TNT.");
+            add("tacz_camo_armor.configuration.grenades", "Grenades");
+            add("tacz_camo_armor.configuration.fragRadius", "Frag grenade power");
+            add("tacz_camo_armor.configuration.heRadius", "HE grenade power");
+            add("tacz_camo_armor.configuration.flashRadius", "Flashbang range");
+            add("tacz_camo_armor.configuration.flashSeconds", "Flashbang blindness (seconds)");
+            add("tacz_camo_armor.configuration.smokeSeconds", "Smoke duration (seconds)");
+            add("tacz_camo_armor.configuration.smokeRadius", "Smoke cloud radius");
+            add("entity.tacz_camo_armor.grenade", "Grenade");
+            add("jei.tacz_camo_armor.grenade_throw", "Right-click to throw. Grenades bounce off walls and floors and go off on a timer.");
         }
 
         @Override
@@ -277,7 +301,9 @@ public abstract class ModLanguageProvider extends LanguageProvider {
             add(ModItems.BATTERY.get(), "Батарейка");
             add(ModItems.GAS_FILTER.get(), "Фильтр противогаза");
             add(ModItems.device(DeviceKind.PVS14).get(), "Монокуляр ночного видения PVS-14");
-            add(ModItems.device(DeviceKind.GPNVG18).get(), "Панорамный ПНВ GPNVG-18");
+            add(ModItems.device(DeviceKind.GPNVG18).get(), "Панорамный ПНВ GPNVG-18 (белый фосфор)");
+            add(ModItems.device(DeviceKind.GPNVG18_GREEN).get(), "Панорамный ПНВ GPNVG-18 (зелёный фосфор)");
+            add("jei.tacz_camo_armor.gpnvg18_green", "Четыре трубки с зелёным люминофором и широким панорамным обзором.");
             add(ModItems.device(DeviceKind.THERMAL).get(), "Тепловизионный монокуляр");
             add("jei.tacz_camo_armor.thermal", "Тепловизор в режиме «белое — горячее»: живые существа в прямой видимости подсвечиваются, даже в камуфляже.");
             add(ModItems.device(DeviceKind.GAS_MASK).get(), "Противогаз");
@@ -312,6 +338,27 @@ public abstract class ModLanguageProvider extends LanguageProvider {
             add("tacz_camo_armor.configuration.nvgUsesBattery", "ПНВ расходует заряд");
             add("tacz_camo_armor.configuration.nvgBatterySeconds", "Время работы ПНВ (секунды)");
             add("tacz_camo_armor.configuration.gasFilterSeconds", "Ёмкость фильтра противогаза (секунды)");
+            add(ModItems.grenade(GrenadeKind.FLASH).get(), "Светошумовая граната");
+            add("tooltip.tacz_camo_armor.grenade.flashbang", "Ослепляет всех, кто на неё смотрит; стены защищают");
+            add("jei.tacz_camo_armor.grenade.flashbang", "Срабатывает через 1,5 с после броска. Вспышка сильнее вблизи и если смотреть прямо на неё; за стеной безопасно. Игрок видит белый экран, мобы теряют цель и замедляются.");
+            add(ModItems.grenade(GrenadeKind.SMOKE).get(), "Дымовая граната");
+            add("tooltip.tacz_camo_armor.grenade.smoke_grenade", "Густой дым, сквозь который мобы не видят");
+            add("jei.tacz_camo_armor.grenade.smoke_grenade", "Начинает дымить через 2 с после броска. Мобы не видят никого внутри облака и сквозь него. Тепловизор видит живых и в дыму.");
+            add(ModItems.grenade(GrenadeKind.FRAG).get(), "Осколочная граната");
+            add("tooltip.tacz_camo_armor.grenade.frag_grenade", "Взрывается через 3 с, блоки не ломает");
+            add("jei.tacz_camo_armor.grenade.frag_grenade", "Взрывается через 3 с после броска. Ранит всех рядом, но блоки не разрушает.");
+            add(ModItems.grenade(GrenadeKind.HE).get(), "Фугасная граната");
+            add("tooltip.tacz_camo_armor.grenade.he_grenade", "Взрывается через 3 с и ломает блоки");
+            add("jei.tacz_camo_armor.grenade.he_grenade", "Взрывается через 3 с после броска и разрушает блоки как динамит.");
+            add("tacz_camo_armor.configuration.grenades", "Гранаты");
+            add("tacz_camo_armor.configuration.fragRadius", "Мощность осколочной гранаты");
+            add("tacz_camo_armor.configuration.heRadius", "Мощность фугасной гранаты");
+            add("tacz_camo_armor.configuration.flashRadius", "Радиус светошумовой");
+            add("tacz_camo_armor.configuration.flashSeconds", "Ослепление светошумовой (секунды)");
+            add("tacz_camo_armor.configuration.smokeSeconds", "Длительность дыма (секунды)");
+            add("tacz_camo_armor.configuration.smokeRadius", "Радиус облака дыма");
+            add("entity.tacz_camo_armor.grenade", "Граната");
+            add("jei.tacz_camo_armor.grenade_throw", "Бросок — правая кнопка мыши. Гранаты отскакивают от стен и пола и срабатывают по таймеру.");
         }
 
         @Override

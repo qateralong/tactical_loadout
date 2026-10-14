@@ -52,7 +52,7 @@ public final class NvgOverlay {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
         switch (nvg.kind()) {
-            case GPNVG18 -> {
+            case GPNVG18, GPNVG18_GREEN -> {
                 int w = Math.round(width * 1.4F);
                 vignette(graphics, PANO, width, height, w, w / 2);
             }

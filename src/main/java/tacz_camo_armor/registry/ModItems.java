@@ -7,6 +7,8 @@ import org.jetbrains.annotations.Nullable;
 import tacz_camo_armor.TaczCamoArmor;
 import tacz_camo_armor.device.DeviceItem;
 import tacz_camo_armor.device.DeviceKind;
+import tacz_camo_armor.grenade.GrenadeItem;
+import tacz_camo_armor.grenade.GrenadeKind;
 import tacz_camo_armor.item.ArmorPiece;
 import tacz_camo_armor.item.ArmorSet;
 import tacz_camo_armor.item.ArmorTier;
@@ -27,6 +29,7 @@ public final class ModItems {
     public static final DeferredItem<Item> GAS_FILTER = ITEMS.registerSimpleItem("gas_filter");
 
     private static final Map<DeviceKind, DeferredItem<DeviceItem>> DEVICES = new EnumMap<>(DeviceKind.class);
+    private static final Map<GrenadeKind, DeferredItem<GrenadeItem>> GRENADES = new EnumMap<>(GrenadeKind.class);
 
     private static final Map<ArmorSet, DeferredItem<Item>> FABRICS = new EnumMap<>(ArmorSet.class);
     private static final Map<ArmorSet, Map<ArmorTier, Map<ArmorPiece, DeferredItem<TacticalArmorItem>>>> ARMOR =
@@ -34,6 +37,9 @@ public final class ModItems {
     private static final List<DeferredItem<TacticalArmorItem>> ALL_ARMOR = new ArrayList<>();
 
     static {
+        for (GrenadeKind kind : GrenadeKind.values()) {
+            GRENADES.put(kind, ITEMS.register(kind.id(), () -> new GrenadeItem(kind, new Item.Properties())));
+        }
         for (DeviceKind kind : DeviceKind.values()) {
             DEVICES.put(kind, ITEMS.register(kind.id(), () -> new DeviceItem(kind, new Item.Properties())));
         }
@@ -58,6 +64,10 @@ public final class ModItems {
     }
 
     private ModItems() {
+    }
+
+    public static DeferredItem<GrenadeItem> grenade(GrenadeKind kind) {
+        return GRENADES.get(kind);
     }
 
     public static DeferredItem<DeviceItem> device(DeviceKind kind) {

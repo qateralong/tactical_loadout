@@ -20,6 +20,12 @@ public final class ServerConfig {
     private static final ModConfigSpec.BooleanValue NVG_USES_BATTERY;
     private static final ModConfigSpec.IntValue NVG_BATTERY_SECONDS;
     private static final ModConfigSpec.IntValue GAS_FILTER_SECONDS;
+    private static final ModConfigSpec.DoubleValue FRAG_RADIUS;
+    private static final ModConfigSpec.DoubleValue HE_RADIUS;
+    private static final ModConfigSpec.DoubleValue FLASH_RADIUS;
+    private static final ModConfigSpec.IntValue FLASH_SECONDS;
+    private static final ModConfigSpec.IntValue SMOKE_SECONDS;
+    private static final ModConfigSpec.DoubleValue SMOKE_RADIUS;
 
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
@@ -88,6 +94,21 @@ public final class ServerConfig {
                 .comment("Seconds of poison/wither a fresh gas mask filter can block.")
                 .translation(key("gasFilterSeconds"))
                 .defineInRange("gasFilterSeconds", 600, 30, 36000);
+        builder.pop();
+
+        builder.translation(key("grenades")).push("grenades");
+        FRAG_RADIUS = builder.comment("Explosion power of the frag grenade (no block damage).")
+                .translation(key("fragRadius")).defineInRange("fragRadius", 3.0, 0.5, 8.0);
+        HE_RADIUS = builder.comment("Explosion power of the HE grenade (breaks blocks like TNT).")
+                .translation(key("heRadius")).defineInRange("heRadius", 3.0, 0.5, 8.0);
+        FLASH_RADIUS = builder.comment("Range of the flashbang in blocks.")
+                .translation(key("flashRadius")).defineInRange("flashRadius", 20.0, 4.0, 48.0);
+        FLASH_SECONDS = builder.comment("Blindness duration in seconds at full strength.")
+                .translation(key("flashSeconds")).defineInRange("flashSeconds", 5, 1, 15);
+        SMOKE_SECONDS = builder.comment("How long a smoke grenade keeps smoking.")
+                .translation(key("smokeSeconds")).defineInRange("smokeSeconds", 20, 5, 60);
+        SMOKE_RADIUS = builder.comment("Radius of the smoke cloud that hides entities from mobs.")
+                .translation(key("smokeRadius")).defineInRange("smokeRadius", 4.5, 2.0, 10.0);
         builder.pop();
 
         SPEC = builder.build();
@@ -165,5 +186,29 @@ public final class ServerConfig {
 
     public static int gasFilterSeconds() {
         return SPEC.isLoaded() ? GAS_FILTER_SECONDS.get() : GAS_FILTER_SECONDS.getDefault();
+    }
+
+    public static double fragRadius() {
+        return get(FRAG_RADIUS);
+    }
+
+    public static double heRadius() {
+        return get(HE_RADIUS);
+    }
+
+    public static double flashRadius() {
+        return get(FLASH_RADIUS);
+    }
+
+    public static int flashSeconds() {
+        return SPEC.isLoaded() ? FLASH_SECONDS.get() : FLASH_SECONDS.getDefault();
+    }
+
+    public static int smokeSeconds() {
+        return SPEC.isLoaded() ? SMOKE_SECONDS.get() : SMOKE_SECONDS.getDefault();
+    }
+
+    public static double smokeRadius() {
+        return get(SMOKE_RADIUS);
     }
 }

@@ -42,8 +42,9 @@ public class TacticalArmorRenderer extends GeoArmorRenderer<TacticalArmorItem> {
         setVisible(model, "nvg_mount", nvg != null);
         setVisible(model, "nvg_pvs14", nvg != null && nvg.kind() == DeviceKind.PVS14);
         setVisible(model, "nvg_gpnvg18", nvg != null && nvg.kind() == DeviceKind.GPNVG18);
+        setVisible(model, "nvg_gpnvg18_green", nvg != null && nvg.kind() == DeviceKind.GPNVG18_GREEN);
         setVisible(model, "nvg_thermal", nvg != null && nvg.kind() == DeviceKind.THERMAL);
-        setVisible(model, "nvg_battery", nvg != null && nvg.kind() == DeviceKind.GPNVG18);
+        setVisible(model, "nvg_battery", nvg != null && (nvg.kind() == DeviceKind.GPNVG18 || nvg.kind() == DeviceKind.GPNVG18_GREEN));
         setVisible(model, "gas_mask", mask);
         if (nvg != null) {
             boolean down = stack.getOrDefault(ModDataComponents.NVG_DOWN.get(), false);
@@ -82,7 +83,7 @@ public class TacticalArmorRenderer extends GeoArmorRenderer<TacticalArmorItem> {
                                   MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick,
                                   int packedLight, int packedOverlay, int colour) {
         String name = bone.getName();
-        if (name.equals("nvg_pvs14") || name.equals("nvg_gpnvg18") || name.equals("nvg_thermal")) {
+        if (name.startsWith("nvg_") && !name.equals("nvg_mount") && !name.equals("nvg_battery")) {
             bone.setRotX(nvgAngle);
         }
         super.renderRecursively(poseStack, animatable, bone, renderType, bufferSource, buffer, isReRender, partialTick,
