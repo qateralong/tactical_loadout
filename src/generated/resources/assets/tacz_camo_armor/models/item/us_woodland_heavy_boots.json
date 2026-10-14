@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "tacz_camo_armor:item/us_woodland_heavy_boots"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "tacz_camo_armor:ceramic_plate"
+    },
+    "F": {
+      "item": "tacz_camo_armor:woodland_fabric"
+    },
+    "K": {
+      "item": "tacz_camo_armor:kevlar_insert"
+    }
+  },
+  "pattern": [
+    "KCK",
+    "F F"
+  ],
+  "result": {
+    "count": 1,
+    "id": "tacz_camo_armor:us_woodland_heavy_helmet"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "values": [
+    "tacz_camo_armor:ct_light_helmet",
+    "tacz_camo_armor:ct_medium_helmet",
+    "tacz_camo_armor:ct_heavy_helmet",
+    "tacz_camo_armor:t_light_helmet",
+    "tacz_camo_armor:t_medium_helmet",
+    "tacz_camo_armor:t_heavy_helmet",
+    "tacz_camo_armor:us_woodland_light_helmet",
+    "tacz_camo_armor:us_woodland_medium_helmet",
+    "tacz_camo_armor:us_woodland_heavy_helmet",
+    "tacz_camo_armor:us_desert_light_helmet",
+    "tacz_camo_armor:us_desert_medium_helmet",
+    "tacz_camo_armor:us_desert_heavy_helmet",
+    "tacz_camo_armor:us_green_light_helmet",
+    "tacz_camo_armor:us_green_medium_helmet",
+    "tacz_camo_armor:us_green_heavy_helmet"
+  ]
+}

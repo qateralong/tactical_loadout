@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "tacz_camo_armor:ceramic_plate"
+    },
+    "F": {
+      "item": "tacz_camo_armor:blue_fabric"
+    },
+    "K": {
+      "item": "tacz_camo_armor:kevlar_insert"
+    }
+  },
+  "pattern": [
+    "F F",
+    "KCK",
+    "FKF"
+  ],
+  "result": {
+    "count": 1,
+    "id": "tacz_camo_armor:ct_heavy_plate_carrier"
+  }
+}

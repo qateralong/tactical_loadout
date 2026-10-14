@@ -1,0 +1,19 @@
+{
+  "values": [
+    "tacz_camo_armor:ct_light_plate_carrier",
+    "tacz_camo_armor:ct_medium_plate_carrier",
+    "tacz_camo_armor:ct_heavy_plate_carrier",
+    "tacz_camo_armor:t_light_plate_carrier",
+    "tacz_camo_armor:t_medium_plate_carrier",
+    "tacz_camo_armor:t_heavy_plate_carrier",
+    "tacz_camo_armor:us_woodland_light_plate_carrier",
+    "tacz_camo_armor:us_woodland_medium_plate_carrier",
+    "tacz_camo_armor:us_woodland_heavy_plate_carrier",
+    "tacz_camo_armor:us_desert_light_plate_carrier",
+    "tacz_camo_armor:us_desert_medium_plate_carrier",
+    "tacz_camo_armor:us_desert_heavy_plate_carrier",
+    "tacz_camo_armor:us_green_light_plate_carrier",
+    "tacz_camo_armor:us_green_medium_plate_carrier",
+    "tacz_camo_armor:us_green_heavy_plate_carrier"
+  ]
+}

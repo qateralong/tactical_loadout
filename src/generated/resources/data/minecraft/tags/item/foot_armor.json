@@ -1,0 +1,19 @@
+{
+  "values": [
+    "tacz_camo_armor:ct_light_boots",
+    "tacz_camo_armor:ct_medium_boots",
+    "tacz_camo_armor:ct_heavy_boots",
+    "tacz_camo_armor:t_light_boots",
+    "tacz_camo_armor:t_medium_boots",
+    "tacz_camo_armor:t_heavy_boots",
+    "tacz_camo_armor:us_woodland_light_boots",
+    "tacz_camo_armor:us_woodland_medium_boots",
+    "tacz_camo_armor:us_woodland_heavy_boots",
+    "tacz_camo_armor:us_desert_light_boots",
+    "tacz_camo_armor:us_desert_medium_boots",
+    "tacz_camo_armor:us_desert_heavy_boots",
+    "tacz_camo_armor:us_green_light_boots",
+    "tacz_camo_armor:us_green_medium_boots",
+    "tacz_camo_armor:us_green_heavy_boots"
+  ]
+}
