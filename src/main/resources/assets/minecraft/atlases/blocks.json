@@ -1,0 +1,48 @@
+{
+  "sources": [
+    {
+      "type": "single",
+      "resource": "tacz_camo_armor:armor/ct"
+    },
+    {
+      "type": "single",
+      "resource": "tacz_camo_armor:armor/t"
+    },
+    {
+      "type": "single",
+      "resource": "tacz_camo_armor:armor/ru_emr"
+    },
+    {
+      "type": "single",
+      "resource": "tacz_camo_armor:armor/swat"
+    },
+    {
+      "type": "single",
+      "resource": "tacz_camo_armor:armor/us_woodland"
+    },
+    {
+      "type": "single",
+      "resource": "tacz_camo_armor:armor/us_desert"
+    },
+    {
+      "type": "single",
+      "resource": "tacz_camo_armor:armor/us_green"
+    },
+    {
+      "type": "single",
+      "resource": "tacz_camo_armor:armor/us_multicam"
+    },
+    {
+      "type": "single",
+      "resource": "tacz_camo_armor:armor/us_snow"
+    },
+    {
+      "type": "single",
+      "resource": "tacz_camo_armor:armor/ghillie"
+    },
+    {
+      "type": "single",
+      "resource": "tacz_camo_armor:armor/ghillie_snow"
+    }
+  ]
+}

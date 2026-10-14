@@ -187,7 +187,7 @@ public abstract class ModLanguageProvider extends LanguageProvider {
             add("tacz_camo_armor.configuration.smokeSeconds", "Smoke duration (seconds)");
             add("tacz_camo_armor.configuration.smokeRadius", "Smoke cloud radius");
             add("entity.tacz_camo_armor.grenade", "Grenade");
-            add("jei.tacz_camo_armor.grenade_throw", "Right-click to throw. Grenades bounce off walls and floors and go off on a timer.");
+            add("jei.tacz_camo_armor.grenade_throw", "Hold right-click to wind up and release to throw: a tap lobs it at your feet, a full second gives the longest throw. Grenades bounce off walls and floors and go off on a timer.");
         }
 
         @Override
@@ -358,7 +358,7 @@ public abstract class ModLanguageProvider extends LanguageProvider {
             add("tacz_camo_armor.configuration.smokeSeconds", "Длительность дыма (секунды)");
             add("tacz_camo_armor.configuration.smokeRadius", "Радиус облака дыма");
             add("entity.tacz_camo_armor.grenade", "Граната");
-            add("jei.tacz_camo_armor.grenade_throw", "Бросок — правая кнопка мыши. Гранаты отскакивают от стен и пола и срабатывают по таймеру.");
+            add("jei.tacz_camo_armor.grenade_throw", "Зажмите правую кнопку мыши для замаха и отпустите для броска: короткое нажатие — бросок под ноги, секунда замаха — самый дальний бросок. Гранаты отскакивают от стен и пола и срабатывают по таймеру.");
         }
 
         @Override

@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "tacz_camo_armor:item/ru_emr_heavy_plate_carrier"
-  }
-}

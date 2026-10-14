@@ -1,5 +1,7 @@
 package tacz_camo_armor.client;
 
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.PostChain;
 import net.minecraft.resources.ResourceLocation;
@@ -14,6 +16,9 @@ import tacz_camo_armor.device.MountedDevice;
 public final class ThermalVision {
     private static final ResourceLocation SHADER = TaczCamoArmor.id("shaders/post/thermal.json");
     private static final double RANGE = 64.0;
+    // Line-of-sight checks run once per client tick instead of once per entity per frame.
+    private static final IntSet VISIBLE = new IntOpenHashSet();
+    private static boolean active;
 
     private ThermalVision() {
     }
@@ -28,16 +33,29 @@ public final class ThermalVision {
     }
 
     public static boolean shouldGlow(Entity entity) {
-        Minecraft mc = Minecraft.getInstance();
-        return entity instanceof LivingEntity && !(entity instanceof ArmorStand) && entity != mc.player && isActive()
-                && entity.distanceToSqr(mc.player) < RANGE * RANGE && mc.player.hasLineOfSight(entity);
+        return active && VISIBLE.contains(entity.getId());
     }
 
-    static void updateShader() {
+    static void tick() {
+        Minecraft mc = Minecraft.getInstance();
+        active = isActive();
+        VISIBLE.clear();
+        if (active && mc.level != null) {
+            for (Entity entity : mc.level.entitiesForRendering()) {
+                if (entity instanceof LivingEntity && !(entity instanceof ArmorStand) && entity != mc.player
+                        && entity.distanceToSqr(mc.player) < RANGE * RANGE && mc.player.hasLineOfSight(entity)) {
+                    VISIBLE.add(entity.getId());
+                }
+            }
+        }
+        updateShader();
+    }
+
+    private static void updateShader() {
         Minecraft mc = Minecraft.getInstance();
         PostChain current = mc.gameRenderer.currentEffect();
         boolean ours = current != null && current.getName().equals(SHADER.toString());
-        if (isActive()) {
+        if (active) {
             if (!ours) {
                 mc.gameRenderer.loadEffect(SHADER);
             }

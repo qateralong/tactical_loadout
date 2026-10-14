@@ -6,6 +6,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
@@ -19,12 +20,22 @@ import tacz_camo_armor.config.ServerConfig;
 import tacz_camo_armor.registry.ModEntities;
 import tacz_camo_armor.registry.ModItems;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+
 public class GrenadeEntity extends ThrowableItemProjectile {
     private static final int PUFFS = 120;
     private static final int FILL_TICKS = 40;
+    private static final double RESEND_RANGE = 160.0;
     private static final double GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5));
     private int fuse = GrenadeKind.FRAG.fuseTicks();
     private int smokeTicks = -1;
+    private final Set<UUID> smokeViewers = new HashSet<>();
+    private float spin;
+    private float spinO;
+    private float heading;
 
     public GrenadeEntity(EntityType<? extends GrenadeEntity> type, Level level) {
         super(type, level);
@@ -49,18 +60,32 @@ public class GrenadeEntity extends ThrowableItemProjectile {
         return ModItems.grenade(GrenadeKind.FRAG).get();
     }
 
+    public float spin(float partialTick) {
+        return Mth.lerp(partialTick, spinO, spin);
+    }
+
+    public float heading() {
+        return heading;
+    }
+
     @Override
     public void tick() {
         super.tick();
         if (!(level() instanceof ServerLevel level)) {
+            updateSpin();
             return;
         }
         if (smokeTicks >= 0) {
             int elapsed = ServerConfig.smokeSeconds() * 20 - smokeTicks;
             if (elapsed < FILL_TICKS) {
-                for (int i = 0; i < PUFFS / FILL_TICKS; i++) {
-                    emitPuff(level, elapsed * (PUFFS / FILL_TICKS) + i, smokeTicks + random.nextInt(40));
+                if (elapsed == 0) {
+                    level.players().forEach(player -> smokeViewers.add(player.getUUID()));
                 }
+                for (int i = 0; i < PUFFS / FILL_TICKS; i++) {
+                    emitPuff(level, level.players(), elapsed * (PUFFS / FILL_TICKS) + i, smokeTicks + random.nextInt(40));
+                }
+            } else if (tickCount % 10 == 0) {
+                resendCloud(level);
             }
             if (--smokeTicks <= 0) {
                 discard();
@@ -72,8 +97,35 @@ public class GrenadeEntity extends ThrowableItemProjectile {
         }
     }
 
+    // Tumbles while flying, then settles on its side so a resting grenade lies flat.
+    private void updateSpin() {
+        spinO = spin;
+        Vec3 velocity = getDeltaMovement();
+        if (velocity.horizontalDistanceSqr() > 1.0E-4) {
+            heading = (float) Math.toDegrees(Mth.atan2(velocity.x, velocity.z));
+        }
+        if (velocity.lengthSqr() > 0.003) {
+            spin += (float) velocity.length() * 45.0F;
+        } else {
+            float rest = Math.round((spin - 90.0F) / 180.0F) * 180.0F + 90.0F;
+            spin += (rest - spin) * 0.35F;
+        }
+    }
+
     // Fills a dome evenly from the centre outwards; each puff lives until the smoke ends, so the cloud never thins out.
-    private void emitPuff(ServerLevel level, int index, int lifetime) {
+    // Players who arrive late, or after the world was reloaded, get the whole cloud at once.
+    private void resendCloud(ServerLevel level) {
+        List<ServerPlayer> late = level.players().stream()
+                .filter(player -> player.distanceToSqr(this) < RESEND_RANGE * RESEND_RANGE && smokeViewers.add(player.getUUID()))
+                .toList();
+        if (!late.isEmpty()) {
+            for (int i = 0; i < PUFFS; i++) {
+                emitPuff(level, late, i, smokeTicks + random.nextInt(40));
+            }
+        }
+    }
+
+    private void emitPuff(ServerLevel level, List<ServerPlayer> players, int index, int lifetime) {
         double radius = ServerConfig.smokeRadius() * 0.85;
         double fraction = (index + 0.5) / PUFFS;
         double distance = radius * Math.cbrt(fraction);
@@ -84,7 +136,7 @@ public class GrenadeEntity extends ThrowableItemProjectile {
         double z = getZ() + Math.sin(azimuth) * horizontal + (random.nextDouble() - 0.5) * 0.6;
         double y = getY() + 0.5 + Math.cos(polar) * distance * 0.7;
         SmokePuffOptions puff = new SmokePuffOptions(lifetime);
-        for (ServerPlayer player : level.players()) {
+        for (ServerPlayer player : players) {
             level.sendParticles(player, puff, true, x, y, z, 1, 0, 0, 0, 0.003);
         }
     }

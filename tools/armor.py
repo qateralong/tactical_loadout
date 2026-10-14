@@ -180,7 +180,8 @@ def leggings(m):
     m.add(r, "light", (-3.9, 1.5, -2), (0.1, 12, 2), "fabric", inflate=0.4, mirror=True)
     m.add(r, "light", (-3.65, 4.5, -2.9), (-0.15, 7.5, -2.25), "kneepad", mirror=True)
     m.add(r, "light", (-4.4, 5.5, -2.5), (0.6, 6.25, 2.5), "strap", mirror=True)
-    m.add(r, "light", (-4.5, 10.75, -2.5), (0.6, 12, 2.5), "strap", mirror=True)
+    m.add(r, "light", (-4.5, 10.75, -2.55), (0.6, 13.25, 2.55), "webbing", mirror=True)
+    m.add(r, "light", (-1.5, 11.25, -2.75), (0.1, 12.75, -2.55), "metal")
     m.add(r, "light", (-4.6, 7.5, -1.25), (-4.3, 10, 1.25), "pouch", mirror=True)
     m.add(r, "medium", (-4.75, 7, -1.75), (-4.3, 10.5, 1.75), "plate", mirror=True)
     m.add(r, "heavy", (-3.6, 7.75, -2.85), (-0.2, 10.5, -2.4), "plate", mirror=True)
@@ -254,13 +255,13 @@ def strands(m, bone, count, box, seed, length=(1.5, 3.0), mirror=False):
 def ghillie_suit(m):
     h, b, ra, rl = "armorHead", "armorBody", "armorRightArm", "armorRightLeg"
     m.add(h, "light", (-4, 24, -4), (4, 32, 4), "hood", inflate=0.7)
-    strands(m, h, 26, ((-4.7, 26, -4.7), (4.7, 32.7, 4.7)), 1)
+    strands(m, h, 34, ((-4.7, 26, -4.7), (4.7, 32.7, 4.7)), 1)
     m.add(b, "light", (-4, 12, -2), (4, 24, 2), "ghillie", inflate=0.55)
-    strands(m, b, 22, ((-4.55, 13, -2.55), (4.55, 24.55, 2.55)), 2, length=(2.0, 4.0))
+    strands(m, b, 36, ((-4.55, 13, -2.55), (4.55, 24.55, 2.55)), 2, length=(2.0, 4.0))
     m.add(ra, "light", (-8, 12, -2), (-4, 24, 2), "ghillie", inflate=0.55, mirror=True)
-    strands(m, ra, 10, ((-8.55, 14, -2.55), (-3.9, 24.55, 2.55)), 3, mirror=True)
+    strands(m, ra, 16, ((-8.55, 14, -2.55), (-3.9, 24.55, 2.55)), 3, mirror=True)
     m.add(rl, "light", (-3.9, 1.5, -2), (0.1, 12, 2), "ghillie", inflate=0.45, mirror=True)
-    strands(m, rl, 10, ((-4.35, 3, -2.45), (0.2, 12, 2.45)), 4, mirror=True)
+    strands(m, rl, 16, ((-4.35, 3, -2.45), (0.2, 12, 2.45)), 4, mirror=True)
 
 
 def helmet_swat(m):

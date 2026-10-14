@@ -9,8 +9,6 @@ ROOT = Path(__file__).resolve().parent.parent
 ITEM_DIR = ROOT / "src/main/resources/assets/tacz_camo_armor/textures/item"
 
 SETS = ["ct", "t", "us_woodland", "us_desert", "us_green", "us_multicam", "us_snow", "ru_emr", "ghillie", "ghillie_snow", "swat"]
-TIERS = ["light", "medium", "heavy"]
-PIECES = ["helmet", "plate_carrier", "leggings", "boots"]
 FABRIC_IDS = {"ct": "blue", "t": "beige", "us_woodland": "woodland", "us_desert": "sand", "us_green": "olive",
               "us_multicam": "multicam", "us_snow": "snow", "ru_emr": "emr", "ghillie": "ghillie",
               "ghillie_snow": "snow_ghillie", "swat": "black"}
@@ -150,134 +148,11 @@ PLATE_MASK = [
 ]
 
 
-class Sprite:
-    def __init__(self):
-        self.grid = [["."] * 16 for _ in range(16)]
-
-    def rect(self, x0, y0, x1, y1, ch):
-        for y in range(y0, y1 + 1):
-            for x in range(x0, x1 + 1):
-                self.grid[y][x] = ch
-        return self
-
-    def outlined(self):
-        out = [row[:] for row in self.grid]
-        for y in range(16):
-            for x in range(16):
-                if self.grid[y][x] != ".":
-                    continue
-                for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
-                    nx, ny = x + dx, y + dy
-                    if 0 <= nx < 16 and 0 <= ny < 16 and self.grid[ny][nx] != ".":
-                        out[y][x] = "#"
-                        break
-        return out
 
 
-def helmet(set_id, level):
-    s = Sprite()
-    s.rect(5, 1, 10, 1, "o").rect(3, 2, 12, 3, "o").rect(2, 4, 13, 8, "o")
-    s.rect(2, 9, 3, 11, "o").rect(12, 9, 13, 11, "o")
-    if set_id == "ct":
-        s.rect(3, 5, 12, 6, "k").rect(4, 5, 6, 6, "l").rect(9, 5, 11, 6, "l")
-    elif set_id == "ru_emr":
-        s.rect(2, 8, 13, 8, "w")
-    elif set_id == "swat":
-        if level >= 2:
-            s.rect(4, 9, 11, 12, "n").rect(5, 10, 10, 10, "e").rect(6, 10, 6, 10, "E").rect(9, 10, 9, 10, "E")
-    else:
-        s.rect(7, 3, 8, 5, "m")
-    if level >= 1:
-        s.rect(1, 8, 2, 11, "k").rect(13, 8, 14, 11, "k").rect(2, 7, 13, 7, "k")
-    if level >= 2 and set_id != "swat":
-        s.rect(3, 12, 12, 13, "M").rect(2, 11, 3, 12, "M").rect(12, 11, 13, 12, "M")
-    return s
-
-
-def balaclava(level):
-    s = Sprite()
-    s.rect(5, 1, 10, 1, "o").rect(4, 2, 11, 12, "o").rect(5, 13, 10, 13, "o").rect(3, 14, 12, 14, "o")
-    s.rect(5, 7, 10, 8, "e").rect(6, 7, 6, 8, "E").rect(9, 7, 9, 8, "E")
-    if level >= 1:
-        s.rect(3, 4, 12, 4, "k").rect(4, 3, 7, 5, "k").rect(8, 3, 11, 5, "k").rect(5, 4, 6, 4, "l").rect(9, 4, 10, 4, "l")
-    if level >= 2:
-        s.rect(4, 0, 11, 0, "c").rect(3, 1, 12, 2, "c")
-    return s
-
-
-def carrier(set_id, level):
-    s = Sprite()
-    if set_id == "t":
-        s.rect(4, 1, 5, 8, "w").rect(10, 1, 11, 8, "w").rect(2, 8, 13, 13, "w")
-        for x0 in (3, 6, 9, 12):
-            s.rect(x0, 9, min(x0 + 1, 13), 13, "p")
-        if level >= 2:
-            s.rect(4, 4, 11, 7, "P")
-    else:
-        s.rect(4, 1, 5, 4, "w").rect(10, 1, 11, 4, "w").rect(3, 5, 12, 13, "o")
-        if set_id == "ct":
-            s.rect(4, 8, 6, 11, "p").rect(9, 8, 11, 11, "p").rect(4, 6, 7, 6, "x").rect(10, 5, 11, 7, "p")
-        elif set_id == "swat":
-            s.rect(4, 9, 6, 11, "p").rect(9, 9, 11, 11, "p").rect(3, 6, 12, 7, "q")
-            for x in (4, 5, 7, 8, 10, 11):
-                s.grid[6][x] = "x"
-        elif set_id == "ru_emr":
-            s.rect(3, 4, 12, 4, "o")
-            for x0 in (3, 5, 8, 10):
-                s.rect(x0, 8, x0 + 1, 11, "p")
-            s.rect(4, 6, 5, 6, "p").rect(10, 6, 11, 6, "p")
-        else:
-            for x0 in (4, 7, 10):
-                s.rect(x0, 8, x0 + 1, 11, "p")
-            s.rect(6, 6, 9, 6, "p")
-        s.rect(3, 12, 12, 12, "w")
-    if level >= 1:
-        y0, y1 = (9, 12) if set_id == "t" else (7, 11)
-        s.rect(1, y0, 2, y1, "P").rect(13, y0, 14, y1, "P")
-    if level >= 2:
-        s.rect(1, 2, 3, 5, "P").rect(12, 2, 14, 5, "P").rect(6, 3, 9, 4, "P").rect(6, 14, 9, 14, "P")
-    return s
-
-
-def leggings(level):
-    s = Sprite()
-    s.rect(3, 1, 12, 1, "w").rect(3, 2, 12, 4, "o").rect(3, 5, 6, 14, "o").rect(9, 5, 12, 14, "o")
-    s.rect(3, 9, 6, 10, "K").rect(9, 9, 12, 10, "K")
-    s.rect(2, 6, 2, 8, "p").rect(13, 6, 13, 8, "p")
-    if level >= 1:
-        s.rect(1, 5, 2, 8, "P").rect(13, 5, 14, 8, "P")
-    if level >= 2:
-        s.rect(4, 5, 5, 7, "P").rect(10, 5, 11, 7, "P")
-    return s
-
-
-def boots(level):
-    s = Sprite()
-    for x in (1, 8):
-        s.rect(x + 1, 3, x + 3, 10, "b").rect(x + 1, 10, x + 5, 12, "b").rect(x + 1, 13, x + 5, 13, "s")
-        s.grid[10][x + 5] = "."
-        for y in (4, 6, 8):
-            s.rect(x + 2, y, x + 3, y, "z")
-        if level >= 1:
-            s.rect(x, 9, x, 11, "P")
-        if level >= 2:
-            s.rect(x + 1, 1, x + 4, 7, "P")
-    return s
-
-
-GEAR_BLACK = hex_rgb("2c2e30")
-SKIN = hex_rgb("c99a78")
-BOOT = {"ct": "232323", "t": "5b4632", "us_woodland": "3b3a33", "us_desert": "a08560", "us_green": "514e36",
-        "us_multicam": "8b7355", "us_snow": "bfc1c2", "ru_emr": "2e2c28", "ghillie": "4a4232", "ghillie_snow": "cfd2d3", "swat": "1d1d1f"}
-KNEE = {"ct": "1e1f21", "t": "4a3a2a", "swat": "1b1b1d", "us_snow": "d9dcdc"}
-
-
-def colorize(rows, fill, set_id=None):
+def colorize(rows, fill):
     img = np.zeros((16, 16, 4))
     mean = fill.reshape(-1, 3).mean(axis=0)
-    plate = mean * 0.5 + hex_rgb("6a6d70") * 0.5
-    boot = hex_rgb(BOOT.get(set_id, "3b3a33"))
-    knee = hex_rgb(KNEE[set_id]) if set_id in KNEE else mean * 0.6
     for y in range(16):
         shade = 1.12 - 0.24 * y / 15
         for x in range(16):
@@ -285,136 +160,10 @@ def colorize(rows, fill, set_id=None):
             if c == ".":
                 continue
             above = rows[y - 1][x] if y > 0 else "."
-            if c == "#":
-                rgb = mean * 0.3
-            elif c == "o":
-                rgb = fill[y, x] * shade
-            elif c == "M":
-                rgb = fill[y, x] * 0.82 * shade
-            elif c == "p":
-                rgb = fill[y, x] * (0.68 if above != "p" else 0.86) * shade
-            elif c == "w":
-                rgb = mean * 0.5 * shade
-            elif c == "P":
-                rgb = plate * shade
-            elif c == "k":
-                rgb = GEAR_BLACK * shade
-            elif c == "K":
-                rgb = knee * shade
-            elif c == "l":
-                rgb = hex_rgb("5f97a8") if above in ".#k" else hex_rgb("2e5562")
-            elif c == "m":
-                rgb = hex_rgb("7a7d80") * shade
-            elif c == "b":
-                rgb = boot * shade
-            elif c == "z":
-                rgb = boot * 0.55
-            elif c == "s":
-                rgb = hex_rgb("1c1c1c")
-            elif c == "x":
-                rgb = hex_rgb("c9ccd1")
-            elif c == "e":
-                rgb = SKIN
-            elif c == "E":
-                rgb = hex_rgb("2a2420")
-            elif c == "c":
-                rgb = hex_rgb("4a4a40") * shade
-            elif c == "n":
-                rgb = hex_rgb("2a2a2e")
-            elif c == "q":
-                rgb = hex_rgb("161618")
-            elif c == "v":
-                rgb = hex_rgb("6f97a3") if (x + y) % 5 == 0 else hex_rgb("1c3038")
-            elif c == "u":
-                rgb = hex_rgb("b87333") * shade
-            elif c == "f":
-                rgb = hex_rgb("4b5233") * (0.8 if y % 2 else 1.0) * shade
-            elif c == "r":
-                rgb = hex_rgb("2f312b") * shade
-            elif c == "d":
-                rgb = hex_rgb("3f4538") * shade
-            elif c == "L":
-                rgb = hex_rgb("7fd39a") if above in ".#d" else hex_rgb("24503a")
-            elif c == "G":
-                rgb = hex_rgb("56603a") * (0.82 if (x + y) % 2 else 1.0) * shade
-            elif c == "H":
-                rgb = hex_rgb("9e2b25") * shade
-            elif c == "J":
-                rgb = hex_rgb("7b8085") * shade
-            elif c == "Q":
-                rgb = hex_rgb("5d6656") * shade
-            elif c == "V":
-                rgb = hex_rgb("e8e8e8") * shade
-            elif c == "W":
-                rgb = hex_rgb("e4f3fa") if above in ".#d" else hex_rgb("33424d")
-            elif c == "T":
-                rgb = hex_rgb("55595c") * shade
-            elif c == "Y":
-                rgb = hex_rgb("b38cff") if above in ".#" else hex_rgb("2a2633")
-            elif c == "g":
-                rgb = fill[y, x] * (0.75 if (x * 7 + y) % 2 else 1.2)
-            else:
-                raise ValueError(c)
-            if c != "#" and above in ".#":
-                rgb = rgb * 1.12
+            rgb = mean * 0.3 if c == "#" else fill[y, x] * shade * (1.12 if above in ".#" else 1.0)
             img[y, x, :3] = rgb
             img[y, x, 3] = 255
     return Image.fromarray(np.clip(img, 0, 255).astype(np.uint8), "RGBA")
-
-
-GHILLIE_STRANDS = {
-    "helmet": [(2, 3), (13, 4), (1, 7), (14, 9), (3, 13), (12, 13), (6, 0), (9, 0), (2, 10), (13, 12)],
-    "plate_carrier": [(1, 11), (3, 12), (14, 11), (12, 12), (5, 14), (8, 14), (10, 14), (0, 4), (15, 5), (2, 1), (13, 1)],
-    "leggings": [(2, 6), (2, 10), (13, 7), (13, 12), (4, 15), (11, 15), (7, 4), (8, 4)],
-}
-
-
-def ghillie(piece):
-    s = Sprite()
-    if piece == "helmet":
-        s.rect(5, 1, 10, 1, "o").rect(3, 2, 12, 12, "o").rect(4, 13, 11, 13, "o")
-        s.rect(5, 6, 10, 10, ".").rect(5, 6, 10, 10, "e").rect(6, 7, 6, 7, "E").rect(9, 7, 9, 7, "E")
-    elif piece == "plate_carrier":
-        s.rect(4, 2, 11, 13, "o").rect(1, 2, 3, 10, "o").rect(12, 2, 14, 10, "o").rect(6, 1, 9, 1, "w")
-    elif piece == "leggings":
-        s.rect(3, 1, 12, 4, "o").rect(3, 5, 6, 14, "o").rect(9, 5, 12, 14, "o")
-    else:
-        return boots(0)
-    for x, y in GHILLIE_STRANDS[piece]:
-        s.grid[y][x] = "g"
-    return s
-
-
-def device_sprite(name):
-    s = Sprite()
-    if name == "battery":
-        s.rect(6, 2, 9, 2, "u").rect(5, 3, 10, 13, "k").rect(5, 8, 10, 9, "u")
-    elif name == "gas_filter":
-        s.rect(6, 2, 9, 3, "m").rect(4, 4, 11, 12, "f").rect(5, 13, 10, 13, "f")
-    elif name == "nvg_pvs14":
-        s.rect(2, 6, 11, 10, "d").rect(1, 6, 1, 10, "L").rect(12, 7, 13, 9, "r").rect(8, 3, 9, 5, "m").rect(4, 4, 6, 5, "d")
-    elif name.startswith("nvg_gpnvg18"):
-        lens = "L" if name.endswith("green") else "W"
-        s.rect(4, 4, 11, 5, "d").rect(7, 2, 8, 3, "m")
-        s.rect(1, 7, 3, 10, "d").rect(4, 6, 7, 10, "d").rect(8, 6, 11, 10, "d").rect(12, 7, 14, 10, "d")
-        s.rect(2, 8, 2, 9, lens).rect(5, 7, 6, 9, lens).rect(9, 7, 10, 9, lens).rect(13, 8, 13, 9, lens)
-    elif name == "nvg_thermal":
-        s.rect(2, 5, 11, 11, "T").rect(1, 6, 1, 10, "Y").rect(12, 7, 13, 9, "r").rect(8, 3, 9, 4, "m").rect(4, 4, 6, 4, "d")
-    elif name in ("frag_grenade", "he_grenade"):
-        s.rect(5, 5, 10, 14, "G").rect(4, 6, 11, 13, "G").rect(6, 3, 8, 4, "m").rect(9, 3, 10, 3, "m").rect(10, 4, 10, 8, "m")
-        s.rect(11, 1, 12, 1, "m").rect(11, 3, 12, 3, "m").rect(13, 2, 13, 2, "m").rect(10, 2, 10, 2, "m")
-        if name == "he_grenade":
-            s.rect(4, 9, 11, 10, "H")
-    elif name == "flashbang":
-        s.rect(5, 4, 10, 14, "J").rect(6, 2, 9, 3, "m").rect(11, 3, 11, 9, "m").rect(12, 2, 12, 2, "m")
-        for y in (6, 9, 12):
-            s.rect(6, y, 6, y, "k").rect(9, y, 9, y, "k")
-    elif name == "smoke_grenade":
-        s.rect(5, 4, 10, 14, "Q").rect(5, 7, 10, 8, "V").rect(6, 2, 9, 3, "m").rect(11, 3, 11, 9, "m").rect(12, 2, 12, 2, "m")
-    elif name == "gas_mask":
-        s.rect(4, 2, 11, 12, "r").rect(3, 4, 12, 9, "r").rect(4, 5, 6, 7, "l").rect(9, 5, 11, 7, "l")
-        s.rect(7, 10, 8, 11, "m").rect(10, 10, 13, 13, "f")
-    return s.outlined()
 
 
 def overlays():
@@ -473,20 +222,6 @@ def smoke_puffs():
         Image.fromarray(img, "RGBA").save(out / f"smoke_puff_{i}.png")
 
 
-def sprite(set_id, piece, level):
-    if set_id.startswith("ghillie"):
-        return ghillie(piece).outlined()
-    if piece == "helmet":
-        s = balaclava(level) if set_id == "t" else helmet(set_id, level)
-    elif piece == "plate_carrier":
-        s = carrier(set_id, level)
-    elif piece == "leggings":
-        s = leggings(level)
-    else:
-        s = boots(level)
-    return s.outlined()
-
-
 def save(img, name):
     ITEM_DIR.mkdir(parents=True, exist_ok=True)
     img.save(ITEM_DIR / f"{name}.png")
@@ -496,14 +231,6 @@ def main():
     for set_id in SETS:
         fill = pattern(set_id, 16, 16, 4, seed=7)
         save(colorize(FABRIC_MASK, fill), FABRIC_IDS[set_id] + "_fabric")
-        icon_fill = pattern(set_id, 16, 16, 3, seed=3)
-        if set_id == "swat":
-            icon_fill = icon_fill * 1.7
-        for level, tier in enumerate(TIERS):
-            if set_id.startswith("ghillie") and level > 0:
-                continue
-            for piece in PIECES:
-                save(colorize(sprite(set_id, piece, level), icon_fill, set_id), f"{set_id}_{tier}_{piece}")
 
     kevlar = solid("c2a94a")
     for y in range(16):
@@ -513,9 +240,6 @@ def main():
     save(colorize(PLATE_MASK, kevlar), "kevlar_insert")
     save(colorize(PLATE_MASK, solid("9a8f86")), "raw_ceramic_plate")
     save(colorize(PLATE_MASK, solid("ddd8cc")), "ceramic_plate")
-    for name in ("battery", "gas_filter", "nvg_pvs14", "nvg_gpnvg18", "nvg_gpnvg18_green", "nvg_thermal", "gas_mask",
-                 "frag_grenade", "he_grenade", "flashbang", "smoke_grenade"):
-        save(colorize(device_sprite(name), solid("6d7073")), name)
     overlays()
     smoke_puffs()
     print(f"wrote {len(list(ITEM_DIR.glob('*.png')))} textures to {ITEM_DIR.relative_to(ROOT)}")

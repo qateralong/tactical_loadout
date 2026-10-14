@@ -32,7 +32,7 @@ public final class Flashbang {
         level.playSound(null, pos.x, pos.y, pos.z, SoundEvents.FIREWORK_ROCKET_BLAST, SoundSource.NEUTRAL, 3.0F, 1.2F);
         level.sendParticles(ParticleTypes.FLASH, pos.x, pos.y, pos.z, 1, 0, 0, 0, 0);
         for (LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class, new AABB(pos, pos).inflate(radius))) {
-            double strength = strength(level, entity, pos, radius);
+            double strength = entity.isSpectator() ? 0 : strength(level, entity, pos, radius);
             if (strength < 0.05) {
                 continue;
             }

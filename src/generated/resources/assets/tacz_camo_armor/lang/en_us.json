@@ -153,7 +153,7 @@
   "jei.tacz_camo_armor.grenade.frag_grenade": "Explodes 3 s after the throw. Hurts everything nearby but never breaks blocks.",
   "jei.tacz_camo_armor.grenade.he_grenade": "Explodes 3 s after the throw and destroys blocks like TNT.",
   "jei.tacz_camo_armor.grenade.smoke_grenade": "Starts smoking 2 s after the throw. Mobs can't see anyone inside the cloud or through it. A thermal imager still sees living things in the smoke.",
-  "jei.tacz_camo_armor.grenade_throw": "Right-click to throw. Grenades bounce off walls and floors and go off on a timer.",
+  "jei.tacz_camo_armor.grenade_throw": "Hold right-click to wind up and release to throw: a tap lobs it at your feet, a full second gives the longest throw. Grenades bounce off walls and floors and go off on a timer.",
   "jei.tacz_camo_armor.heavy": "Each heavy piece slows you down by %s%%.",
   "jei.tacz_camo_armor.mask_fits": "The helmet accepts a gas mask.",
   "jei.tacz_camo_armor.no_camo": "This set gives no camouflage.",
