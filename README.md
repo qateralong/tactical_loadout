@@ -28,6 +28,9 @@ Bullet-resistant tactical armor for NeoForge 1.21.1 with working camouflage, hel
 ## Compatibility
 
 - **Without a gun mod**, the zone protection applies to every damage type in the `#tacz_camo_armor:ballistic` tag. By default that is `#minecraft:is_projectile`: arrows, tridents and bullets from any gun mod that marks its damage as a projectile. To change what counts as a bullet, edit the tag in a datapack. The hit zone comes from the projectile's path; for hitscan weapons it comes from the shooter's line of sight.
+- **Covered out of the box:**
+  - through the projectile tag: Just Enough Guns, and NTGL-based mods such as Create: Gunsmithing;
+  - through optional tag entries: Guns++ and Gamingbarn's Guns.
 - **TaCZ** is detected automatically. Its bullets then use TaCZ's own headshot detection, and armor-piercing ammo gets through part of the protection.
 - **JEI** shows info pages for every set, device and grenade.
 - **Other gun mods** can integrate through `tacz_camo_armor.combat.BallisticHits`:

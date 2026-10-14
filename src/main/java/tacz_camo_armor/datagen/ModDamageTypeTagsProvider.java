@@ -4,6 +4,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.TagsProvider;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageType;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -19,6 +20,12 @@ public class ModDamageTypeTagsProvider extends TagsProvider<DamageType> {
 
     @Override
     protected void addTags(HolderLookup.Provider provider) {
-        tag(ModTags.BALLISTIC).addTag(DamageTypeTags.IS_PROJECTILE);
+        // Gun mods whose bullet damage is not tagged as a projectile.
+        tag(ModTags.BALLISTIC).addTag(DamageTypeTags.IS_PROJECTILE)
+                .addOptional(ResourceLocation.fromNamespaceAndPath("thepa", "shot"))
+                .addOptional(ResourceLocation.fromNamespaceAndPath("thepa", "pulse"))
+                .addOptional(ResourceLocation.fromNamespaceAndPath("gbg", "bullet_light"))
+                .addOptional(ResourceLocation.fromNamespaceAndPath("gbg", "bullet_standard"))
+                .addOptional(ResourceLocation.fromNamespaceAndPath("gbg", "bullet_heavy"));
     }
 }

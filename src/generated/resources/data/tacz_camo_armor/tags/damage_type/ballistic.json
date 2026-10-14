@@ -1,5 +1,25 @@
 {
   "values": [
-    "#minecraft:is_projectile"
+    "#minecraft:is_projectile",
+    {
+      "id": "thepa:shot",
+      "required": false
+    },
+    {
+      "id": "thepa:pulse",
+      "required": false
+    },
+    {
+      "id": "gbg:bullet_light",
+      "required": false
+    },
+    {
+      "id": "gbg:bullet_standard",
+      "required": false
+    },
+    {
+      "id": "gbg:bullet_heavy",
+      "required": false
+    }
   ]
 }
