@@ -8,6 +8,7 @@ import tacz_camo_armor.TaczCamoArmor;
 
 public final class FlashOverlay {
     private static final ResourceLocation WHITE = TaczCamoArmor.id("textures/misc/white.png");
+    private static final long FADE_MS = 3000L;
     private static float strength;
     private static long start;
     private static long duration;
@@ -24,16 +25,19 @@ public final class FlashOverlay {
         }
     }
 
+    // CS2-like: full white for ~40% of the duration, then up to a 3 s fade.
     private static float alpha() {
         long elapsed = System.currentTimeMillis() - start;
         if (duration == 0 || elapsed >= duration) {
             return 0.0F;
         }
-        float hold = duration * 0.35F;
+        float peak = Math.min(1.0F, 0.55F + strength);
+        long fade = Math.min(FADE_MS, Math.round(duration * 0.6));
+        long hold = duration - fade;
         if (elapsed < hold) {
-            return strength;
+            return peak;
         }
-        return strength * (1.0F - (elapsed - hold) / (duration - hold));
+        return peak * (1.0F - (float) (elapsed - hold) / fade);
     }
 
     public static void render(GuiGraphics graphics, DeltaTracker delta) {
@@ -43,7 +47,7 @@ public final class FlashOverlay {
         }
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, Math.min(1.0F, alpha * 1.1F));
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, alpha);
         graphics.blit(WHITE, 0, 0, 0, 0, graphics.guiWidth(), graphics.guiHeight(), 16, 16);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.disableBlend();

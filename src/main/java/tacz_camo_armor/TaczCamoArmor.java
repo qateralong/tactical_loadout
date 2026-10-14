@@ -12,6 +12,7 @@ import tacz_camo_armor.registry.ModArmorMaterials;
 import tacz_camo_armor.registry.ModCreativeTabs;
 import tacz_camo_armor.registry.ModDataComponents;
 import tacz_camo_armor.registry.ModEntities;
+import tacz_camo_armor.registry.ModParticles;
 import tacz_camo_armor.registry.ModItems;
 import tacz_camo_armor.registry.ModRecipes;
 
@@ -26,6 +27,7 @@ public class TaczCamoArmor {
         ModItems.ITEMS.register(modBus);
         ModRecipes.SERIALIZERS.register(modBus);
         ModEntities.ENTITY_TYPES.register(modBus);
+        ModParticles.PARTICLE_TYPES.register(modBus);
         ModCreativeTabs.TABS.register(modBus);
         container.registerConfig(ModConfig.Type.SERVER, ServerConfig.SPEC);
     }

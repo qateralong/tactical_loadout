@@ -11,6 +11,7 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -18,6 +19,7 @@ import org.lwjgl.glfw.GLFW;
 import tacz_camo_armor.TaczCamoArmor;
 import tacz_camo_armor.network.ToggleNvgPayload;
 import tacz_camo_armor.registry.ModEntities;
+import tacz_camo_armor.registry.ModParticles;
 
 @EventBusSubscriber(modid = TaczCamoArmor.MOD_ID, value = Dist.CLIENT)
 public final class ClientEvents {
@@ -36,6 +38,11 @@ public final class ClientEvents {
     static void registerLayers(RegisterGuiLayersEvent event) {
         event.registerAbove(VanillaGuiLayers.CAMERA_OVERLAYS, TaczCamoArmor.id("nvg"), NvgOverlay::render);
         event.registerAboveAll(TaczCamoArmor.id("flash"), FlashOverlay::render);
+    }
+
+    @SubscribeEvent
+    static void registerParticles(RegisterParticleProvidersEvent event) {
+        event.registerSpriteSet(ModParticles.SMOKE_PUFF.get(), SmokePuffParticle.Provider::new);
     }
 
     @SubscribeEvent

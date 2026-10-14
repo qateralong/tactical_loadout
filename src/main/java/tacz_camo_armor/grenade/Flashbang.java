@@ -58,7 +58,7 @@ public final class Flashbang {
             return 0;
         }
         double facing = Math.max(0, entity.getViewVector(1.0F).dot(pos.subtract(eye).normalize()));
-        double strength = (1 - distance / radius) * (0.3 + 0.7 * facing);
+        double strength = (1 - (distance / radius) * (distance / radius)) * (0.3 + 0.7 * facing);
         return distance < 3 ? Math.max(strength, 0.8) : strength;
     }
 

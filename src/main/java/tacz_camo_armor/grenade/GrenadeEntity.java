@@ -1,9 +1,9 @@
 package tacz_camo_armor.grenade;
 
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EntityType;
@@ -20,6 +20,9 @@ import tacz_camo_armor.registry.ModEntities;
 import tacz_camo_armor.registry.ModItems;
 
 public class GrenadeEntity extends ThrowableItemProjectile {
+    private static final int PUFFS = 120;
+    private static final int FILL_TICKS = 40;
+    private static final double GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5));
     private int fuse = GrenadeKind.FRAG.fuseTicks();
     private int smokeTicks = -1;
 
@@ -53,9 +56,11 @@ public class GrenadeEntity extends ThrowableItemProjectile {
             return;
         }
         if (smokeTicks >= 0) {
-            if (tickCount % 2 == 0) {
-                double radius = ServerConfig.smokeRadius() * 0.45;
-                level.sendParticles(ParticleTypes.CAMPFIRE_COSY_SMOKE, getX(), getY() + 0.8, getZ(), 24, radius, 0.7, radius, 0.006);
+            int elapsed = ServerConfig.smokeSeconds() * 20 - smokeTicks;
+            if (elapsed < FILL_TICKS) {
+                for (int i = 0; i < PUFFS / FILL_TICKS; i++) {
+                    emitPuff(level, elapsed * (PUFFS / FILL_TICKS) + i, smokeTicks + random.nextInt(40));
+                }
             }
             if (--smokeTicks <= 0) {
                 discard();
@@ -64,6 +69,23 @@ public class GrenadeEntity extends ThrowableItemProjectile {
         }
         if (--fuse <= 0) {
             detonate(level);
+        }
+    }
+
+    // Fills a dome evenly from the centre outwards; each puff lives until the smoke ends, so the cloud never thins out.
+    private void emitPuff(ServerLevel level, int index, int lifetime) {
+        double radius = ServerConfig.smokeRadius() * 0.85;
+        double fraction = (index + 0.5) / PUFFS;
+        double distance = radius * Math.cbrt(fraction);
+        double polar = Math.acos(1 - (index * 0.7548776662) % 1.0);
+        double azimuth = index * GOLDEN_ANGLE;
+        double horizontal = Math.sin(polar) * distance;
+        double x = getX() + Math.cos(azimuth) * horizontal + (random.nextDouble() - 0.5) * 0.6;
+        double z = getZ() + Math.sin(azimuth) * horizontal + (random.nextDouble() - 0.5) * 0.6;
+        double y = getY() + 0.5 + Math.cos(polar) * distance * 0.7;
+        SmokePuffOptions puff = new SmokePuffOptions(lifetime);
+        for (ServerPlayer player : level.players()) {
+            level.sendParticles(player, puff, true, x, y, z, 1, 0, 0, 0, 0.003);
         }
     }
 

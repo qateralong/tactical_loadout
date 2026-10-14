@@ -451,6 +451,28 @@ def overlays():
     Image.fromarray(img, "RGBA").save(misc / "nvg_thermal.png")
 
 
+def smoke_puffs():
+    out = ROOT / "src/main/resources/assets/tacz_camo_armor/textures/particle"
+    out.mkdir(parents=True, exist_ok=True)
+    size = 16
+    ys, xs = np.mgrid[0:size, 0:size].astype(np.float64)
+    dist = np.hypot(xs - 7.5, ys - 7.5) / 8.0
+    tones = [hex_rgb("e8e8e8"), hex_rgb("d2d2d2"), hex_rgb("bababa")]
+    for i in range(4):
+        rng = np.random.default_rng(40 + i)
+        noise = fbm(size, size, 4, rng, octaves=2)
+        noise = (noise - noise.min()) / (noise.max() - noise.min())
+        inside = dist + (noise - 0.5) * 0.5 < 0.9
+        img = np.zeros((size, size, 4), dtype=np.uint8)
+        shade = np.where(noise > 0.62, 0, np.where(noise > 0.38, 1, 2))
+        shade = np.where(dist > 0.7, np.minimum(shade + 1, 2), shade)
+        for t, color in enumerate(tones):
+            mask = inside & (shade == t)
+            img[mask, :3] = color.astype(np.uint8)
+        img[inside, 3] = 255
+        Image.fromarray(img, "RGBA").save(out / f"smoke_puff_{i}.png")
+
+
 def sprite(set_id, piece, level):
     if set_id.startswith("ghillie"):
         return ghillie(piece).outlined()
@@ -495,6 +517,7 @@ def main():
                  "frag_grenade", "he_grenade", "flashbang", "smoke_grenade"):
         save(colorize(device_sprite(name), solid("6d7073")), name)
     overlays()
+    smoke_puffs()
     print(f"wrote {len(list(ITEM_DIR.glob('*.png')))} textures to {ITEM_DIR.relative_to(ROOT)}")
 
 
