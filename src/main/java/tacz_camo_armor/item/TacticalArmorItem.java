@@ -1,24 +1,36 @@
 package tacz_camo_armor.item;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
+import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.animatable.GeoItem;
+import software.bernie.geckolib.animatable.client.GeoRenderProvider;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.util.GeckoLibUtil;
 import tacz_camo_armor.TaczCamoArmor;
+import tacz_camo_armor.client.TacticalArmorRenderer;
 import tacz_camo_armor.config.ServerConfig;
 import tacz_camo_armor.registry.ModArmorMaterials;
 
 import java.util.List;
+import java.util.function.Consumer;
 
-public class TacticalArmorItem extends ArmorItem {
+public class TacticalArmorItem extends ArmorItem implements GeoItem {
     private final ArmorSet set;
     private final ArmorTier tier;
     private final ArmorPiece piece;
+    private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
     public TacticalArmorItem(ArmorSet set, ArmorTier tier, ArmorPiece piece, Properties properties) {
         super(ModArmorMaterials.get(tier), piece.type(),
@@ -70,5 +82,30 @@ public class TacticalArmorItem extends ArmorItem {
             tooltip.add(Component.translatable("tooltip." + TaczCamoArmor.MOD_ID + ".camo_biome." + set.id())
                     .withStyle(ChatFormatting.DARK_GRAY));
         }
+    }
+
+    @Override
+    public void createGeoRenderer(Consumer<GeoRenderProvider> consumer) {
+        consumer.accept(new GeoRenderProvider() {
+            private TacticalArmorRenderer renderer;
+
+            @Override
+            public <T extends LivingEntity> HumanoidModel<?> getGeoArmorRenderer(@Nullable T entity, ItemStack stack,
+                                                                                 @Nullable EquipmentSlot slot, @Nullable HumanoidModel<T> original) {
+                if (renderer == null) {
+                    renderer = new TacticalArmorRenderer();
+                }
+                return renderer;
+            }
+        });
+    }
+
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+    }
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return cache;
     }
 }
