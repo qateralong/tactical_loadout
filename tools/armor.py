@@ -276,79 +276,124 @@ def palette(set_id):
 
 
 def paint(set_id, faces, height):
-    fill = pattern(set_id, ATLAS_W, height, 10, seed=11)
+    half = pattern(set_id, ATLAS_W // 2, height // 2, 5, seed=11)
+    fill = np.repeat(np.repeat(half, 2, axis=0), 2, axis=1)
     mean = fill.reshape(-1, 3).mean(axis=0)
     pal = palette(set_id)
     img = np.zeros((height, ATLAS_W, 4))
     rng = np.random.default_rng(5)
+    sides = ("north", "south", "east", "west")
 
     for mat, face, u, v, w, h in faces:
         region = fill[v:v + h, u:u + w].copy()
         alpha = np.full((h, w), 255.0)
-        rows = np.arange(h)[:, None] / max(1, h - 1)
-        grain = 1.0 + (rng.random((h, w)) - 0.5) * 0.06
+        ys = np.arange(h)[:, None]
+        xs = np.arange(w)[None, :]
+        border = (ys == 0) | (ys == h - 1) | (xs == 0) | (xs == w - 1)
+        outline = True
 
         if mat == "fabric":
-            rgb = region
+            rgb = region * (1.0 - 0.03 * ((xs + ys) % 2))[..., None]
+            outline = False
         elif mat == "knit":
-            rgb = region * (1.0 - 0.08 * (np.arange(h)[:, None] % 2))
+            rgb = region * (1.0 - 0.08 * (xs % 2))[..., None]
+            outline = False
             if face == "north":
                 y0, y1 = int(h * 0.42), int(h * 0.56)
                 x0, x1 = int(w * 0.14), int(w * 0.86)
                 alpha[y0:y1, x0:x1] = 0
-                rgb[max(0, y0 - 1):y0, x0:x1] *= 0.6
-                rgb[y1:y1 + 1, x0:x1] *= 0.6
+                rgb[max(0, y0 - 1):y0, x0 - 1:x1 + 1] *= 0.6
+                rgb[y1:y1 + 1, x0 - 1:x1 + 1] *= 0.6
+                rgb[y0:y1, x0 - 1:x0] *= 0.6
+                rgb[y0:y1, x1:x1 + 1] *= 0.6
         elif mat == "webbing":
-            rgb = region * 0.78
-            rgb[np.arange(h) % 3 == 2] *= 0.7
+            rgb = region * 0.8
+            rgb[(ys % 3 == 2).repeat(w, axis=1)] *= 0.62
+            slits = (ys % 3 != 2) & (xs % 4 == 3)
+            rgb[slits] *= 0.8
         elif mat == "pouch":
-            rgb = region * 0.95
-            if face in ("north", "south", "east", "west") and h > 3:
-                flap = max(1, h // 3)
-                rgb[:flap] *= 0.88
-                rgb[flap] *= 0.6
+            rgb = region * 0.96
+            if face in sides and h >= 4:
+                flap = max(2, h // 3)
+                rgb[:flap] *= 1.06
+                rgb[flap - 1] *= 0.62
+                if face in ("north", "south") and w >= 4:
+                    cx = w // 2
+                    rgb[flap - 1:flap + 1, cx - 1:cx + 1] = mean * 0.6
+                    rgb[flap, cx - 1:cx + 1] = hex_rgb("3a3b3c")
         elif mat == "plate":
             rgb = region * 0.9
+            if h >= 5 and w >= 5:
+                stitch = ((ys == 1) | (ys == h - 2) | (xs == 1) | (xs == w - 2)) & ~border & ((xs + ys) % 2 == 0)
+                rgb[stitch] *= 1.18
         elif mat == "shell":
-            rgb = (pal["shell"] * np.ones_like(region)) if pal["shell"] is not None else region * 0.95
+            rgb = pal["shell"] * np.ones_like(region) if pal["shell"] is not None else region * 0.95
+            scuff = rng.random((h, w)) < 0.04
+            rgb[scuff] *= 1.15
         elif mat == "strap":
             rgb = np.ones_like(region) * mean * 0.45
+            rgb[(xs % 4 == 0).repeat(h, axis=0)] *= 1.15
+            outline = False
         elif mat == "polymer":
             rgb = np.ones_like(region) * hex_rgb("2c2e30")
+            rgb[0] *= 1.35
         elif mat == "metal":
             rgb = np.ones_like(region) * hex_rgb("6d7073")
+            rgb[0] *= 1.3
         elif mat == "lens":
-            rgb = np.ones_like(region) * hex_rgb("2e4d5a")
-            rgb[: max(1, h // 3), : max(1, w // 3)] = hex_rgb("7fa8b5")
+            top = hex_rgb("5f97a8")
+            bottom = hex_rgb("1f3a44")
+            t = ys / max(1, h - 1)
+            rgb = (top * (1 - t)[..., None] + bottom * t[..., None]) * np.ones((h, w, 1))
+            rgb[:1, :2] = hex_rgb("d7eef3")
         elif mat == "patch":
             rgb = np.ones_like(region) * hex_rgb("1a1d24")
-            if face == "north":
-                rgb[h // 2 - 1:h // 2 + 1, 1:w - 1] = hex_rgb("c9ccd1")
+            if face in ("north", "south") and h >= 3 and w >= 5:
+                row = h // 2 - (1 if h >= 6 else 0)
+                letters = (xs[0] % 4 != 3) & (xs[0] > 0) & (xs[0] < w - 1)
+                rgb[row, letters] = hex_rgb("c9ccd1")
+                if h >= 6:
+                    rgb[row + 2, letters & (xs[0] % 2 == 0)] = hex_rgb("8f949c")
         elif mat == "kneepad":
             base = pal["knee"] if pal["knee"] is not None else mean * 0.7
             rgb = np.ones_like(region) * base
+            if face == "north" and h >= 3 and w >= 3:
+                cy, cx = (h - 1) / 2, (w - 1) / 2
+                d = ((ys - cy) / max(1, h / 2)) ** 2 + ((xs - cx) / max(1, w / 2)) ** 2
+                rgb = rgb * (1.25 - 0.35 * np.clip(d, 0, 1))[..., None]
         elif mat == "boot":
             rgb = np.ones_like(region) * pal["boot"]
-            if face == "north" and h > 6:
-                for y in range(1, h - 1, 2):
-                    rgb[y, w // 2 - 1:w // 2 + 1] = pal["boot"] * 0.6
+            if face == "north" and h > 6 and w >= 6:
+                cx = w // 2
+                for y in range(1, h - 2, 2):
+                    rgb[y, cx - 2] = pal["boot"] * 0.55
+                    rgb[y, cx + 1] = pal["boot"] * 0.55
+                    rgb[y + 1, cx - 1:cx + 1] = pal["boot"] * 0.55
+            elif face in ("east", "west") and h > 6:
+                rgb[h // 3] *= 0.8
+                rgb[-2:] *= 0.85
+            elif face == "north":
+                rgb *= 0.85
         elif mat == "sole":
             rgb = np.ones_like(region) * hex_rgb("1c1c1c")
+            if face == "down":
+                rgb[(ys % 2 == 0).repeat(w, axis=1)] = hex_rgb("2b2b2b")
+            outline = False
         else:
             raise ValueError(mat)
 
-        if face in ("north", "south", "east", "west"):
-            rgb = rgb * (1.06 - 0.12 * rows)[..., None]
+        if face in sides:
+            rgb = rgb * (1.06 - 0.12 * ys / max(1, h - 1))[..., None]
         elif face == "up":
             rgb = rgb * 1.08
         else:
             rgb = rgb * 0.8
-        rgb = rgb * grain[..., None]
-        if w > 2 and h > 2 and mat not in ("fabric", "knit", "strap"):
-            rgb[0, :] *= 0.85
-            rgb[-1, :] *= 0.8
-            rgb[:, 0] *= 0.88
-            rgb[:, -1] *= 0.88
+        rgb = rgb * (1.0 + (rng.random((h, w)) - 0.5) * 0.05)[..., None]
+        if outline and w > 2 and h > 2:
+            rgb[0, :] *= 0.88
+            rgb[-1, :] *= 0.78
+            rgb[:, 0] *= 0.86
+            rgb[:, -1] *= 0.86
         img[v:v + h, u:u + w, :3] = rgb
         img[v:v + h, u:u + w, 3] = alpha
     return Image.fromarray(np.clip(img, 0, 255).astype(np.uint8), "RGBA")
@@ -360,7 +405,7 @@ def main():
     ANIM_DIR.mkdir(parents=True, exist_ok=True)
     for form, sets in FORMS.items():
         geo, faces, height = build(form)
-        (GEO_DIR / f"{form}.geo.json").write_text(json.dumps(geo, indent=1))
+        (GEO_DIR / f"{form}.geo.json").write_text(json.dumps(geo, separators=(",", ":")))
         for set_id in sets:
             paint(set_id, faces, height).save(TEX_DIR / f"{set_id}.png")
         print(f"{form}: {sum(len(b['cubes']) for b in geo['minecraft:geometry'][0]['bones'])} cubes, atlas {ATLAS_W}x{height}")
