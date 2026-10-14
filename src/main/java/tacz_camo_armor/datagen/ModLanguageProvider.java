@@ -151,7 +151,7 @@ public abstract class ModLanguageProvider extends LanguageProvider {
             add("jei.tacz_camo_armor.protection", "Bullet protection in the hit zone: light %s%%, medium %s%%, heavy %s%%. Armor-piercing ammo lowers it.");
             add("jei.tacz_camo_armor.protection_single", "Bullet protection in the hit zone: %s%%. Armor-piercing ammo lowers it.");
             add("jei.tacz_camo_armor.heavy", "Each heavy piece slows you down by %s%%.");
-            add("jei.tacz_camo_armor.zones", "Zones: helmet covers headshots, chest piece the torso, leggings the legs, boots the feet.");
+            add("jei.tacz_camo_armor.zones", "Zones: helmet covers headshots, chest piece the torso, leggings the legs, boots the feet. Works against TaCZ bullets, arrows and other projectiles, including bullets from gun mods that count as projectiles.");
             add("jei.tacz_camo_armor.camo", "A full set of one color shrinks mob detection range by %s%% (%s%% while sneaking).");
             add("jei.tacz_camo_armor.no_camo", "This set gives no camouflage.");
             add("jei.tacz_camo_armor.nvg_fits", "The helmet accepts a night vision device and a gas mask.");
@@ -186,6 +186,15 @@ public abstract class ModLanguageProvider extends LanguageProvider {
             add("tacz_camo_armor.configuration.flashSeconds", "Flashbang blindness (seconds)");
             add("tacz_camo_armor.configuration.smokeSeconds", "Smoke duration (seconds)");
             add("tacz_camo_armor.configuration.smokeRadius", "Smoke cloud radius");
+            add("tacz_camo_armor.configuration.title", "Tactical Camo Armor Settings");
+            add("tacz_camo_armor.configuration.section.tacz.camo.armor.client.toml", "Client Settings");
+            add("tacz_camo_armor.configuration.section.tacz.camo.armor.client.toml.title", "Client Settings");
+            add("tacz_camo_armor.configuration.section.tacz.camo.armor.server.toml", "Server Settings");
+            add("tacz_camo_armor.configuration.section.tacz.camo.armor.server.toml.title", "Server Settings");
+            add("tacz_camo_armor.configuration.visuals", "Visuals");
+            add("tacz_camo_armor.configuration.throwFovEffect", "Widen view while winding up a throw");
+            add("tacz_camo_armor.configuration.flashMaxOpacity", "Strongest flashbang white-out");
+            add("tacz_camo_armor.configuration.nvgVignette", "Night vision tube vignette");
             add("entity.tacz_camo_armor.grenade", "Grenade");
             add("jei.tacz_camo_armor.grenade_throw", "Hold right-click to wind up and release to throw: a tap lobs it at your feet, a full second gives the longest throw. Grenades bounce off walls and floors and go off on a timer.");
         }
@@ -216,6 +225,7 @@ public abstract class ModLanguageProvider extends LanguageProvider {
             add(configKey("heavyReduction"), "Heavy tier damage reduction");
             add(configKey("durabilityPerDamage"), "Durability loss per damage point");
             add(configKey("hitZones"), "Hit zones");
+            add(configKey("headZoneBottom"), "Head zone bottom (fraction of height)");
             add(configKey("bootsZoneTop"), "Boots zone top (fraction of height)");
             add(configKey("legsZoneTop"), "Leggings zone top (fraction of height)");
             add(configKey("mobility"), "Mobility");
@@ -322,7 +332,7 @@ public abstract class ModLanguageProvider extends LanguageProvider {
             add("jei.tacz_camo_armor.protection", "Защита от пуль в зоне попадания: лёгкий %s%%, средний %s%%, тяжёлый %s%%. Бронебойные патроны её снижают.");
             add("jei.tacz_camo_armor.protection_single", "Защита от пуль в зоне попадания: %s%%. Бронебойные патроны её снижают.");
             add("jei.tacz_camo_armor.heavy", "Каждая тяжёлая деталь замедляет на %s%%.");
-            add("jei.tacz_camo_armor.zones", "Зоны: шлем — хедшоты, нагрудная часть — торс, поножи — ноги, ботинки — ступни.");
+            add("jei.tacz_camo_armor.zones", "Зоны: шлем — хедшоты, нагрудная часть — торс, поножи — ноги, ботинки — ступни. Защищает от пуль TaCZ, стрел и других снарядов, в том числе от пуль оружейных модов, если они считаются снарядами.");
             add("jei.tacz_camo_armor.camo", "Полный комплект одной расцветки уменьшает дальность обнаружения мобами на %s%% (%s%% крадучись).");
             add("jei.tacz_camo_armor.no_camo", "У этого комплекта нет камуфляжа.");
             add("jei.tacz_camo_armor.nvg_fits", "На шлем ставятся ПНВ и противогаз.");
@@ -357,6 +367,15 @@ public abstract class ModLanguageProvider extends LanguageProvider {
             add("tacz_camo_armor.configuration.flashSeconds", "Ослепление светошумовой (секунды)");
             add("tacz_camo_armor.configuration.smokeSeconds", "Длительность дыма (секунды)");
             add("tacz_camo_armor.configuration.smokeRadius", "Радиус облака дыма");
+            add("tacz_camo_armor.configuration.title", "Настройки Tactical Camo Armor");
+            add("tacz_camo_armor.configuration.section.tacz.camo.armor.client.toml", "Настройки клиента");
+            add("tacz_camo_armor.configuration.section.tacz.camo.armor.client.toml.title", "Настройки клиента");
+            add("tacz_camo_armor.configuration.section.tacz.camo.armor.server.toml", "Настройки сервера");
+            add("tacz_camo_armor.configuration.section.tacz.camo.armor.server.toml.title", "Настройки сервера");
+            add("tacz_camo_armor.configuration.visuals", "Изображение");
+            add("tacz_camo_armor.configuration.throwFovEffect", "Расширять обзор при замахе гранатой");
+            add("tacz_camo_armor.configuration.flashMaxOpacity", "Максимальная засветка от светошумовой");
+            add("tacz_camo_armor.configuration.nvgVignette", "Затемнение вокруг окуляров ПНВ");
             add("entity.tacz_camo_armor.grenade", "Граната");
             add("jei.tacz_camo_armor.grenade_throw", "Зажмите правую кнопку мыши для замаха и отпустите для броска: короткое нажатие — бросок под ноги, секунда замаха — самый дальний бросок. Гранаты отскакивают от стен и пола и срабатывают по таймеру.");
         }
@@ -387,6 +406,7 @@ public abstract class ModLanguageProvider extends LanguageProvider {
             add(configKey("heavyReduction"), "Снижение урона: тяжёлый тир");
             add(configKey("durabilityPerDamage"), "Потеря прочности за единицу урона");
             add(configKey("hitZones"), "Зоны попадания");
+            add(configKey("headZoneBottom"), "Низ зоны головы (доля роста)");
             add(configKey("bootsZoneTop"), "Верх зоны ботинок (доля роста)");
             add(configKey("legsZoneTop"), "Верх зоны поножей (доля роста)");
             add(configKey("mobility"), "Подвижность");

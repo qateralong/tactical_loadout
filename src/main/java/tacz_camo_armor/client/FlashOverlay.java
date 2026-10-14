@@ -5,6 +5,7 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import tacz_camo_armor.TaczCamoArmor;
+import tacz_camo_armor.config.ClientConfig;
 
 public final class FlashOverlay {
     private static final ResourceLocation WHITE = TaczCamoArmor.id("textures/misc/white.png");
@@ -31,7 +32,7 @@ public final class FlashOverlay {
         if (duration == 0 || elapsed >= duration) {
             return 0.0F;
         }
-        float peak = Math.min(1.0F, 0.55F + strength);
+        float peak = Math.min(ClientConfig.flashMaxOpacity(), 0.55F + strength);
         long fade = Math.min(FADE_MS, Math.round(duration * 0.6));
         long hold = duration - fade;
         if (elapsed < hold) {

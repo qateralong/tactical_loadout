@@ -19,6 +19,7 @@ import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.lwjgl.glfw.GLFW;
 import tacz_camo_armor.TaczCamoArmor;
+import tacz_camo_armor.config.ClientConfig;
 import tacz_camo_armor.grenade.GrenadeItem;
 import tacz_camo_armor.network.ToggleNvgPayload;
 import tacz_camo_armor.registry.ModEntities;
@@ -56,7 +57,7 @@ public final class ClientEvents {
     @SubscribeEvent
     static void onFov(ComputeFovModifierEvent event) {
         float charge = grenadeCharge(event.getPlayer());
-        if (charge > 0.0F) {
+        if (charge > 0.0F && ClientConfig.throwFovEffect()) {
             double scale = Minecraft.getInstance().options.fovEffectScale().get();
             event.setNewFovModifier(event.getNewFovModifier() * (1.0F + 0.12F * charge * (float) scale));
         }

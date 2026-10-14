@@ -32,5 +32,6 @@ public final class DataGenerators {
         generator.addProvider(event.includeServer(), new ModItemTagsProvider(output, lookup, noBlockTags, fileHelper));
         generator.addProvider(event.includeServer(), new ModRecipeProvider(output, lookup));
         generator.addProvider(event.includeServer(), new ModBiomeTagsProvider(output, lookup, fileHelper));
+        generator.addProvider(event.includeServer(), new ModDamageTypeTagsProvider(output, lookup, fileHelper));
     }
 }

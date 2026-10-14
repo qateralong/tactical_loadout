@@ -9,6 +9,7 @@ public final class ServerConfig {
     private static final ModConfigSpec.DoubleValue MEDIUM_REDUCTION;
     private static final ModConfigSpec.DoubleValue HEAVY_REDUCTION;
     private static final ModConfigSpec.DoubleValue DURABILITY_PER_DAMAGE;
+    private static final ModConfigSpec.DoubleValue HEAD_ZONE_BOTTOM;
     private static final ModConfigSpec.DoubleValue BOOTS_ZONE_TOP;
     private static final ModConfigSpec.DoubleValue LEGS_ZONE_TOP;
     private static final ModConfigSpec.DoubleValue HEAVY_SLOWDOWN_PER_PIECE;
@@ -41,6 +42,10 @@ public final class ServerConfig {
         builder.pop();
 
         builder.translation(key("hitZones")).push("hitZones");
+        HEAD_ZONE_BOTTOM = builder
+                .comment("Projectiles hitting above this fraction of the target's hitbox height land on the helmet. TaCZ bullets use TaCZ's own headshot detection instead.")
+                .translation(key("headZoneBottom"))
+                .defineInRange("headZoneBottom", 0.75, 0.0, 1.0);
         BOOTS_ZONE_TOP = builder
                 .comment("Hits below this fraction of the target's hitbox height land on the boots.")
                 .translation(key("bootsZoneTop"))
@@ -142,6 +147,10 @@ public final class ServerConfig {
 
     public static double durabilityPerDamage() {
         return get(DURABILITY_PER_DAMAGE);
+    }
+
+    public static double headZoneBottom() {
+        return Math.max(get(HEAD_ZONE_BOTTOM), legsZoneTop());
     }
 
     public static double bootsZoneTop() {

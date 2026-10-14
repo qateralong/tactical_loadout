@@ -38,7 +38,7 @@ def faces_of(lo, hi):
     }
 
 
-def quads(geo, tex, tiers):
+def quads(geo, tex, tiers, shown=None):
     tex = np.asarray(tex)
     out = []
     for lo, hi in BODY:
@@ -47,6 +47,8 @@ def quads(geo, tex, tiers):
     for bone in geo["bones"]:
         tier = bone["name"].split("_")[0]
         if tier in ("medium", "heavy") and tier not in tiers:
+            continue
+        if shown is not None and "parent" in bone and not bone["name"].startswith(("medium_", "heavy_")) and bone["name"] not in shown:
             continue
         for cube in bone["cubes"]:
             inf = cube.get("inflate", 0)
@@ -63,20 +65,20 @@ def quads(geo, tex, tiers):
     return out
 
 
-def render(geo, tex, tiers, yaw, size=(130, 260)):
-    img = Image.new("RGBA", size, (235, 235, 235, 255))
+def render(geo, tex, tiers, yaw, size=(130, 260), scale=SCALE, background=(235, 235, 235, 255), body=(150, 150, 150, 255), shown=None, pitch=0):
+    img = Image.new("RGBA", size, background)
     draw = ImageDraw.Draw(img)
-    m = rot_matrix(0, yaw, 0)
+    m = rot_matrix(pitch, 0, 0) @ rot_matrix(0, yaw, 0)
     cx, cy = size[0] / 2, size[1] - 20
     polys = []
-    for o, u, v, n, tex, uv, uvs in quads(geo, tex, tiers):
+    for o, u, v, n, tex, uv, uvs in quads(geo, tex, tiers, shown):
         nn = m @ n
         if nn[2] >= -1e-6:
             continue
         light = 0.65 + 0.35 * max(0.0, float(-nn[2]) * 0.8 + float(nn[1]) * 0.4)
         if tex is None:
             gw, gh = max(1, int(np.linalg.norm(u) * 2)), max(1, int(np.linalg.norm(v) * 2))
-            grid = [(i / gw, j / gh, (i + 1) / gw, (j + 1) / gh, (150, 150, 150, 255)) for j in range(gh) for i in range(gw)]
+            grid = [(i / gw, j / gh, (i + 1) / gw, (j + 1) / gh, body) for j in range(gh) for i in range(gw)]
         else:
             gw, gh = int(uvs[0]), int(uvs[1])
             grid = []
@@ -91,7 +93,7 @@ def render(geo, tex, tiers, yaw, size=(130, 260)):
             pts = [m @ p for p in pts3]
             depth = sum(p[2] for p in pts) / 4
             shade = tuple(int(c * light) for c in col[:3]) + (255,)
-            polys.append((depth, [(cx + p[0] * SCALE, cy - p[1] * SCALE) for p in pts], shade))
+            polys.append((depth, [(cx + p[0] * scale, cy - p[1] * scale) for p in pts], shade))
     polys.sort(key=lambda t: -t[0])
     for _, pts, col in polys:
         draw.polygon(pts, fill=col)

@@ -8,6 +8,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import tacz_camo_armor.TaczCamoArmor;
+import tacz_camo_armor.config.ClientConfig;
 import tacz_camo_armor.device.DeviceKind;
 import tacz_camo_armor.device.Devices;
 import tacz_camo_armor.device.MountedDevice;
@@ -51,6 +52,10 @@ public final class NvgOverlay {
         graphics.blit(NOISE, 0, 0, width, height, RANDOM.nextInt(128), RANDOM.nextInt(128), 128, 128, 256, 256);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
+        if (!ClientConfig.nvgVignette()) {
+            RenderSystem.disableBlend();
+            return;
+        }
         switch (nvg.kind()) {
             case GPNVG18, GPNVG18_GREEN -> {
                 int w = Math.round(width * 1.4F);

@@ -6,8 +6,19 @@ license="${mod_license}"
 modId="${mod_id}"
 version="${mod_version}"
 displayName="${mod_name}"
+logoFile="tacz_camo_armor_logo.png"
+logoBlur=false
+authors="qateralong"
 description='''
-Bullet-resistant tactical armor for TaCZ: CS2-style CT and T kits and US Woodland, Desert and OD Green camo sets.
+Bullet-resistant tactical armor with working camouflage, night vision and CS2-style grenades.
+
+- 11 sets: CS2 CT and T, US Woodland, Desert, OD Green, MultiCam and Snow, Russian Ratnik (EMR), ghillie suits and SWAT.
+- Light, medium and heavy tiers with per-zone protection against bullets and other projectiles.
+- Camouflage that hides you from mobs, stronger in matching biomes and while sneaking.
+- Helmet-mounted PVS-14, GPNVG-18 and thermal imagers, plus a gas mask.
+- Frag, HE, flashbang and smoke grenades with a hold-to-charge throw.
+
+Works on its own; TaCZ adds exact headshot detection and armor-piercing ammo support.
 '''
 
 [[dependencies.${mod_id}]]
@@ -33,7 +44,7 @@ Bullet-resistant tactical armor for TaCZ: CS2-style CT and T kits and US Woodlan
 
 [[dependencies.${mod_id}]]
     modId="tacz"
-    type="required"
+    type="optional"
     versionRange="*"
     ordering="AFTER"
     side="BOTH"

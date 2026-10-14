@@ -7,6 +7,9 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import org.slf4j.Logger;
+import net.neoforged.fml.ModList;
+import tacz_camo_armor.compat.tacz.TaczCompat;
+import tacz_camo_armor.config.ClientConfig;
 import tacz_camo_armor.config.ServerConfig;
 import tacz_camo_armor.registry.ModArmorMaterials;
 import tacz_camo_armor.registry.ModCreativeTabs;
@@ -30,6 +33,10 @@ public class TaczCamoArmor {
         ModParticles.PARTICLE_TYPES.register(modBus);
         ModCreativeTabs.TABS.register(modBus);
         container.registerConfig(ModConfig.Type.SERVER, ServerConfig.SPEC);
+        container.registerConfig(ModConfig.Type.CLIENT, ClientConfig.SPEC);
+        if (ModList.get().isLoaded("tacz")) {
+            TaczCompat.init();
+        }
     }
 
     public static ResourceLocation id(String path) {
