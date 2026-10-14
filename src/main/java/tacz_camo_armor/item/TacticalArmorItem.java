@@ -1,14 +1,19 @@
 package tacz_camo_armor.item;
 
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import tacz_camo_armor.TaczCamoArmor;
 import tacz_camo_armor.config.ServerConfig;
 import tacz_camo_armor.registry.ModArmorMaterials;
+
+import java.util.List;
 
 public class TacticalArmorItem extends ArmorItem {
     private final ArmorSet set;
@@ -49,5 +54,13 @@ public class TacticalArmorItem extends ArmorItem {
                 TaczCamoArmor.id("heavy_slowdown_" + piece.id()), -slowdown,
                 AttributeModifier.Operation.ADD_MULTIPLIED_BASE);
         return modifiers.withModifierAdded(Attributes.MOVEMENT_SPEED, modifier, EquipmentSlotGroup.bySlot(getEquipmentSlot()));
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+        long percent = Math.round(ServerConfig.bulletReduction(tier) * 100);
+        Component zone = Component.translatable("tooltip." + TaczCamoArmor.MOD_ID + ".zone." + piece.id());
+        tooltip.add(Component.translatable("tooltip." + TaczCamoArmor.MOD_ID + ".bullet_protection", percent, zone)
+                .withStyle(ChatFormatting.GRAY));
     }
 }

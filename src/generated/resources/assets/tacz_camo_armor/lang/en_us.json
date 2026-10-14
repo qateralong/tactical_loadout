@@ -68,6 +68,19 @@
   "item.tacz_camo_armor.us_woodland_medium_plate_carrier": "US Woodland Medium Plate Carrier",
   "item.tacz_camo_armor.woodland_fabric": "Woodland Camo Fabric",
   "itemGroup.tacz_camo_armor": "Tactical Camo Armor",
+  "tacz_camo_armor.configuration.bootsZoneTop": "Boots zone top (fraction of height)",
+  "tacz_camo_armor.configuration.durabilityPerDamage": "Durability loss per damage point",
+  "tacz_camo_armor.configuration.heavyReduction": "Heavy tier damage reduction",
   "tacz_camo_armor.configuration.heavySlowdownPerPiece": "Heavy armor slowdown per piece",
-  "tacz_camo_armor.configuration.mobility": "Mobility"
+  "tacz_camo_armor.configuration.hitZones": "Hit zones",
+  "tacz_camo_armor.configuration.legsZoneTop": "Leggings zone top (fraction of height)",
+  "tacz_camo_armor.configuration.lightReduction": "Light tier damage reduction",
+  "tacz_camo_armor.configuration.mediumReduction": "Medium tier damage reduction",
+  "tacz_camo_armor.configuration.mobility": "Mobility",
+  "tacz_camo_armor.configuration.protection": "Bullet protection",
+  "tooltip.tacz_camo_armor.bullet_protection": "Bullet protection: %s%% (%s)",
+  "tooltip.tacz_camo_armor.zone.boots": "feet",
+  "tooltip.tacz_camo_armor.zone.helmet": "head",
+  "tooltip.tacz_camo_armor.zone.leggings": "legs",
+  "tooltip.tacz_camo_armor.zone.plate_carrier": "torso"
 }

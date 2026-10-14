@@ -25,6 +25,7 @@ public abstract class ModLanguageProvider extends LanguageProvider {
             }
         }
         addComponents();
+        addTooltips();
         addConfig();
     }
 
@@ -38,6 +39,10 @@ public abstract class ModLanguageProvider extends LanguageProvider {
         };
     }
 
+    protected void tooltip(String name, String value) {
+        add("tooltip." + TaczCamoArmor.MOD_ID + "." + name, value);
+    }
+
     protected static String configKey(String name) {
         return TaczCamoArmor.MOD_ID + ".configuration." + name;
     }
@@ -49,6 +54,8 @@ public abstract class ModLanguageProvider extends LanguageProvider {
     protected abstract String armorName(ArmorSet set, ArmorTier tier, ArmorPiece piece);
 
     protected abstract void addComponents();
+
+    protected abstract void addTooltips();
 
     protected abstract void addConfig();
 
@@ -97,7 +104,24 @@ public abstract class ModLanguageProvider extends LanguageProvider {
         }
 
         @Override
+        protected void addTooltips() {
+            tooltip("bullet_protection", "Bullet protection: %s%% (%s)");
+            tooltip("zone.helmet", "head");
+            tooltip("zone.plate_carrier", "torso");
+            tooltip("zone.leggings", "legs");
+            tooltip("zone.boots", "feet");
+        }
+
+        @Override
         protected void addConfig() {
+            add(configKey("protection"), "Bullet protection");
+            add(configKey("lightReduction"), "Light tier damage reduction");
+            add(configKey("mediumReduction"), "Medium tier damage reduction");
+            add(configKey("heavyReduction"), "Heavy tier damage reduction");
+            add(configKey("durabilityPerDamage"), "Durability loss per damage point");
+            add(configKey("hitZones"), "Hit zones");
+            add(configKey("bootsZoneTop"), "Boots zone top (fraction of height)");
+            add(configKey("legsZoneTop"), "Leggings zone top (fraction of height)");
             add(configKey("mobility"), "Mobility");
             add(configKey("heavySlowdownPerPiece"), "Heavy armor slowdown per piece");
         }
@@ -150,7 +174,24 @@ public abstract class ModLanguageProvider extends LanguageProvider {
         }
 
         @Override
+        protected void addTooltips() {
+            tooltip("bullet_protection", "Защита от пуль: %s%% (%s)");
+            tooltip("zone.helmet", "голова");
+            tooltip("zone.plate_carrier", "торс");
+            tooltip("zone.leggings", "ноги");
+            tooltip("zone.boots", "ступни");
+        }
+
+        @Override
         protected void addConfig() {
+            add(configKey("protection"), "Защита от пуль");
+            add(configKey("lightReduction"), "Снижение урона: лёгкий тир");
+            add(configKey("mediumReduction"), "Снижение урона: средний тир");
+            add(configKey("heavyReduction"), "Снижение урона: тяжёлый тир");
+            add(configKey("durabilityPerDamage"), "Потеря прочности за единицу урона");
+            add(configKey("hitZones"), "Зоны попадания");
+            add(configKey("bootsZoneTop"), "Верх зоны ботинок (доля роста)");
+            add(configKey("legsZoneTop"), "Верх зоны поножей (доля роста)");
             add(configKey("mobility"), "Подвижность");
             add(configKey("heavySlowdownPerPiece"), "Замедление за каждую тяжёлую деталь");
         }

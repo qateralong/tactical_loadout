@@ -68,6 +68,19 @@
   "item.tacz_camo_armor.us_woodland_medium_plate_carrier": "Средняя плитоноска US Woodland",
   "item.tacz_camo_armor.woodland_fabric": "Камуфляжная ткань Woodland",
   "itemGroup.tacz_camo_armor": "Тактическая камуфляжная броня",
+  "tacz_camo_armor.configuration.bootsZoneTop": "Верх зоны ботинок (доля роста)",
+  "tacz_camo_armor.configuration.durabilityPerDamage": "Потеря прочности за единицу урона",
+  "tacz_camo_armor.configuration.heavyReduction": "Снижение урона: тяжёлый тир",
   "tacz_camo_armor.configuration.heavySlowdownPerPiece": "Замедление за каждую тяжёлую деталь",
-  "tacz_camo_armor.configuration.mobility": "Подвижность"
+  "tacz_camo_armor.configuration.hitZones": "Зоны попадания",
+  "tacz_camo_armor.configuration.legsZoneTop": "Верх зоны поножей (доля роста)",
+  "tacz_camo_armor.configuration.lightReduction": "Снижение урона: лёгкий тир",
+  "tacz_camo_armor.configuration.mediumReduction": "Снижение урона: средний тир",
+  "tacz_camo_armor.configuration.mobility": "Подвижность",
+  "tacz_camo_armor.configuration.protection": "Защита от пуль",
+  "tooltip.tacz_camo_armor.bullet_protection": "Защита от пуль: %s%% (%s)",
+  "tooltip.tacz_camo_armor.zone.boots": "ступни",
+  "tooltip.tacz_camo_armor.zone.helmet": "голова",
+  "tooltip.tacz_camo_armor.zone.leggings": "ноги",
+  "tooltip.tacz_camo_armor.zone.plate_carrier": "торс"
 }
