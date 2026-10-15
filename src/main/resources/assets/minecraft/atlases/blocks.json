@@ -14,6 +14,10 @@
     },
     {
       "type": "single",
+      "resource": "tacz_camo_armor:armor/ru_flora"
+    },
+    {
+      "type": "single",
       "resource": "tacz_camo_armor:armor/swat"
     },
     {
@@ -38,11 +42,23 @@
     },
     {
       "type": "single",
+      "resource": "tacz_camo_armor:armor/us_ucp"
+    },
+    {
+      "type": "single",
+      "resource": "tacz_camo_armor:armor/us_tiger"
+    },
+    {
+      "type": "single",
       "resource": "tacz_camo_armor:armor/ghillie"
     },
     {
       "type": "single",
       "resource": "tacz_camo_armor:armor/ghillie_snow"
+    },
+    {
+      "type": "single",
+      "resource": "tacz_camo_armor:armor/ghillie_desert"
     }
   ]
 }

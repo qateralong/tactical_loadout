@@ -1,0 +1,63 @@
+{
+  "parent": "tacz_camo_armor:main/flash_mob",
+  "criteria": {
+    "decoy_grenade": {
+      "trigger": "minecraft:impossible"
+    },
+    "flashbang": {
+      "trigger": "minecraft:impossible"
+    },
+    "frag_grenade": {
+      "trigger": "minecraft:impossible"
+    },
+    "he_grenade": {
+      "trigger": "minecraft:impossible"
+    },
+    "incendiary_grenade": {
+      "trigger": "minecraft:impossible"
+    },
+    "molotov": {
+      "trigger": "minecraft:impossible"
+    },
+    "smoke_grenade": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.tacz_camo_armor.all_grenades.description"
+    },
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "tacz_camo_armor:molotov"
+    },
+    "title": {
+      "translate": "advancement.tacz_camo_armor.all_grenades.title"
+    }
+  },
+  "requirements": [
+    [
+      "frag_grenade"
+    ],
+    [
+      "he_grenade"
+    ],
+    [
+      "flashbang"
+    ],
+    [
+      "smoke_grenade"
+    ],
+    [
+      "molotov"
+    ],
+    [
+      "incendiary_grenade"
+    ],
+    [
+      "decoy_grenade"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

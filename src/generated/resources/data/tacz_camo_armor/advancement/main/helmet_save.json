@@ -1,0 +1,27 @@
+{
+  "parent": "tacz_camo_armor:main/suit_up",
+  "criteria": {
+    "done": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.tacz_camo_armor.helmet_save.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "tacz_camo_armor:us_woodland_heavy_helmet"
+    },
+    "title": {
+      "translate": "advancement.tacz_camo_armor.helmet_save.title"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

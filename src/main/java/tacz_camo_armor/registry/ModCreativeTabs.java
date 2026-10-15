@@ -27,6 +27,7 @@ public final class ModCreativeTabs {
                         output.accept(ModItems.KEVLAR_INSERT);
                         output.accept(ModItems.RAW_CERAMIC_PLATE);
                         output.accept(ModItems.CERAMIC_PLATE);
+                        output.accept(ModItems.ARMOR_REPAIR_KIT);
                         output.accept(ModItems.BATTERY);
                         output.accept(ModItems.GAS_FILTER);
                         for (DeviceKind kind : DeviceKind.values()) {

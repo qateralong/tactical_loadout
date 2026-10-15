@@ -1,7 +1,10 @@
 package tacz_camo_armor.grenade;
 
 import net.minecraft.core.Direction;
+import net.minecraft.core.Position;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -9,16 +12,21 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import tacz_camo_armor.config.ServerConfig;
 import tacz_camo_armor.registry.ModEntities;
 import tacz_camo_armor.registry.ModItems;
+import tacz_camo_armor.registry.ModSounds;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,9 +40,14 @@ public class GrenadeEntity extends ThrowableItemProjectile {
     private static final double RESEND_RANGE = 160.0;
     private static final double GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5));
     private int fuse = GrenadeKind.FRAG.fuseTicks();
-    private int smokeTicks = -1;
+    // Ticks left of the lasting effect (smoke, fire or decoy shots); -1 while the grenade is still live.
+    private int activeTicks = -1;
+    private int activeTotal;
     // Identity, not UUID: a player who relogs gets a new ServerPlayer and an empty particle engine.
     private final Set<ServerPlayer> smokeViewers = Collections.newSetFromMap(new WeakHashMap<>());
+    private IncendiaryFire fire;
+    private int nextShot;
+    private int burstLeft;
     private float spin;
     private float spinO;
     private float heading;
@@ -49,17 +62,29 @@ public class GrenadeEntity extends ThrowableItemProjectile {
         fuse = kind().fuseTicks();
     }
 
+    public GrenadeEntity(Level level, Position pos, ItemStack stack) {
+        super(ModEntities.GRENADE.get(), pos.x(), pos.y(), pos.z(), level);
+        setItem(stack.copyWithCount(1));
+        fuse = kind().fuseTicks();
+    }
+
     public GrenadeKind kind() {
         return getItem().getItem() instanceof GrenadeItem grenade ? grenade.kind() : GrenadeKind.FRAG;
     }
 
     public boolean isSmoking() {
-        return smokeTicks > 0;
+        return kind() == GrenadeKind.SMOKE && activeTicks > 0;
     }
 
     @Override
     protected Item getDefaultItem() {
         return ModItems.grenade(GrenadeKind.FRAG).get();
+    }
+
+    // Death messages name the grenade ("blown up by Frag Grenade") when nobody threw it, e.g. from a dispenser.
+    @Override
+    protected Component getTypeName() {
+        return getItem().getHoverName();
     }
 
     public float spin(float partialTick) {
@@ -80,21 +105,24 @@ public class GrenadeEntity extends ThrowableItemProjectile {
             updateSpin();
             return;
         }
-        if (smokeTicks >= 0) {
-            int elapsed = Math.max(0, ServerConfig.smokeSeconds() * 20 - smokeTicks);
-            if (elapsed < FILL_TICKS) {
-                List<ServerPlayer> nearby = nearbyPlayers(level);
-                if (elapsed == 0) {
-                    smokeViewers.addAll(nearby);
+        if (activeTicks >= 0) {
+            int elapsed = Math.max(0, activeTotal - activeTicks);
+            boolean alive = switch (kind()) {
+                case SMOKE -> {
+                    tickSmoke(level, elapsed);
+                    yield true;
                 }
-                nearby.removeIf(player -> !smokeViewers.contains(player));
-                for (int i = 0; i < PUFFS / FILL_TICKS; i++) {
-                    emitPuff(level, nearby, elapsed * (PUFFS / FILL_TICKS) + i, smokeTicks + random.nextInt(40));
+                case MOLOTOV, INCENDIARY -> tickFire(level, elapsed);
+                case DECOY -> {
+                    tickDecoy(level);
+                    yield true;
                 }
-            } else if (tickCount % 10 == 0) {
-                resendCloud(level);
-            }
-            if (--smokeTicks <= 0) {
+                default -> false;
+            };
+            if (!alive || --activeTicks <= 0) {
+                if (alive && kind() == GrenadeKind.DECOY) {
+                    level.explode(this, getX(), getY(0.5), getZ(), 1.0F, Level.ExplosionInteraction.NONE);
+                }
                 discard();
             }
             return;
@@ -119,14 +147,70 @@ public class GrenadeEntity extends ThrowableItemProjectile {
         }
     }
 
-    // Fills a dome evenly from the centre outwards; each puff lives until the smoke ends, so the cloud never thins out.
+    private void tickSmoke(ServerLevel level, int elapsed) {
+        if (elapsed < FILL_TICKS) {
+            List<ServerPlayer> nearby = nearbyPlayers(level);
+            if (elapsed == 0) {
+                smokeViewers.addAll(nearby);
+            }
+            nearby.removeIf(player -> !smokeViewers.contains(player));
+            for (int i = 0; i < PUFFS / FILL_TICKS; i++) {
+                emitPuff(level, nearby, elapsed * (PUFFS / FILL_TICKS) + i, activeTicks + random.nextInt(40));
+            }
+        } else if (tickCount % 10 == 0) {
+            resendCloud(level);
+        }
+    }
+
+    private boolean tickFire(ServerLevel level, int elapsed) {
+        setInvisible(true);
+        if (fire == null) {
+            fire = IncendiaryFire.spread(level, position(), ServerConfig.fireRadius());
+            if (fire == null) {
+                IncendiaryFire.fizzle(level, position());
+                return false;
+            }
+        }
+        if (!fire.tick(level, this, elapsed, activeTicks)) {
+            IncendiaryFire.fizzle(level, position());
+            return false;
+        }
+        return true;
+    }
+
+    // Fake gunfire in short bursts; every burst draws idle monsters over and sets off sculk and wardens.
+    private void tickDecoy(ServerLevel level) {
+        if (--nextShot > 0) {
+            return;
+        }
+        level.playSound(null, getX(), getY(), getZ(), ModSounds.DECOY_SHOT.get(), SoundSource.NEUTRAL, 4.0F,
+                0.9F + random.nextFloat() * 0.15F);
+        level.sendParticles(ParticleTypes.SMOKE, getX(), getY() + 0.2, getZ(), 2, 0.05, 0.05, 0.05, 0.01);
+        level.gameEvent(this, GameEvent.PROJECTILE_SHOOT, position());
+        if (burstLeft-- > 0) {
+            nextShot = 3 + random.nextInt(2);
+            return;
+        }
+        burstLeft = random.nextInt(5);
+        nextShot = 15 + random.nextInt(30);
+        double radius = ServerConfig.decoyLureRadius();
+        if (radius <= 0) {
+            return;
+        }
+        for (Mob mob : level.getEntitiesOfClass(Mob.class, new AABB(position(), position()).inflate(radius))) {
+            if (mob instanceof Enemy && mob.getTarget() == null && !Flashbang.isBlinded(mob)) {
+                mob.getNavigation().moveTo(getX(), getY(), getZ(), 1.0);
+            }
+        }
+    }
+
     // Players who arrive late, or after the world was reloaded, get the whole cloud at once.
     private void resendCloud(ServerLevel level) {
         List<ServerPlayer> late = nearbyPlayers(level);
         late.removeIf(player -> !smokeViewers.add(player));
         if (!late.isEmpty()) {
             for (int i = 0; i < PUFFS; i++) {
-                emitPuff(level, late, i, smokeTicks + random.nextInt(40));
+                emitPuff(level, late, i, activeTicks + random.nextInt(40));
             }
         }
     }
@@ -141,6 +225,7 @@ public class GrenadeEntity extends ThrowableItemProjectile {
         return players;
     }
 
+    // Fills a dome evenly from the centre outwards; each puff lives until the smoke ends, so the cloud never thins out.
     private void emitPuff(ServerLevel level, List<ServerPlayer> players, int index, int lifetime) {
         double radius = ServerConfig.smokeRadius() * 0.85;
         double fraction = (index + 0.5) / PUFFS;
@@ -155,6 +240,11 @@ public class GrenadeEntity extends ThrowableItemProjectile {
         for (ServerPlayer player : players) {
             level.sendParticles(player, puff, true, x, y, z, 1, 0, 0, 0, 0.003);
         }
+    }
+
+    private void activate(int ticks) {
+        activeTicks = ticks;
+        activeTotal = ticks;
     }
 
     private void detonate(ServerLevel level) {
@@ -172,16 +262,34 @@ public class GrenadeEntity extends ThrowableItemProjectile {
                 discard();
             }
             case SMOKE -> {
-                smokeTicks = ServerConfig.smokeSeconds() * 20;
+                activate(ServerConfig.smokeSeconds() * 20);
                 level.playSound(null, getX(), getY(), getZ(), SoundEvents.FIRE_EXTINGUISH, SoundSource.NEUTRAL, 1.2F, 0.6F);
                 SmokeClouds.add(this);
             }
+            case MOLOTOV, INCENDIARY -> ignite(level);
+            case DECOY -> {
+                activate(ServerConfig.decoySeconds() * 20);
+                nextShot = 5;
+                burstLeft = random.nextInt(4);
+            }
         }
+    }
+
+    // Fire grenades burst on the first floor they land on, or wherever they are when the fuse runs out.
+    private void ignite(ServerLevel level) {
+        setDeltaMovement(Vec3.ZERO);
+        setNoGravity(true);
+        setInvisible(true);
+        IncendiaryFire.ignite(level, this);
+        activate(ServerConfig.fireSeconds() * 20);
     }
 
     @Override
     protected void onHitBlock(BlockHitResult hit) {
         super.onHitBlock(hit);
+        if (activeTicks >= 0 && kind().isFire()) {
+            return;
+        }
         setNoGravity(false);
         Vec3 velocity = getDeltaMovement();
         Direction.Axis axis = hit.getDirection().getAxis();
@@ -192,6 +300,11 @@ public class GrenadeEntity extends ThrowableItemProjectile {
             case Y -> new Vec3(velocity.x * friction, -velocity.y * bounce, velocity.z * friction);
             case Z -> new Vec3(velocity.x * friction, velocity.y * friction, -velocity.z * bounce);
         };
+        setPos(hit.getLocation().add(Vec3.atLowerCornerOf(hit.getDirection().getNormal()).scale(0.05)));
+        if (kind().isFire() && hit.getDirection() == Direction.UP && level() instanceof ServerLevel level) {
+            ignite(level);
+            return;
+        }
         if (velocity.lengthSqr() > 0.01) {
             level().playSound(null, getX(), getY(), getZ(), SoundEvents.CHAIN_HIT, SoundSource.NEUTRAL, 0.5F, 1.6F);
         } else if (hit.getDirection() == Direction.UP) {
@@ -201,7 +314,6 @@ public class GrenadeEntity extends ThrowableItemProjectile {
             setNoGravity(true);
         }
         setDeltaMovement(velocity);
-        setPos(hit.getLocation().add(Vec3.atLowerCornerOf(hit.getDirection().getNormal()).scale(0.05)));
     }
 
     @Override
@@ -221,15 +333,18 @@ public class GrenadeEntity extends ThrowableItemProjectile {
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
         tag.putInt("Fuse", fuse);
-        tag.putInt("SmokeTicks", smokeTicks);
+        tag.putInt("ActiveTicks", activeTicks);
+        tag.putInt("ActiveTotal", activeTotal);
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
         fuse = tag.contains("Fuse") ? tag.getInt("Fuse") : kind().fuseTicks();
-        smokeTicks = tag.contains("SmokeTicks") ? tag.getInt("SmokeTicks") : -1;
-        if (smokeTicks > 0 && !level().isClientSide) {
+        String key = tag.contains("ActiveTicks") ? "ActiveTicks" : "SmokeTicks";
+        activeTicks = tag.contains(key) ? tag.getInt(key) : -1;
+        activeTotal = tag.contains("ActiveTotal") ? tag.getInt("ActiveTotal") : Math.max(activeTicks, ServerConfig.smokeSeconds() * 20);
+        if (isSmoking() && !level().isClientSide) {
             SmokeClouds.add(this);
         }
     }

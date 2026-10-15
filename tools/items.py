@@ -18,9 +18,9 @@ ATLAS = ROOT / "src/main/resources/assets/minecraft/atlases/blocks.json"
 NS = "tacz_camo_armor"
 
 FORMS = {
-    "ct": ["ct"], "t": ["t"], "ru": ["ru_emr"], "swat": ["swat"],
-    "us": ["us_woodland", "us_desert", "us_green", "us_multicam", "us_snow"],
-    "ghillie": ["ghillie", "ghillie_snow"],
+    "ct": ["ct"], "t": ["t"], "ru": ["ru_emr", "ru_flora"], "swat": ["swat"],
+    "us": ["us_woodland", "us_desert", "us_green", "us_multicam", "us_snow", "us_ucp", "us_tiger"],
+    "ghillie": ["ghillie", "ghillie_snow", "ghillie_desert"],
 }
 TIERS = ["light", "medium", "heavy"]
 PIECES = {
@@ -42,7 +42,7 @@ SWATCH = 8
 SWATCHES = [
     "frag_side", "frag_top", "fuze", "spoon", "ring", "he_side", "he_band", "flash_side",
     "flash_top", "smoke_side", "smoke_top", "battery_side", "battery_top", "battery_bottom", "filter_side", "filter_top",
-    "metal_dark",
+    "metal_dark", "glass", "glass_top", "rag", "incendiary_side", "incendiary_top", "decoy_side", "decoy_top",
 ]
 
 
@@ -103,6 +103,35 @@ def paint_swatch(name, rng):
     elif name == "filter_top":
         rgb = flat("4b5233")
         rgb[(ys % 2 == 1) & (xs % 2 == 1)] = hex_rgb("23261a")
+    elif name == "glass":
+        rgb = flat("3f5c3c")
+        rgb[:, 1] = hex_rgb("7fa07a")
+        rgb[:, 2] *= 1.15
+        rgb[-2:] *= 0.8
+        rgb[2:4] = hex_rgb("6e4a2a")
+    elif name == "glass_top":
+        rgb = flat("38533a")
+        rgb[3:5, 3:5] = hex_rgb("6e4a2a")
+    elif name == "rag":
+        rgb = flat("d6ccb4")
+        rgb[ys % 3 == 2] *= 0.86
+        rgb[rng.random((SWATCH, SWATCH)) < 0.18] = hex_rgb("8a6a4a")
+    elif name == "incendiary_side":
+        rgb = flat("4a4d50")
+        rgb[2:4] = hex_rgb("a83a2a")
+        rgb[6, (xs[0] % 2 == 0)] = hex_rgb("b9bcbf")
+        rgb[0] *= 1.12
+    elif name == "incendiary_top":
+        rgb = flat("45484b")
+        rgb[3:5, 3:5] *= 0.75
+    elif name == "decoy_side":
+        rgb = flat("62675a")
+        rgb[1:3] = hex_rgb("c9a227")
+        holes = (ys >= 4) & (ys <= 6) & (xs % 2 == 1) & (ys % 2 == 0)
+        rgb[holes] = hex_rgb("23251f")
+    elif name == "decoy_top":
+        rgb = flat("5a5f52")
+        rgb[3:5, 3:5] = hex_rgb("23251f")
     elif name == "metal_dark":
         rgb = flat("3a3c3e")
         rgb[ys % 2 == 0] *= 1.25
@@ -205,6 +234,25 @@ def gear_models(size):
     g.cylinder(8, 8, 1.75, 2.5, 9.5, "smoke_side", "smoke_top")
     g.fuze(9.5, 1.75, 6.25)
     models["smoke_grenade"] = (g, 1.4)
+
+    g = Gear(size)
+    g.cylinder(8, 8, 2, 1, 8, "glass", "glass_top")
+    g.cylinder(8, 8, 1.4, 8, 9.5, "glass", "glass_top")
+    g.cylinder(8, 8, 0.75, 9.5, 12.5, "glass", "glass_top")
+    g.box((7.1, 11, 7.1), (8.9, 13, 8.9), "rag")
+    g.box((7.4, 13, 7.4), (8.6, 14, 8.6), "rag")
+    g.box((8.7, 8.5, 7.5), (9.3, 11.5, 8.5), "rag")
+    models["molotov"] = (g, 1.3)
+
+    g = Gear(size)
+    g.cylinder(8, 8, 1.75, 2.5, 9.5, "incendiary_side", "incendiary_top")
+    g.fuze(9.5, 1.75, 6.25)
+    models["incendiary_grenade"] = (g, 1.4)
+
+    g = Gear(size)
+    g.cylinder(8, 8, 1.5, 3, 9, "decoy_side", "decoy_top")
+    g.fuze(9, 1.5, 6.5)
+    models["decoy_grenade"] = (g, 1.45)
 
     g = Gear(size)
     g.cylinder(8, 8, 1.25, 4, 11, "battery_side", "battery_top", "battery_bottom")
@@ -324,7 +372,7 @@ def armor_models():
 def main():
     size = gear_texture()
     gear_models(size)
-    print(f"wrote {armor_models() + 6} item models")
+    print(f"wrote {armor_models() + 9} item models")
 
 
 if __name__ == "__main__":

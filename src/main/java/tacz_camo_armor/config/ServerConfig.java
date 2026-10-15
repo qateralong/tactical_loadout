@@ -27,6 +27,12 @@ public final class ServerConfig {
     private static final ModConfigSpec.IntValue FLASH_SECONDS;
     private static final ModConfigSpec.IntValue SMOKE_SECONDS;
     private static final ModConfigSpec.DoubleValue SMOKE_RADIUS;
+    private static final ModConfigSpec.DoubleValue FIRE_RADIUS;
+    private static final ModConfigSpec.IntValue FIRE_SECONDS;
+    private static final ModConfigSpec.DoubleValue FIRE_DAMAGE;
+    private static final ModConfigSpec.IntValue DECOY_SECONDS;
+    private static final ModConfigSpec.DoubleValue DECOY_LURE_RADIUS;
+    private static final ModConfigSpec.DoubleValue REPAIR_KIT_FRACTION;
 
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
@@ -114,6 +120,21 @@ public final class ServerConfig {
                 .translation(key("smokeSeconds")).defineInRange("smokeSeconds", 20, 5, 60);
         SMOKE_RADIUS = builder.comment("Radius of the smoke cloud that hides entities from mobs.")
                 .translation(key("smokeRadius")).defineInRange("smokeRadius", 4.5, 2.0, 10.0);
+        FIRE_RADIUS = builder.comment("How far the fire of a molotov or incendiary grenade spreads, in blocks.")
+                .translation(key("fireRadius")).defineInRange("fireRadius", 3.0, 1.0, 8.0);
+        FIRE_SECONDS = builder.comment("How long the fire of a molotov or incendiary grenade burns.")
+                .translation(key("fireSeconds")).defineInRange("fireSeconds", 7, 2, 30);
+        FIRE_DAMAGE = builder.comment("Damage per hit for standing in the fire; a hit lands every half second.")
+                .translation(key("fireDamage")).defineInRange("fireDamage", 2.0, 0.0, 20.0);
+        DECOY_SECONDS = builder.comment("How long a decoy grenade keeps firing fake shots.")
+                .translation(key("decoySeconds")).defineInRange("decoySeconds", 15, 3, 60);
+        DECOY_LURE_RADIUS = builder.comment("Monsters without a target within this range walk to the decoy. 0 turns it off.")
+                .translation(key("decoyLureRadius")).defineInRange("decoyLureRadius", 24.0, 0.0, 64.0);
+        builder.pop();
+
+        builder.translation(key("repair")).push("repair");
+        REPAIR_KIT_FRACTION = builder.comment("Share of a piece's durability restored by one armor repair kit in an anvil.")
+                .translation(key("repairKitFraction")).defineInRange("repairKitFraction", 0.5, 0.05, 1.0);
         builder.pop();
 
         SPEC = builder.build();
@@ -219,5 +240,29 @@ public final class ServerConfig {
 
     public static double smokeRadius() {
         return get(SMOKE_RADIUS);
+    }
+
+    public static double fireRadius() {
+        return get(FIRE_RADIUS);
+    }
+
+    public static int fireSeconds() {
+        return SPEC.isLoaded() ? FIRE_SECONDS.get() : FIRE_SECONDS.getDefault();
+    }
+
+    public static double fireDamage() {
+        return get(FIRE_DAMAGE);
+    }
+
+    public static int decoySeconds() {
+        return SPEC.isLoaded() ? DECOY_SECONDS.get() : DECOY_SECONDS.getDefault();
+    }
+
+    public static double decoyLureRadius() {
+        return get(DECOY_LURE_RADIUS);
+    }
+
+    public static double repairKitFraction() {
+        return get(REPAIR_KIT_FRACTION);
     }
 }

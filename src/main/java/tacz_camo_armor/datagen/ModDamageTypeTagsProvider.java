@@ -9,6 +9,7 @@ import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageType;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import tacz_camo_armor.TaczCamoArmor;
+import tacz_camo_armor.grenade.IncendiaryFire;
 import tacz_camo_armor.registry.ModTags;
 
 import java.util.concurrent.CompletableFuture;
@@ -27,5 +28,8 @@ public class ModDamageTypeTagsProvider extends TagsProvider<DamageType> {
                 .addOptional(ResourceLocation.fromNamespaceAndPath("gbg", "bullet_light"))
                 .addOptional(ResourceLocation.fromNamespaceAndPath("gbg", "bullet_standard"))
                 .addOptional(ResourceLocation.fromNamespaceAndPath("gbg", "bullet_heavy"));
+        tag(DamageTypeTags.IS_FIRE).add(IncendiaryFire.DAMAGE);
+        tag(DamageTypeTags.NO_KNOCKBACK).add(IncendiaryFire.DAMAGE);
+        tag(DamageTypeTags.BURNS_ARMOR_STANDS).add(IncendiaryFire.DAMAGE);
     }
 }

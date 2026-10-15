@@ -24,6 +24,12 @@ public final class ModTags {
     public static final TagKey<Biome> EMR_UNFAVORED = biome("camo/emr_unfavored");
     public static final TagKey<Biome> GHILLIE_FAVORED = biome("camo/ghillie_favored");
     public static final TagKey<Biome> GHILLIE_UNFAVORED = biome("camo/ghillie_unfavored");
+    public static final TagKey<Biome> UCP_FAVORED = biome("camo/ucp_favored");
+    public static final TagKey<Biome> UCP_UNFAVORED = biome("camo/ucp_unfavored");
+    public static final TagKey<Biome> TIGER_FAVORED = biome("camo/tiger_favored");
+    public static final TagKey<Biome> TIGER_UNFAVORED = biome("camo/tiger_unfavored");
+    public static final TagKey<Biome> FLORA_FAVORED = biome("camo/flora_favored");
+    public static final TagKey<Biome> FLORA_UNFAVORED = biome("camo/flora_unfavored");
 
     private ModTags() {
     }

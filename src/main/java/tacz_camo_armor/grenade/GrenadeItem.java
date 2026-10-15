@@ -1,6 +1,8 @@
 package tacz_camo_armor.grenade;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Position;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -8,16 +10,20 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ProjectileItem;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import tacz_camo_armor.TaczCamoArmor;
+import tacz_camo_armor.advancement.ModAdvancements;
+import tacz_camo_armor.registry.ModSounds;
 
 import java.util.List;
 
-public class GrenadeItem extends Item {
+public class GrenadeItem extends Item implements ProjectileItem {
     public static final int FULL_CHARGE_TICKS = 20;
     private static final int USE_DURATION = 72000;
     private static final float MIN_VELOCITY = 0.35F;
@@ -39,6 +45,10 @@ public class GrenadeItem extends Item {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        if (!player.isUsingItem()) {
+            level.playSound(null, player.getX(), player.getEyeY(), player.getZ(), ModSounds.GRENADE_PIN.get(), SoundSource.PLAYERS,
+                    0.7F, 0.95F + level.getRandom().nextFloat() * 0.1F);
+        }
         player.startUsingItem(hand);
         return InteractionResultHolder.consume(player.getItemInHand(hand));
     }
@@ -66,9 +76,20 @@ public class GrenadeItem extends Item {
             float velocity = MIN_VELOCITY + (MAX_VELOCITY - MIN_VELOCITY) * charge;
             grenade.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, velocity, 1.0F);
             level.addFreshEntity(grenade);
+            ModAdvancements.award(player, ModAdvancements.ALL_GRENADES, kind.id());
         }
         player.getCooldowns().addCooldown(this, 20);
         stack.consume(1, player);
+    }
+
+    @Override
+    public Projectile asProjectile(Level level, Position pos, ItemStack stack, Direction direction) {
+        return new GrenadeEntity(level, pos, stack);
+    }
+
+    @Override
+    public DispenseConfig createDispenseConfig() {
+        return DispenseConfig.builder().power(0.9F).uncertainty(3.0F).build();
     }
 
     @Override

@@ -42,15 +42,24 @@ public abstract class ModLanguageProvider extends LanguageProvider {
             case US_GREEN -> "US Green";
             case US_MULTICAM -> "US Multicam";
             case US_SNOW -> "US Snow";
+            case US_UCP -> "US UCP";
+            case US_TIGER -> "US Tiger Stripe";
             case RU_EMR -> "Ratnik EMR";
+            case RU_FLORA -> "Flora";
             case GHILLIE -> "Ghillie";
             case GHILLIE_SNOW -> "Snow Ghillie";
+            case GHILLIE_DESERT -> "Desert Ghillie";
             case SWAT -> "SWAT";
         };
     }
 
     protected void tooltip(String name, String value) {
         add("tooltip." + TaczCamoArmor.MOD_ID + "." + name, value);
+    }
+
+    protected void advancement(String name, String title, String description) {
+        add("advancement." + TaczCamoArmor.MOD_ID + "." + name + ".title", title);
+        add("advancement." + TaczCamoArmor.MOD_ID + "." + name + ".description", description);
     }
 
     protected static String configKey(String name) {
@@ -91,9 +100,13 @@ public abstract class ModLanguageProvider extends LanguageProvider {
                 case US_GREEN -> "Olive Drab Fabric";
                 case US_MULTICAM -> "Multicam Fabric";
                 case US_SNOW -> "Snow Camo Fabric";
+                case US_UCP -> "UCP Digital Fabric";
+                case US_TIGER -> "Tiger Stripe Fabric";
                 case RU_EMR -> "EMR Digital Fabric";
+                case RU_FLORA -> "Flora Fabric";
                 case GHILLIE -> "Ghillie Fabric";
                 case GHILLIE_SNOW -> "Snow Ghillie Fabric";
+                case GHILLIE_DESERT -> "Desert Ghillie Fabric";
                 case SWAT -> "Black Fabric";
             };
         }
@@ -108,7 +121,7 @@ public abstract class ModLanguageProvider extends LanguageProvider {
             boolean ghillie = set.form() == ArmorForm.GHILLIE;
             String pieceName = switch (piece) {
                 case HELMET -> set == ArmorSet.T ? "Balaclava" : ghillie ? "Hood" : "Helmet";
-                case PLATE_CARRIER -> set == ArmorSet.RU_EMR ? "Body Armor" : ghillie ? "Jacket" : "Plate Carrier";
+                case PLATE_CARRIER -> set.form() == ArmorForm.RU ? "Body Armor" : ghillie ? "Jacket" : "Plate Carrier";
                 case LEGGINGS -> ghillie ? "Pants" : "Leggings with Knee Pads";
                 case BOOTS -> "Boots";
             };
@@ -197,6 +210,40 @@ public abstract class ModLanguageProvider extends LanguageProvider {
             add("tacz_camo_armor.configuration.nvgVignette", "Night vision tube vignette");
             add("entity.tacz_camo_armor.grenade", "Grenade");
             add("jei.tacz_camo_armor.grenade_throw", "Hold right-click to wind up and release to throw: a tap lobs it at your feet, a full second gives the longest throw. Grenades bounce off walls and floors and go off on a timer.");
+            add(ModItems.grenade(GrenadeKind.MOLOTOV).get(), "Molotov Cocktail");
+            add("tooltip.tacz_camo_armor.grenade.molotov", "Shatters on landing and spreads fire");
+            add("jei.tacz_camo_armor.grenade.molotov", "Shatters on the first floor it lands on and covers it in fire for %s s; it bounces off walls. Anyone in the flames burns. Smoke puts the fire out and it never spreads into water. If it is still in the air after 2 s, it bursts without fire.");
+            add(ModItems.grenade(GrenadeKind.INCENDIARY).get(), "Incendiary Grenade");
+            add("tooltip.tacz_camo_armor.grenade.incendiary_grenade", "Covers the floor in fire on landing");
+            add("jei.tacz_camo_armor.grenade.incendiary_grenade", "Works like the molotov: on the first floor it lands on, it covers the area in fire for %s s. Smoke puts the fire out and it never spreads into water. If it is still in the air after 2 s, it bursts without fire.");
+            add(ModItems.grenade(GrenadeKind.DECOY).get(), "Decoy Grenade");
+            add("tooltip.tacz_camo_armor.grenade.decoy_grenade", "Fakes gunfire to lure monsters");
+            add("jei.tacz_camo_armor.grenade.decoy_grenade", "Two seconds after the throw it starts firing fake shots in bursts for %s s, then pops. Monsters without a target walk over to it; sculk sensors and wardens hear it too.");
+            add("jei.tacz_camo_armor.dispenser", "Dispensers throw grenades too.");
+            add("tacz_camo_armor.configuration.fireRadius", "Fire spread radius");
+            add("tacz_camo_armor.configuration.fireSeconds", "Fire duration (seconds)");
+            add("tacz_camo_armor.configuration.fireDamage", "Fire damage per hit");
+            add("tacz_camo_armor.configuration.decoySeconds", "Decoy duration (seconds)");
+            add("tacz_camo_armor.configuration.decoyLureRadius", "Decoy lure radius");
+            add("tacz_camo_armor.configuration.repair", "Repair");
+            add("tacz_camo_armor.configuration.repairKitFraction", "Durability restored per repair kit");
+            add(ModItems.ARMOR_REPAIR_KIT.get(), "Armor Repair Kit");
+            add("tooltip.tacz_camo_armor.repair_kit", "Restores %s%% durability of tactical armor in an anvil");
+            add("jei.tacz_camo_armor.repair_kit", "Put a damaged armor piece and repair kits into an anvil. Each kit restores %s%% durability and costs one level, whatever the tier.");
+            add("message.tacz_camo_armor.nvg_low", "NVG battery is running low");
+            add("message.tacz_camo_armor.filter_low", "Gas mask filter is running out");
+            add("message.tacz_camo_armor.filter_empty", "Gas mask filter is used up");
+            add("death.attack.tacz_camo_armor.incendiary", "%1$s was burned alive by %2$s");
+            add("death.attack.tacz_camo_armor.incendiary.item", "%1$s was burned alive by %2$s using %3$s");
+            add("subtitles.tacz_camo_armor.grenade.decoy_shot", "Decoy fires");
+            add("subtitles.tacz_camo_armor.grenade.pin", "Grenade pin pulled");
+            advancement("root", "Tactical Camo Armor", "Weave your first camouflage fabric");
+            advancement("suit_up", "Suit Up", "Wear four heavy armor pieces at once");
+            advancement("ghillie", "Part of the Scenery", "Wear a full ghillie suit");
+            advancement("helmet_save", "Not Today", "Survive a shot to the head thanks to your helmet");
+            advancement("flash_mob", "Look Away!", "Blind a mob with a flashbang");
+            advancement("extinguish", "Fire Department", "Put out a molotov or incendiary fire with smoke");
+            advancement("all_grenades", "Full Utility", "Throw every kind of grenade");
         }
 
         @Override
@@ -215,6 +262,10 @@ public abstract class ModLanguageProvider extends LanguageProvider {
             tooltip("camo_biome.ru_emr", "Best in forests, taiga and plains");
             tooltip("camo_biome.ghillie", "Strongest camo, best among vegetation");
             tooltip("camo_biome.ghillie_snow", "Strongest camo in snowy biomes, weak elsewhere");
+            tooltip("camo_biome.ghillie_desert", "Strongest camo in deserts and badlands, weak in forests");
+            tooltip("camo_biome.us_ucp", "Best in mountains, on stony shores and underground");
+            tooltip("camo_biome.us_tiger", "Best in jungles, swamps and lush caves");
+            tooltip("camo_biome.ru_flora", "Best on plains, in savannas and forests");
         }
 
         @Override
@@ -246,7 +297,11 @@ public abstract class ModLanguageProvider extends LanguageProvider {
 
         @Override
         protected String setName(ArmorSet set) {
-            return set == ArmorSet.RU_EMR ? "Ратник" : super.setName(set);
+            return switch (set) {
+                case RU_EMR -> "Ратник";
+                case RU_FLORA -> "Флора";
+                default -> super.setName(set);
+            };
         }
 
         @Override
@@ -264,9 +319,13 @@ public abstract class ModLanguageProvider extends LanguageProvider {
                 case US_GREEN -> "Оливковая ткань";
                 case US_MULTICAM -> "Ткань Multicam";
                 case US_SNOW -> "Снежная камуфляжная ткань";
+                case US_UCP -> "Цифровая ткань UCP";
+                case US_TIGER -> "Ткань «Тигровая полоса»";
                 case RU_EMR -> "Цифровая ткань ЕМР";
+                case RU_FLORA -> "Ткань «Флора»";
                 case GHILLIE -> "Маскировочная ткань гилли";
                 case GHILLIE_SNOW -> "Снежная маскировочная ткань гилли";
+                case GHILLIE_DESERT -> "Пустынная маскировочная ткань гилли";
                 case SWAT -> "Чёрная ткань";
             };
         }
@@ -274,7 +333,11 @@ public abstract class ModLanguageProvider extends LanguageProvider {
         @Override
         protected String armorName(ArmorSet set, ArmorTier tier, ArmorPiece piece) {
             if (set.form() == ArmorForm.GHILLIE) {
-                String suffix = set == ArmorSet.GHILLIE_SNOW ? " снежного гилли" : " гилли";
+                String suffix = switch (set) {
+                    case GHILLIE_SNOW -> " снежного гилли";
+                    case GHILLIE_DESERT -> " пустынного гилли";
+                    default -> " гилли";
+                };
                 return switch (piece) {
                     case HELMET -> "Капюшон";
                     case PLATE_CARRIER -> "Куртка";
@@ -282,7 +345,7 @@ public abstract class ModLanguageProvider extends LanguageProvider {
                     case BOOTS -> "Ботинки";
                 } + suffix;
             }
-            boolean feminine = (piece == ArmorPiece.PLATE_CARRIER && set != ArmorSet.RU_EMR)
+            boolean feminine = (piece == ArmorPiece.PLATE_CARRIER && set.form() != ArmorForm.RU)
                     || (piece == ArmorPiece.HELMET && set == ArmorSet.T);
             boolean plural = piece == ArmorPiece.LEGGINGS || piece == ArmorPiece.BOOTS;
             String tierName = switch (tier) {
@@ -292,7 +355,7 @@ public abstract class ModLanguageProvider extends LanguageProvider {
             };
             String pieceName = switch (piece) {
                 case HELMET -> set == ArmorSet.T ? "балаклава" : "шлем";
-                case PLATE_CARRIER -> set == ArmorSet.RU_EMR ? "бронежилет" : "плитоноска";
+                case PLATE_CARRIER -> set.form() == ArmorForm.RU ? "бронежилет" : "плитоноска";
                 case LEGGINGS -> "поножи с наколенниками";
                 case BOOTS -> "ботинки";
             };
@@ -378,6 +441,40 @@ public abstract class ModLanguageProvider extends LanguageProvider {
             add("tacz_camo_armor.configuration.nvgVignette", "Затемнение вокруг окуляров ПНВ");
             add("entity.tacz_camo_armor.grenade", "Граната");
             add("jei.tacz_camo_armor.grenade_throw", "Зажмите правую кнопку мыши для замаха и отпустите для броска: короткое нажатие — бросок под ноги, секунда замаха — самый дальний бросок. Гранаты отскакивают от стен и пола и срабатывают по таймеру.");
+            add(ModItems.grenade(GrenadeKind.MOLOTOV).get(), "Коктейль Молотова");
+            add("tooltip.tacz_camo_armor.grenade.molotov", "Разбивается при падении и разливает огонь");
+            add("jei.tacz_camo_armor.grenade.molotov", "Разбивается о первый пол, на который упадёт, и заливает его огнём на %s с; от стен отскакивает. Все, кто стоит в пламени, горят. Дым тушит огонь, в воду пламя не растекается. Если через 2 с бутылка ещё в воздухе, она разрывается без огня.");
+            add(ModItems.grenade(GrenadeKind.INCENDIARY).get(), "Зажигательная граната");
+            add("tooltip.tacz_camo_armor.grenade.incendiary_grenade", "Заливает пол огнём при падении");
+            add("jei.tacz_camo_armor.grenade.incendiary_grenade", "Работает как коктейль Молотова: на первом полу, куда упадёт, заливает всё огнём на %s с. Дым тушит огонь, в воду пламя не растекается. Если через 2 с граната ещё в воздухе, она разрывается без огня.");
+            add(ModItems.grenade(GrenadeKind.DECOY).get(), "Ложная граната");
+            add("tooltip.tacz_camo_armor.grenade.decoy_grenade", "Имитирует стрельбу и приманивает монстров");
+            add("jei.tacz_camo_armor.grenade.decoy_grenade", "Через 2 с после броска начинает очередями имитировать выстрелы в течение %s с, затем хлопает. Монстры без цели идут к ней; скалк-сенсоры и хранители тоже её слышат.");
+            add("jei.tacz_camo_armor.dispenser", "Раздатчик тоже бросает гранаты.");
+            add("tacz_camo_armor.configuration.fireRadius", "Радиус огня");
+            add("tacz_camo_armor.configuration.fireSeconds", "Длительность огня (секунды)");
+            add("tacz_camo_armor.configuration.fireDamage", "Урон огня за удар");
+            add("tacz_camo_armor.configuration.decoySeconds", "Длительность ложной гранаты (секунды)");
+            add("tacz_camo_armor.configuration.decoyLureRadius", "Радиус приманки ложной гранаты");
+            add("tacz_camo_armor.configuration.repair", "Ремонт");
+            add("tacz_camo_armor.configuration.repairKitFraction", "Прочность за один ремкомплект");
+            add(ModItems.ARMOR_REPAIR_KIT.get(), "Ремкомплект брони");
+            add("tooltip.tacz_camo_armor.repair_kit", "Восстанавливает %s%% прочности тактической брони в наковальне");
+            add("jei.tacz_camo_armor.repair_kit", "Положите повреждённую деталь брони и ремкомплекты в наковальню. Каждый комплект восстанавливает %s%% прочности и стоит один уровень, для любого тира.");
+            add("message.tacz_camo_armor.nvg_low", "Батарея ПНВ садится");
+            add("message.tacz_camo_armor.filter_low", "Фильтр противогаза почти израсходован");
+            add("message.tacz_camo_armor.filter_empty", "Фильтр противогаза израсходован");
+            add("death.attack.tacz_camo_armor.incendiary", "%1$s сгорел(а) в пламени (%2$s)");
+            add("death.attack.tacz_camo_armor.incendiary.item", "%1$s сгорел(а) в пламени (%2$s, %3$s)");
+            add("subtitles.tacz_camo_armor.grenade.decoy_shot", "Ложная граната стреляет");
+            add("subtitles.tacz_camo_armor.grenade.pin", "Выдернута чека");
+            advancement("root", "Тактическая камуфляжная броня", "Сплетите первую камуфляжную ткань");
+            advancement("suit_up", "Полная выкладка", "Наденьте сразу четыре тяжёлые детали брони");
+            advancement("ghillie", "Часть пейзажа", "Наденьте полный костюм гилли");
+            advancement("helmet_save", "Не сегодня", "Переживите выстрел в голову благодаря шлему");
+            advancement("flash_mob", "Отвернись!", "Ослепите моба светошумовой гранатой");
+            advancement("extinguish", "Пожарная команда", "Потушите огонь молотова или зажигательной гранаты дымом");
+            advancement("all_grenades", "Полный набор", "Бросьте гранату каждого вида");
         }
 
         @Override
@@ -396,6 +493,10 @@ public abstract class ModLanguageProvider extends LanguageProvider {
             tooltip("camo_biome.ru_emr", "Лучше всего в лесах, тайге и на равнинах");
             tooltip("camo_biome.ghillie", "Самый сильный камуфляж, лучше всего среди растительности");
             tooltip("camo_biome.ghillie_snow", "Самый сильный камуфляж в снегу, слабый в остальных биомах");
+            tooltip("camo_biome.ghillie_desert", "Самый сильный камуфляж в пустынях и бэдлендах, слабый в лесах");
+            tooltip("camo_biome.us_ucp", "Лучше всего в горах, на каменистых берегах и под землёй");
+            tooltip("camo_biome.us_tiger", "Лучше всего в джунглях, на болотах и в пышных пещерах");
+            tooltip("camo_biome.ru_flora", "Лучше всего на равнинах, в саваннах и лесах");
         }
 
         @Override

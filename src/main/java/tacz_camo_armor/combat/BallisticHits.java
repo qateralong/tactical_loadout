@@ -19,6 +19,7 @@ import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import tacz_camo_armor.TaczCamoArmor;
+import tacz_camo_armor.advancement.ModAdvancements;
 import tacz_camo_armor.config.ServerConfig;
 import tacz_camo_armor.item.TacticalArmorItem;
 import tacz_camo_armor.registry.ModTags;
@@ -173,6 +174,9 @@ public final class BallisticHits {
             PENDING_WEAR.remove(event.getEntity());
             if (event.getBlockedDamage() <= 0.0F) {
                 wear(event.getEntity(), wear.slot(), wear.damage());
+                if (wear.slot() == EquipmentSlot.HEAD && event.getEntity().isAlive()) {
+                    ModAdvancements.award(event.getEntity(), ModAdvancements.HELMET_SAVE);
+                }
             }
         }
     }

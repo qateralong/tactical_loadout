@@ -15,7 +15,11 @@ public enum CamoPattern {
     SNOW(ModTags.SNOW_FAVORED, null, true),
     EMR(ModTags.EMR_FAVORED, ModTags.EMR_UNFAVORED, false),
     GHILLIE(ModTags.GHILLIE_FAVORED, ModTags.GHILLIE_UNFAVORED, false),
-    GHILLIE_SNOW(ModTags.SNOW_FAVORED, null, true);
+    GHILLIE_SNOW(ModTags.SNOW_FAVORED, null, true),
+    UCP(ModTags.UCP_FAVORED, ModTags.UCP_UNFAVORED, false),
+    TIGER(ModTags.TIGER_FAVORED, ModTags.TIGER_UNFAVORED, false),
+    FLORA(ModTags.FLORA_FAVORED, ModTags.FLORA_UNFAVORED, false),
+    GHILLIE_DESERT(ModTags.DESERT_FAVORED, ModTags.DESERT_UNFAVORED, false);
 
     @Nullable
     private final TagKey<Biome> favored;
@@ -30,7 +34,7 @@ public enum CamoPattern {
     }
 
     public double strength() {
-        return this == GHILLIE || this == GHILLIE_SNOW ? ServerConfig.ghillieStrength() : 1.0;
+        return this == GHILLIE || this == GHILLIE_SNOW || this == GHILLIE_DESERT ? ServerConfig.ghillieStrength() : 1.0;
     }
 
     public double biomeFactor(Holder<Biome> biome) {

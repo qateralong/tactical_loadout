@@ -13,9 +13,13 @@ public enum ArmorSet {
     US_GREEN("us_green", ArmorForm.US, "olive", CamoPattern.OLIVE),
     US_MULTICAM("us_multicam", ArmorForm.US, "multicam", CamoPattern.MULTICAM),
     US_SNOW("us_snow", ArmorForm.US, "snow", CamoPattern.SNOW),
+    US_UCP("us_ucp", ArmorForm.US, "ucp", CamoPattern.UCP),
+    US_TIGER("us_tiger", ArmorForm.US, "tiger_stripe", CamoPattern.TIGER),
     RU_EMR("ru_emr", ArmorForm.RU, "emr", CamoPattern.EMR),
+    RU_FLORA("ru_flora", ArmorForm.RU, "flora", CamoPattern.FLORA),
     GHILLIE("ghillie", ArmorForm.GHILLIE, "ghillie", CamoPattern.GHILLIE),
     GHILLIE_SNOW("ghillie_snow", ArmorForm.GHILLIE, "snow_ghillie", CamoPattern.GHILLIE_SNOW),
+    GHILLIE_DESERT("ghillie_desert", ArmorForm.GHILLIE, "desert_ghillie", CamoPattern.GHILLIE_DESERT),
     SWAT("swat", ArmorForm.SWAT, "black", null);
 
     private final String id;

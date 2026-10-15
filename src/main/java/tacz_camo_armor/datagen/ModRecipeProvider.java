@@ -58,9 +58,12 @@ public class ModRecipeProvider extends RecipeProvider {
             case US_GREEN -> List.of(Tags.Items.DYES_GREEN);
             case US_MULTICAM -> List.of(Tags.Items.DYES_YELLOW, Tags.Items.DYES_GREEN, Tags.Items.DYES_BROWN);
             case US_SNOW -> List.of(Tags.Items.DYES_WHITE, Tags.Items.DYES_LIGHT_GRAY);
+            case US_UCP -> List.of(Tags.Items.DYES_LIGHT_GRAY, Tags.Items.DYES_GRAY, Tags.Items.DYES_LIME);
+            case US_TIGER -> List.of(Tags.Items.DYES_GREEN, Tags.Items.DYES_BROWN, Tags.Items.DYES_BLACK, Tags.Items.DYES_YELLOW);
+            case RU_FLORA -> List.of(Tags.Items.DYES_LIME, Tags.Items.DYES_GREEN, Tags.Items.DYES_BROWN);
             case RU_EMR -> List.of(Tags.Items.DYES_GREEN, Tags.Items.DYES_BROWN, Tags.Items.DYES_BLACK);
             case SWAT -> List.of(Tags.Items.DYES_BLACK);
-            case GHILLIE, GHILLIE_SNOW -> List.of();
+            case GHILLIE, GHILLIE_SNOW, GHILLIE_DESERT -> List.of();
         };
     }
 
@@ -83,6 +86,17 @@ public class ModRecipeProvider extends RecipeProvider {
                         .requires(Tags.Items.STRINGS)
                         .requires(Tags.Items.STRINGS)
                         .unlockedBy("has_snow_fabric", has(ModItems.fabric(ArmorSet.US_SNOW)))
+                        .save(output);
+                continue;
+            }
+            if (set == ArmorSet.GHILLIE_DESERT) {
+                ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.fabric(set), 2)
+                        .requires(ModItems.fabric(ArmorSet.US_DESERT))
+                        .requires(Ingredient.of(Items.DEAD_BUSH), 2)
+                        .requires(Ingredient.of(Items.SHORT_GRASS), 2)
+                        .requires(Tags.Items.STRINGS)
+                        .requires(Tags.Items.STRINGS)
+                        .unlockedBy("has_sand_fabric", has(ModItems.fabric(ArmorSet.US_DESERT)))
                         .save(output);
                 continue;
             }
@@ -169,6 +183,27 @@ public class ModRecipeProvider extends RecipeProvider {
         grenade(output, GrenadeKind.HE, 'T', Ingredient.of(Items.TNT), "I");
         grenade(output, GrenadeKind.FLASH, 'G', Ingredient.of(Tags.Items.GUNPOWDERS), "IDI");
         grenade(output, GrenadeKind.SMOKE, 'C', Ingredient.of(ItemTags.COALS), "IGI");
+        grenade(output, GrenadeKind.INCENDIARY, 'B', Ingredient.of(Items.BLAZE_POWDER), "IGI");
+        grenade(output, GrenadeKind.DECOY, 'R', Ingredient.of(Tags.Items.DUSTS_REDSTONE), "INI");
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.grenade(GrenadeKind.MOLOTOV), 2)
+                .pattern(" S ")
+                .pattern("GCG")
+                .pattern(" G ")
+                .define('S', Tags.Items.STRINGS)
+                .define('G', Tags.Items.GLASS_BLOCKS_COLORLESS)
+                .define('C', Ingredient.of(ItemTags.COALS))
+                .unlockedBy("has_coal", has(ItemTags.COALS))
+                .save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.ARMOR_REPAIR_KIT)
+                .pattern(" S ")
+                .pattern("KFK")
+                .pattern(" I ")
+                .define('S', Tags.Items.STRINGS)
+                .define('K', ModItems.KEVLAR_INSERT)
+                .define('F', ModTags.FABRICS)
+                .define('I', Tags.Items.INGOTS_IRON)
+                .unlockedBy("has_kevlar_insert", has(ModItems.KEVLAR_INSERT))
+                .save(output);
         SpecialRecipeBuilder.special(AttachDeviceRecipe::new).save(output, TaczCamoArmor.id("attach_device"));
         SpecialRecipeBuilder.special(DetachDeviceRecipe::new).save(output, TaczCamoArmor.id("detach_device"));
         SpecialRecipeBuilder.special(RechargeDeviceRecipe::new).save(output, TaczCamoArmor.id("recharge_device"));

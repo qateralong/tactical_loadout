@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "tacz_camo_armor:ceramic_plate"
+    },
+    "F": {
+      "item": "tacz_camo_armor:ucp_fabric"
+    },
+    "K": {
+      "item": "tacz_camo_armor:kevlar_insert"
+    }
+  },
+  "pattern": [
+    "KCK",
+    "F F",
+    "K K"
+  ],
+  "result": {
+    "count": 1,
+    "id": "tacz_camo_armor:us_ucp_heavy_leggings"
+  }
+}

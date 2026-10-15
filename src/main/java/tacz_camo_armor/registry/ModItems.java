@@ -12,6 +12,7 @@ import tacz_camo_armor.grenade.GrenadeKind;
 import tacz_camo_armor.item.ArmorPiece;
 import tacz_camo_armor.item.ArmorSet;
 import tacz_camo_armor.item.ArmorTier;
+import tacz_camo_armor.item.RepairKitItem;
 import tacz_camo_armor.item.TacticalArmorItem;
 
 import java.util.ArrayList;
@@ -27,6 +28,8 @@ public final class ModItems {
     public static final DeferredItem<Item> CERAMIC_PLATE = ITEMS.registerSimpleItem("ceramic_plate");
     public static final DeferredItem<Item> BATTERY = ITEMS.registerSimpleItem("battery");
     public static final DeferredItem<Item> GAS_FILTER = ITEMS.registerSimpleItem("gas_filter");
+    public static final DeferredItem<RepairKitItem> ARMOR_REPAIR_KIT =
+            ITEMS.register("armor_repair_kit", () -> new RepairKitItem(new Item.Properties()));
 
     private static final Map<DeviceKind, DeferredItem<DeviceItem>> DEVICES = new EnumMap<>(DeviceKind.class);
     private static final Map<GrenadeKind, DeferredItem<GrenadeItem>> GRENADES = new EnumMap<>(GrenadeKind.class);

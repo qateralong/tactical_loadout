@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "F": {
+      "item": "tacz_camo_armor:flora_fabric"
+    },
+    "K": {
+      "item": "tacz_camo_armor:kevlar_insert"
+    }
+  },
+  "pattern": [
+    "K K",
+    "KFK"
+  ],
+  "result": {
+    "count": 1,
+    "id": "tacz_camo_armor:ru_flora_medium_boots"
+  }
+}

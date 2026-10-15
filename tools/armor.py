@@ -21,9 +21,9 @@ ATLAS_W = 256
 FORMS = {
     "ct": ["ct"],
     "t": ["t"],
-    "us": ["us_woodland", "us_desert", "us_green", "us_multicam", "us_snow"],
-    "ru": ["ru_emr"],
-    "ghillie": ["ghillie", "ghillie_snow"],
+    "us": ["us_woodland", "us_desert", "us_green", "us_multicam", "us_snow", "us_ucp", "us_tiger"],
+    "ru": ["ru_emr", "ru_flora"],
+    "ghillie": ["ghillie", "ghillie_snow", "ghillie_desert"],
     "swat": ["swat"],
 }
 
@@ -433,7 +433,8 @@ def build(form):
 
 def palette(set_id):
     boot = {"ct": "232323", "t": "5b4632", "us_woodland": "3b3a33", "us_desert": "a08560", "us_green": "514e36",
-            "us_multicam": "8b7355", "us_snow": "bfc1c2", "ru_emr": "2e2c28", "ghillie": "4a4232", "ghillie_snow": "cfd2d3", "swat": "1d1d1f"}[set_id]
+            "us_multicam": "8b7355", "us_snow": "bfc1c2", "ru_emr": "2e2c28", "ghillie": "4a4232", "ghillie_snow": "cfd2d3", "swat": "1d1d1f",
+            "us_ucp": "8f8a76", "us_tiger": "3b3a2c", "ru_flora": "2e2c28", "ghillie_desert": "8a7556"}[set_id]
     shell = {"ct": "1f2a3d", "t": "4a4a40", "swat": "202124"}.get(set_id)
     knee = {"ct": "1e1f21", "t": "4a3a2a", "swat": "1b1b1d", "us_snow": "d9dcdc"}.get(set_id)
     knit = {"swat": "1a1a1c"}.get(set_id)

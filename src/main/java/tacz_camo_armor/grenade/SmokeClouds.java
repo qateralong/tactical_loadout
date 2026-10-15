@@ -2,10 +2,12 @@ package tacz_camo_armor.grenade;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingEvent;
+import org.jetbrains.annotations.Nullable;
 import tacz_camo_armor.TaczCamoArmor;
 import tacz_camo_armor.config.ServerConfig;
 
@@ -26,6 +28,18 @@ public final class SmokeClouds {
 
     static void remove(GrenadeEntity grenade) {
         ACTIVE.remove(grenade);
+    }
+
+    @Nullable
+    static GrenadeEntity coveringSmoke(Level level, Vec3 point) {
+        double radius = ServerConfig.smokeRadius();
+        for (GrenadeEntity smoke : ACTIVE) {
+            if (!smoke.isRemoved() && smoke.level() == level && smoke.isSmoking()
+                    && smoke.position().add(0, 1.0, 0).distanceTo(point) < radius) {
+                return smoke;
+            }
+        }
+        return null;
     }
 
     @SubscribeEvent

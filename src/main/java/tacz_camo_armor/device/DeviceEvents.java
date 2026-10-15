@@ -1,6 +1,8 @@
 package tacz_camo_armor.device;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -21,6 +23,7 @@ import tacz_camo_armor.registry.ModDataComponents;
 public final class DeviceEvents {
     private static final int EFFECT_TICKS = 300;
     private static final int REFRESH_BELOW = 220;
+    private static final int LOW_FRACTION = 10;
 
     private DeviceEvents() {
     }
@@ -48,6 +51,8 @@ public final class DeviceEvents {
             head.set(ModDataComponents.NVG.get(), drained);
             if (!drained.hasCharge()) {
                 Devices.toggleNvg(player);
+            } else {
+                warnIfLow(player, nvg, drained, "nvg_low");
             }
         }
     }
@@ -83,7 +88,19 @@ public final class DeviceEvents {
         if (mask == null || !mask.hasCharge()) {
             return false;
         }
-        head.set(ModDataComponents.GAS_MASK.get(), mask.withCharge(mask.clampedCharge() - cost));
+        MountedDevice used = mask.withCharge(mask.clampedCharge() - cost);
+        head.set(ModDataComponents.GAS_MASK.get(), used);
+        if (entity instanceof Player player) {
+            warnIfLow(player, mask, used, used.hasCharge() ? "filter_low" : "filter_empty");
+        }
         return true;
+    }
+
+    private static void warnIfLow(Player player, MountedDevice before, MountedDevice after, String message) {
+        int threshold = after.kind().maxCharge() / LOW_FRACTION;
+        if (before.clampedCharge() > threshold && after.clampedCharge() <= threshold || !after.hasCharge()) {
+            player.displayClientMessage(Component.translatable("message." + TaczCamoArmor.MOD_ID + "." + message)
+                    .withStyle(ChatFormatting.RED), true);
+        }
     }
 }

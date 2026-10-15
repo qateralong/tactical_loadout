@@ -1,0 +1,27 @@
+{
+  "parent": "tacz_camo_armor:main/flash_mob",
+  "criteria": {
+    "done": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.tacz_camo_armor.extinguish.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "tacz_camo_armor:smoke_grenade"
+    },
+    "title": {
+      "translate": "advancement.tacz_camo_armor.extinguish.title"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

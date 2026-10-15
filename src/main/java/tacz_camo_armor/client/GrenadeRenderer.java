@@ -25,6 +25,9 @@ public class GrenadeRenderer extends EntityRenderer<GrenadeEntity> {
     @Override
     public void render(GrenadeEntity entity, float entityYaw, float partialTick, PoseStack poseStack,
                        MultiBufferSource buffer, int packedLight) {
+        if (entity.isInvisible()) {
+            return;
+        }
         poseStack.pushPose();
         poseStack.translate(0.0F, 0.1F, 0.0F);
         poseStack.mulPose(Axis.YP.rotationDegrees(entity.heading()));

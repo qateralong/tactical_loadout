@@ -12,11 +12,12 @@ authors="qateralong"
 description='''
 Bullet-resistant tactical armor with working camouflage, night vision and CS2-style grenades.
 
-- 11 sets: CS2 CT and T, US Woodland, Desert, OD Green, MultiCam and Snow, Russian Ratnik (EMR), ghillie suits and SWAT.
+- 15 sets: CS2 CT and T, US Woodland, Desert, OD Green, MultiCam, Snow, UCP and Tiger Stripe, Russian Ratnik (EMR) and Flora, ghillie suits and SWAT.
 - Light, medium and heavy tiers with per-zone protection against bullets and other projectiles.
 - Camouflage that hides you from mobs, stronger in matching biomes and while sneaking.
 - Helmet-mounted PVS-14, GPNVG-18 and thermal imagers, plus a gas mask.
-- Frag, HE, flashbang and smoke grenades with a hold-to-charge throw.
+- Every CS2 grenade plus a frag: HE, flashbang, smoke, molotov, incendiary and decoy, with a hold-to-charge throw.
+- Armor repair kits for the anvil, grenade-throwing dispensers, advancements and loot in outposts, dungeons and ancient cities.
 
 Works on its own; TaCZ adds exact headshot detection and armor-piercing ammo support.
 '''

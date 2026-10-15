@@ -8,10 +8,12 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parent.parent
 ITEM_DIR = ROOT / "src/main/resources/assets/tacz_camo_armor/textures/item"
 
-SETS = ["ct", "t", "us_woodland", "us_desert", "us_green", "us_multicam", "us_snow", "ru_emr", "ghillie", "ghillie_snow", "swat"]
+SETS = ["ct", "t", "us_woodland", "us_desert", "us_green", "us_multicam", "us_snow", "us_ucp", "us_tiger", "ru_emr", "ru_flora",
+        "ghillie", "ghillie_snow", "ghillie_desert", "swat"]
 FABRIC_IDS = {"ct": "blue", "t": "beige", "us_woodland": "woodland", "us_desert": "sand", "us_green": "olive",
               "us_multicam": "multicam", "us_snow": "snow", "ru_emr": "emr", "ghillie": "ghillie",
-              "ghillie_snow": "snow_ghillie", "swat": "black"}
+              "ghillie_snow": "snow_ghillie", "swat": "black", "us_ucp": "ucp", "us_tiger": "tiger_stripe",
+              "ru_flora": "flora", "ghillie_desert": "desert_ghillie"}
 
 
 def hex_rgb(value):
@@ -61,6 +63,21 @@ def layered(w, h, scale, rng, palette, thresholds):
     return out
 
 
+def stretched(w, h, cell, rng, sx, sy):
+    small = fbm(max(2, w // sx), max(2, h // sy), max(1, cell // max(sx, sy)), rng)
+    img = Image.fromarray((small * 255).astype(np.uint8), "L").resize((w, h), Image.BILINEAR)
+    return np.asarray(img, dtype=np.float64) / 255.0
+
+
+def striped(w, h, scale, rng, palette, thresholds, sx, sy):
+    out = np.empty((h, w, 3))
+    out[:] = palette[0]
+    for color, threshold in zip(palette[1:], thresholds):
+        field = stretched(w, h, scale * 2, rng, sx, sy)
+        out[field >= np.quantile(field, threshold)] = color
+    return out
+
+
 def speckle(w, h, rng, base, dark, amount):
     out = np.empty((h, w, 3))
     out[:] = base
@@ -89,6 +106,19 @@ def pattern(set_id, w, h, scale, seed=1):
         palette = [hex_rgb("7a7a52"), hex_rgb("525b3a"), hex_rgb("6e5639"), hex_rgb("2b2b25")]
         small = layered(max(1, w // 2), max(1, h // 2), max(1, scale // 2), rng, palette, [0.5, 0.72, 0.88])
         return np.repeat(np.repeat(small, 2, axis=0), 2, axis=1)[:h, :w]
+    if set_id == "us_ucp":
+        palette = [hex_rgb("c9c8b8"), hex_rgb("9a9d8c"), hex_rgb("7f876f")]
+        small = layered(max(1, w // 2), max(1, h // 2), max(1, scale // 2), rng, palette, [0.55, 0.8])
+        return np.repeat(np.repeat(small, 2, axis=0), 2, axis=1)[:h, :w]
+    if set_id == "us_tiger":
+        palette = [hex_rgb("8a875a"), hex_rgb("5a5a36"), hex_rgb("5e4630"), hex_rgb("1f1f19")]
+        return striped(w, h, scale, rng, palette, [0.5, 0.72, 0.86], 4, 1)
+    if set_id == "ru_flora":
+        palette = [hex_rgb("8f9b62"), hex_rgb("5b6e3c"), hex_rgb("6e5a3c")]
+        return striped(w, h, scale, rng, palette, [0.5, 0.78], 1, 3)
+    if set_id == "ghillie_desert":
+        palette = [hex_rgb("c4ae82"), hex_rgb("a8915f"), hex_rgb("8a7b52"), hex_rgb("6e6446")]
+        return layered(w, h, max(1, scale // 2), rng, palette, [0.45, 0.68, 0.86])
     if set_id == "ghillie":
         palette = [hex_rgb("525c33"), hex_rgb("6d6b3d"), hex_rgb("3a4224"), hex_rgb("6b583a")]
         return layered(w, h, max(1, scale // 2), rng, palette, [0.45, 0.65, 0.85])
@@ -148,6 +178,38 @@ PLATE_MASK = [
 ]
 
 
+
+
+REPAIR_KIT = [
+    "................",
+    "......mmmm......",
+    ".....m....m.....",
+    "..############..",
+    "..#ffffffffff#..",
+    "..#ffffffffff#..",
+    "..#####bb#####..",
+    "..#ooooBBoooo#..",
+    "..#oyyyyyyyyo#..",
+    "..#oyKyKyKyyo#..",
+    "..#oyyyyyyyyo#..",
+    "..#oyKyKyKyyo#..",
+    "..#oyyyyyyyyo#..",
+    "..#oooooooooo#..",
+    "..############..",
+    "................",
+]
+REPAIR_KIT_COLORS = {"#": "26291d", "o": "56603a", "f": "636e43", "b": "8f9295", "B": "5d6063", "m": "3a3c3e",
+                     "y": "c2a94a", "K": "9e8838"}
+
+
+def pixel_icon(rows, colors):
+    img = np.zeros((16, 16, 4))
+    for y, row in enumerate(rows):
+        for x, c in enumerate(row):
+            if c != ".":
+                img[y, x, :3] = hex_rgb(colors[c]) * (1.1 - 0.2 * y / 15)
+                img[y, x, 3] = 255
+    return Image.fromarray(np.clip(img, 0, 255).astype(np.uint8), "RGBA")
 
 
 def colorize(rows, fill):
@@ -240,6 +302,7 @@ def main():
     save(colorize(PLATE_MASK, kevlar), "kevlar_insert")
     save(colorize(PLATE_MASK, solid("9a8f86")), "raw_ceramic_plate")
     save(colorize(PLATE_MASK, solid("ddd8cc")), "ceramic_plate")
+    save(pixel_icon(REPAIR_KIT, REPAIR_KIT_COLORS), "armor_repair_kit")
     overlays()
     smoke_puffs()
     print(f"wrote {len(list(ITEM_DIR.glob('*.png')))} textures to {ITEM_DIR.relative_to(ROOT)}")
