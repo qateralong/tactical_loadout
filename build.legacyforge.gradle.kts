@@ -70,6 +70,10 @@ repositories {
             includeGroup("com.eliotlash.mclib")
         }
     }
+    exclusiveContent {
+        forRepository { maven("https://api.modrinth.com/maven") { name = "Modrinth" } }
+        filter { includeGroup("maven.modrinth") }
+    }
     maven("https://maven.blamejared.com") {
         name = "BlameJared"
         content {
@@ -82,6 +86,7 @@ repositories {
 dependencies {
     annotationProcessor("org.spongepowered:mixin:0.8.5:processor")
     modImplementation("software.bernie.geckolib:geckolib-forge-$mcVersion:${property("deps.geckolib")}")
+    modImplementation(property("deps.tacz") as String)
     modCompileOnly("mezz.jei:jei-$mcVersion-common-api:${property("deps.jei")}") { isTransitive = false }
     modCompileOnly("mezz.jei:jei-$mcVersion-forge-api:${property("deps.jei")}") { isTransitive = false }
     modRuntimeOnly("mezz.jei:jei-$mcVersion-forge:${property("deps.jei")}") { isTransitive = false }

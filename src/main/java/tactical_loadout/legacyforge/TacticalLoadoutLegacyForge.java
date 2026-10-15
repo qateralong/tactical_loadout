@@ -23,5 +23,8 @@ public final class TacticalLoadoutLegacyForge {
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ServerConfig.SPEC);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ClientConfig.SPEC);
         MinecraftForge.EVENT_BUS.register(LegacyForgeEvents.class);
+        if (Platform.INSTANCE.isModLoaded("tacz")) {
+            TaczCompat.init();
+        }
     }
 }
