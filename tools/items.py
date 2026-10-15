@@ -20,7 +20,7 @@ NS = "tactical_loadout"
 FORMS = {
     "ct": ["ct"], "t": ["t"], "ru": ["ru_emr", "ru_flora"], "swat": ["swat"],
     "us": ["us_woodland", "us_desert", "us_green", "us_multicam", "us_snow", "us_ucp", "us_tiger"],
-    "ghillie": ["ghillie", "ghillie_snow", "ghillie_desert"],
+    "ghillie": ["ghillie", "ghillie_snow", "ghillie_desert"], "eod": ["eod"],
 }
 TIERS = ["light", "medium", "heavy"]
 PIECES = {
@@ -372,7 +372,7 @@ def armor_models():
             textures.append(f"{NS}:armor/{set_id}")
             texture = f"{NS}:armor/{set_id}"
             for level, tier in enumerate(TIERS):
-                if form == "ghillie" and level > 0:
+                if form == "ghillie" and level > 0 or form == "eod" and tier != "heavy":
                     continue
                 for piece, slot_bones in PIECES.items():
                     names = list(slot_bones)

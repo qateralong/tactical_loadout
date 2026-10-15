@@ -36,7 +36,8 @@ public final class Devices {
         if (!(helmet.getItem() instanceof TacticalArmorItem armor) || armor.piece() != ArmorPiece.HELMET) {
             return false;
         }
-        if (kind.isNvg() && !NVG_FORMS.contains(armor.set().form())) {
+        // The bomb suit helmet has a sealed blast visor with no room for devices.
+        if (armor.set().form() == ArmorForm.EOD || kind.isNvg() && !NVG_FORMS.contains(armor.set().form())) {
             return false;
         }
         return !component(kind).has(helmet);

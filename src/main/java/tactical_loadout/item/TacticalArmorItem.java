@@ -68,6 +68,15 @@ public class TacticalArmorItem extends ArmorItem implements GeoItem {
     @Override
     public ItemAttributeModifiers getDefaultAttributeModifiers() {
         ItemAttributeModifiers modifiers = super.getDefaultAttributeModifiers();
+        EquipmentSlotGroup group = EquipmentSlotGroup.bySlot(getEquipmentSlot());
+        if (set == ArmorSet.EOD) {
+            // Each piece carries a quarter of the full suit's weight.
+            modifiers = modifiers
+                    .withModifierAdded(Attributes.MOVEMENT_SPEED, new AttributeModifier(TacticalLoadout.id("eod_slowdown_" + piece.id()),
+                            -ServerConfig.eodSlowdown() / 4, AttributeModifier.Operation.ADD_MULTIPLIED_BASE), group)
+                    .withModifierAdded(Attributes.JUMP_STRENGTH, new AttributeModifier(TacticalLoadout.id("eod_jump_" + piece.id()),
+                            -ServerConfig.eodJumpReduction() / 4, AttributeModifier.Operation.ADD_MULTIPLIED_BASE), group);
+        }
         if (tier != ArmorTier.HEAVY) {
             return modifiers;
         }
@@ -78,7 +87,7 @@ public class TacticalArmorItem extends ArmorItem implements GeoItem {
         AttributeModifier modifier = new AttributeModifier(
                 TacticalLoadout.id("heavy_slowdown_" + piece.id()), -slowdown,
                 AttributeModifier.Operation.ADD_MULTIPLIED_BASE);
-        return modifiers.withModifierAdded(Attributes.MOVEMENT_SPEED, modifier, EquipmentSlotGroup.bySlot(getEquipmentSlot()));
+        return modifiers.withModifierAdded(Attributes.MOVEMENT_SPEED, modifier, group);
     }
     //?} else {
     /*@Override
@@ -106,6 +115,10 @@ public class TacticalArmorItem extends ArmorItem implements GeoItem {
         Component zone = Component.translatable("tooltip." + TacticalLoadout.MOD_ID + ".zone." + piece.id());
         tooltip.add(Component.translatable("tooltip." + TacticalLoadout.MOD_ID + ".bullet_protection", percent, zone)
                 .withStyle(ChatFormatting.GRAY));
+        if (set == ArmorSet.EOD) {
+            tooltip.add(Component.translatable("tooltip." + TacticalLoadout.MOD_ID + ".eod", Math.round(ServerConfig.eodBlastReduction() * 100))
+                    .withStyle(ChatFormatting.GOLD));
+        }
         appendDevices(stack, tooltip);
         if (set.camo() != null) {
             double strength = set.camo().strength();

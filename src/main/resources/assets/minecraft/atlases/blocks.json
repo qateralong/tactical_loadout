@@ -59,6 +59,10 @@
     {
       "type": "single",
       "resource": "tactical_loadout:armor/ghillie_desert"
+    },
+    {
+      "type": "single",
+      "resource": "tactical_loadout:armor/eod"
     }
   ]
 }

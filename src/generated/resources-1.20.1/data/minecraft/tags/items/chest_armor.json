@@ -38,6 +38,7 @@
     "tactical_loadout:ghillie_desert_light_plate_carrier",
     "tactical_loadout:swat_light_plate_carrier",
     "tactical_loadout:swat_medium_plate_carrier",
-    "tactical_loadout:swat_heavy_plate_carrier"
+    "tactical_loadout:swat_heavy_plate_carrier",
+    "tactical_loadout:eod_heavy_plate_carrier"
   ]
 }

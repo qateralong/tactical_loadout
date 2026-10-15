@@ -109,7 +109,11 @@ public class JeiCompat implements IModPlugin {
         } else {
             lines.add(Component.translatable(INFO + "no_camo"));
         }
-        lines.add(Component.translatable(INFO + (Devices.NVG_FORMS.contains(set.form()) ? "nvg_fits" : "mask_fits")));
+        if (set == ArmorSet.EOD) {
+            lines.add(Component.translatable(INFO + "eod", percent(ServerConfig.eodBlastReduction()), percent(ServerConfig.eodSlowdown())));
+        } else {
+            lines.add(Component.translatable(INFO + (Devices.NVG_FORMS.contains(set.form()) ? "nvg_fits" : "mask_fits")));
+        }
         return lines.toArray(Component[]::new);
     }
 

@@ -155,6 +155,10 @@
     "tactical_loadout:swat_heavy_helmet",
     "tactical_loadout:swat_heavy_plate_carrier",
     "tactical_loadout:swat_heavy_leggings",
-    "tactical_loadout:swat_heavy_boots"
+    "tactical_loadout:swat_heavy_boots",
+    "tactical_loadout:eod_heavy_helmet",
+    "tactical_loadout:eod_heavy_plate_carrier",
+    "tactical_loadout:eod_heavy_leggings",
+    "tactical_loadout:eod_heavy_boots"
   ]
 }

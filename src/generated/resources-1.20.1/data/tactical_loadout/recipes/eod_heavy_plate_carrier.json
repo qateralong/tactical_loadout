@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "tactical_loadout:ceramic_plate"
+    },
+    "F": {
+      "item": "tactical_loadout:padded_fabric"
+    },
+    "K": {
+      "item": "tactical_loadout:kevlar_insert"
+    }
+  },
+  "pattern": [
+    "F F",
+    "KCK",
+    "FKF"
+  ],
+  "result": {
+    "count": 1,
+    "item": "tactical_loadout:eod_heavy_plate_carrier"
+  }
+}

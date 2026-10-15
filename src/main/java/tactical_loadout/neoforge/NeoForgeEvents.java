@@ -29,6 +29,7 @@ import tactical_loadout.camo.Camouflage;
 import tactical_loadout.combat.BallisticHits;
 import tactical_loadout.device.DeviceEvents;
 import tactical_loadout.grenade.SmokeClouds;
+import tactical_loadout.gear.EodSuit;
 import tactical_loadout.gear.Helpless;
 import tactical_loadout.gear.Restraints;
 import tactical_loadout.item.RepairKitItem;
@@ -54,6 +55,7 @@ public final class NeoForgeEvents {
             event.setCanceled(true);
             return;
         }
+        event.setAmount(EodSuit.blastDamage(target, event.getSource(), event.getAmount()));
         event.setAmount(BallisticHits.onIncomingDamage(target, event.getSource(), event.getAmount()));
         if (BallisticHits.excludesOwnArmor(target, event.getSource())) {
             event.addReductionModifier(DamageContainer.Reduction.ARMOR, (container, reduction) ->

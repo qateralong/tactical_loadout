@@ -63,12 +63,22 @@ public class ModRecipeProvider extends RecipeProvider {
             case RU_FLORA -> List.of(Tags.Items.DYES_LIME, Tags.Items.DYES_GREEN, Tags.Items.DYES_BROWN);
             case RU_EMR -> List.of(Tags.Items.DYES_GREEN, Tags.Items.DYES_BROWN, Tags.Items.DYES_BLACK);
             case SWAT -> List.of(Tags.Items.DYES_BLACK);
-            case GHILLIE, GHILLIE_SNOW, GHILLIE_DESERT -> List.of();
+            case GHILLIE, GHILLIE_SNOW, GHILLIE_DESERT, EOD -> List.of();
         };
     }
 
     private void buildFabrics(RecipeOutput output) {
         for (ArmorSet set : ArmorSet.values()) {
+            if (set == ArmorSet.EOD) {
+                ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.fabric(set), 2)
+                        .requires(ModItems.fabric(ArmorSet.US_GREEN))
+                        .requires(ModItems.KEVLAR_INSERT)
+                        .requires(ItemTags.WOOL)
+                        .requires(ItemTags.WOOL)
+                        .unlockedBy("has_kevlar_insert", has(ModItems.KEVLAR_INSERT))
+                        .save(output);
+                continue;
+            }
             if (set == ArmorSet.GHILLIE) {
                 ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.fabric(set), 2)
                         .requires(ModItems.fabric(ArmorSet.US_GREEN))

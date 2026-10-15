@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "tactical_loadout:olive_fabric"
+    },
+    {
+      "item": "tactical_loadout:kevlar_insert"
+    },
+    {
+      "tag": "minecraft:wool"
+    },
+    {
+      "tag": "minecraft:wool"
+    }
+  ],
+  "result": {
+    "count": 2,
+    "item": "tactical_loadout:padded_fabric"
+  }
+}

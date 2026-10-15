@@ -25,6 +25,7 @@ FORMS = {
     "ru": ["ru_emr", "ru_flora"],
     "ghillie": ["ghillie", "ghillie_snow", "ghillie_desert"],
     "swat": ["swat"],
+    "eod": ["eod"],
 }
 
 PIVOTS = {
@@ -284,6 +285,45 @@ def vest_swat(m):
     m.add(b, "light", (1.5, 21.5, -3.75), (3.5, 23.5, -3.25), "pouch")
 
 
+# A bomb suit: an oversized helmet with a blast visor, a high collar, a thick padded jacket and padded legs.
+def helmet_eod(m):
+    h = "armorHead"
+    m.add(h, "light", (-5.25, 23.5, -5.25), (5.25, 33, 5.25), "shell")
+    m.add(h, "light", (-4.5, 33, -4.5), (4.5, 33.75, 4.5), "shell")
+    m.add(h, "light", (-3.75, 25, -5.75), (3.75, 31, -5.25), "visor")
+    m.add(h, "light", (-4.5, 23.5, -5.6), (4.5, 25, -5.25), "polymer")
+    m.add(h, "light", (-4.25, 31, -5.6), (4.25, 31.75, -5.25), "polymer")
+    m.add(h, "light", (-5.75, 27.5, -1.5), (-5.25, 30.5, 1.5), "metal", sym=True)
+
+
+def suit_eod(m):
+    b = "armorBody"
+    m.add(b, "light", (-4.75, 11.5, -3), (4.75, 24, 3), "fabric", inflate=0.6)
+    m.add(b, "light", (-4.5, 22.5, -4.25), (4.5, 26, -3.25), "fabric")
+    m.add(b, "light", (-5.25, 22.5, -3.25), (-4.25, 26, 3.25), "fabric", sym=True)
+    m.add(b, "light", (-4.5, 22.5, 3.25), (4.5, 26.5, 4.25), "fabric")
+    m.add(b, "light", (-4, 13, -4.1), (4, 22, -3.4), "plate")
+    m.add(b, "light", (-3.25, 8.5, -3.6), (3.25, 12, -3), "plate")
+    m.add(b, "light", (-4.25, 15, 3.4), (4.25, 21, 4), "pouch")
+    m.add("armorRightArm", "light", (-8.75, 11.5, -2.75), (-3.25, 24.5, 2.75), "fabric", inflate=0.3, mirror=True)
+    m.add("armorRightArm", "light", (-9.25, 20.5, -3), (-3.5, 25, 3), "plate", mirror=True)
+    m.add("armorRightArm", "light", (-9, 13, -2.9), (-3.4, 14, 2.9), "strap", mirror=True)
+
+
+def legs_eod(m):
+    r = "armorRightLeg"
+    m.add(r, "light", (-4.4, 0.5, -2.6), (0.6, 12.5, 2.6), "fabric", inflate=0.35, mirror=True)
+    m.add(r, "light", (-3.9, 2.5, -3.25), (-0.1, 10.5, -2.75), "plate", mirror=True)
+    m.add(r, "light", (-4.95, 6, -1.75), (-4.55, 10, 1.75), "pouch", mirror=True)
+
+
+def boots_eod(m):
+    r = "armorRightBoot"
+    m.add(r, "light", (-4.6, 0, -3.3), (0.8, 5.5, 2.8), "boot", mirror=True)
+    m.add(r, "light", (-4.7, 0, -3.5), (0.9, 0.75, 2.9), "sole", mirror=True)
+    m.add(r, "light", (-4.7, 4.5, -3.4), (0.9, 5.25, 2.9), "strap", mirror=True)
+
+
 def nvg_devices(m, mz):
     h = "armorHead"
     mount = m.extra("nvg_mount", h, [0, 24, 0])
@@ -339,6 +379,7 @@ BUILDERS = {
     "ru": [helmet_ru, vest_ru, leggings, boots, lambda m: nvg_devices(m, -5.0), gas_mask],
     "ghillie": [ghillie_suit, boots, gas_mask],
     "swat": [helmet_swat, vest_swat, leggings, boots, lambda m: nvg_devices(m, -5.0), gas_mask],
+    "eod": [helmet_eod, suit_eod, legs_eod, boots_eod],
 }
 
 
@@ -442,8 +483,8 @@ def build(form):
 def palette(set_id):
     boot = {"ct": "232323", "t": "5b4632", "us_woodland": "3b3a33", "us_desert": "a08560", "us_green": "514e36",
             "us_multicam": "8b7355", "us_snow": "bfc1c2", "ru_emr": "2e2c28", "ghillie": "4a4232", "ghillie_snow": "cfd2d3", "swat": "1d1d1f",
-            "us_ucp": "8f8a76", "us_tiger": "3b3a2c", "ru_flora": "2e2c28", "ghillie_desert": "8a7556"}[set_id]
-    shell = {"ct": "1f2a3d", "t": "4a4a40", "swat": "202124"}.get(set_id)
+            "us_ucp": "8f8a76", "us_tiger": "3b3a2c", "ru_flora": "2e2c28", "ghillie_desert": "8a7556", "eod": "2b2c26"}[set_id]
+    shell = {"ct": "1f2a3d", "t": "4a4a40", "swat": "202124", "eod": "4f5636"}.get(set_id)
     knee = {"ct": "1e1f21", "t": "4a3a2a", "swat": "1b1b1d", "us_snow": "d9dcdc"}.get(set_id)
     knit = {"swat": "1a1a1c"}.get(set_id)
     return {"boot": hex_rgb(boot), "shell": None if shell is None else hex_rgb(shell),

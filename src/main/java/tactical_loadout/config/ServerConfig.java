@@ -25,6 +25,9 @@ public final class ServerConfig {
     private static final ModConfigSpec.BooleanValue NVG_USES_BATTERY;
     private static final ModConfigSpec.IntValue NVG_BATTERY_SECONDS;
     private static final ModConfigSpec.IntValue ZIP_TIE_STRUGGLES;
+    private static final ModConfigSpec.DoubleValue EOD_BLAST_REDUCTION;
+    private static final ModConfigSpec.DoubleValue EOD_SLOWDOWN;
+    private static final ModConfigSpec.DoubleValue EOD_JUMP_REDUCTION;
     private static final ModConfigSpec.DoubleValue BLEED_CHANCE;
     private static final ModConfigSpec.IntValue BLEED_SECONDS;
     private static final ModConfigSpec.DoubleValue MEDKIT_HEALTH;
@@ -151,6 +154,15 @@ public final class ServerConfig {
         builder.translation(key("repair")).push("repair");
         REPAIR_KIT_FRACTION = builder.comment("Share of a piece's durability restored by one armor repair kit in an anvil.")
                 .translation(key("repairKitFraction")).defineInRange("repairKitFraction", 0.5, 0.05, 1.0);
+        builder.pop();
+
+        builder.translation(key("eod")).push("eod");
+        EOD_BLAST_REDUCTION = builder.comment("Share of explosion damage blocked by a full bomb suit.")
+                .translation(key("eodBlastReduction")).defineInRange("eodBlastReduction", 0.95, 0.0, 1.0);
+        EOD_SLOWDOWN = builder.comment("Walking speed lost in a full bomb suit, on top of the heavy armor slowdown.")
+                .translation(key("eodSlowdown")).defineInRange("eodSlowdown", 0.5, 0.0, 0.9);
+        EOD_JUMP_REDUCTION = builder.comment("Jump strength lost in a full bomb suit; about 0.1 still clears one block.")
+                .translation(key("eodJumpReduction")).defineInRange("eodJumpReduction", 0.1, 0.0, 0.9);
         builder.pop();
 
         builder.translation(key("restraints")).push("restraints");
@@ -283,6 +295,18 @@ public final class ServerConfig {
 
     public static double medkitHealth() {
         return get(MEDKIT_HEALTH);
+    }
+
+    public static double eodBlastReduction() {
+        return get(EOD_BLAST_REDUCTION);
+    }
+
+    public static double eodSlowdown() {
+        return get(EOD_SLOWDOWN);
+    }
+
+    public static double eodJumpReduction() {
+        return get(EOD_JUMP_REDUCTION);
     }
 
     public static int zipTieStruggles() {

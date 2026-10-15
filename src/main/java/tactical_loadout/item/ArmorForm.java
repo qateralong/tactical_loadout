@@ -6,7 +6,8 @@ public enum ArmorForm {
     US("us"),
     RU("ru"),
     GHILLIE("ghillie"),
-    SWAT("swat");
+    SWAT("swat"),
+    EOD("eod");
 
     private final String id;
 

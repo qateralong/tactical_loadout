@@ -9,11 +9,11 @@ ROOT = Path(__file__).resolve().parent.parent
 ITEM_DIR = ROOT / "src/main/resources/assets/tactical_loadout/textures/item"
 
 SETS = ["ct", "t", "us_woodland", "us_desert", "us_green", "us_multicam", "us_snow", "us_ucp", "us_tiger", "ru_emr", "ru_flora",
-        "ghillie", "ghillie_snow", "ghillie_desert", "swat"]
+        "ghillie", "ghillie_snow", "ghillie_desert", "swat", "eod"]
 FABRIC_IDS = {"ct": "blue", "t": "beige", "us_woodland": "woodland", "us_desert": "sand", "us_green": "olive",
               "us_multicam": "multicam", "us_snow": "snow", "ru_emr": "emr", "ghillie": "ghillie",
               "ghillie_snow": "snow_ghillie", "swat": "black", "us_ucp": "ucp", "us_tiger": "tiger_stripe",
-              "ru_flora": "flora", "ghillie_desert": "desert_ghillie"}
+              "ru_flora": "flora", "ghillie_desert": "desert_ghillie", "eod": "padded"}
 
 
 def hex_rgb(value):
@@ -127,6 +127,8 @@ def pattern(set_id, w, h, scale, seed=1):
         return layered(w, h, max(1, scale // 2), rng, palette, [0.45, 0.68, 0.88])
     if set_id == "swat":
         return speckle(w, h, rng, hex_rgb("26282b"), hex_rgb("1f2023"), 0.3)
+    if set_id == "eod":
+        return speckle(w, h, rng, hex_rgb("5d6340"), hex_rgb("51573a"), 0.3)
     if set_id == "ct":
         return speckle(w, h, rng, hex_rgb("2f3d58"), hex_rgb("26324a"), 0.3)
     if set_id == "t":

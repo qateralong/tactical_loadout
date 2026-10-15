@@ -50,6 +50,7 @@ public abstract class ModLanguageProvider extends LanguageProvider {
             case GHILLIE_SNOW -> "Snow Ghillie";
             case GHILLIE_DESERT -> "Desert Ghillie";
             case SWAT -> "SWAT";
+            case EOD -> "EOD";
         };
     }
 
@@ -108,6 +109,7 @@ public abstract class ModLanguageProvider extends LanguageProvider {
                 case GHILLIE_SNOW -> "Snow Ghillie Fabric";
                 case GHILLIE_DESERT -> "Desert Ghillie Fabric";
                 case SWAT -> "Black Fabric";
+                case EOD -> "Padded Fabric";
             };
         }
 
@@ -118,6 +120,14 @@ public abstract class ModLanguageProvider extends LanguageProvider {
                 case MEDIUM -> "Medium";
                 case HEAVY -> "Heavy";
             };
+            if (set == ArmorSet.EOD) {
+                return switch (piece) {
+                    case HELMET -> "EOD Helmet";
+                    case PLATE_CARRIER -> "EOD Suit Jacket";
+                    case LEGGINGS -> "EOD Suit Trousers";
+                    case BOOTS -> "EOD Boots";
+                };
+            }
             boolean ghillie = set.form() == ArmorForm.GHILLIE;
             String pieceName = switch (piece) {
                 case HELMET -> set == ArmorSet.T ? "Balaclava" : ghillie ? "Hood" : "Helmet";
@@ -273,6 +283,12 @@ public abstract class ModLanguageProvider extends LanguageProvider {
             add("tactical_loadout.configuration.reviveSeconds", "Time to pick someone up (seconds)");
             add("tactical_loadout.configuration.reviveHealth", "Health after being picked up");
             add("tactical_loadout.configuration.selfReviveChance", "Chance to get up alone");
+            add("tooltip.tactical_loadout.eod", "Full set: blocks %s%% of explosion damage");
+            add("jei.tactical_loadout.eod", "Bomb suit. A full set blocks %s%% of explosion damage, but it is very heavy: it slows you down by %s%% on top of the heavy armor slowdown and makes jumps lower. The sealed helmet takes no night vision, thermal imager or gas mask.");
+            add("tactical_loadout.configuration.eod", "Bomb suit");
+            add("tactical_loadout.configuration.eodBlastReduction", "Explosion damage blocked by a full suit");
+            add("tactical_loadout.configuration.eodSlowdown", "Speed lost in a full suit");
+            add("tactical_loadout.configuration.eodJumpReduction", "Jump strength lost in a full suit");
             add(ModItems.ZIP_TIES.get(), "Zip Ties");
             add("tooltip.tactical_loadout.zip_ties", "Right-click a player %s times quickly to tie them up; they need %s key presses to break free");
             add("jei.tactical_loadout.zip_ties", "Right-click another player %1$s times in a row to tie them up. A tied player can't move, jump, attack, shoot or use anything. To break free they press the jump key %2$s times; anyone can also cut them loose with shears, %1$s clicks in a row. Respawning frees them too.");
@@ -379,6 +395,7 @@ public abstract class ModLanguageProvider extends LanguageProvider {
                 case GHILLIE_SNOW -> "Снежная маскировочная ткань гилли";
                 case GHILLIE_DESERT -> "Пустынная маскировочная ткань гилли";
                 case SWAT -> "Чёрная ткань";
+                case EOD -> "Стёганая ткань";
             };
         }
 
@@ -396,6 +413,14 @@ public abstract class ModLanguageProvider extends LanguageProvider {
                     case LEGGINGS -> "Штаны";
                     case BOOTS -> "Ботинки";
                 } + suffix;
+            }
+            if (set == ArmorSet.EOD) {
+                return switch (piece) {
+                    case HELMET -> "Шлем сапёра";
+                    case PLATE_CARRIER -> "Куртка костюма сапёра";
+                    case LEGGINGS -> "Штаны костюма сапёра";
+                    case BOOTS -> "Ботинки сапёра";
+                };
             }
             boolean feminine = (piece == ArmorPiece.PLATE_CARRIER && set.form() != ArmorForm.RU)
                     || (piece == ArmorPiece.HELMET && set == ArmorSet.T);
@@ -556,6 +581,12 @@ public abstract class ModLanguageProvider extends LanguageProvider {
             add("tactical_loadout.configuration.reviveSeconds", "Время, чтобы поднять (секунды)");
             add("tactical_loadout.configuration.reviveHealth", "Здоровье после подъёма");
             add("tactical_loadout.configuration.selfReviveChance", "Шанс подняться самому");
+            add("tooltip.tactical_loadout.eod", "Полный комплект: поглощает %s%% урона от взрывов");
+            add("jei.tactical_loadout.eod", "Костюм сапёра. Полный комплект поглощает %s%% урона от взрывов, но он очень тяжёлый: замедляет ещё на %s%% сверх тяжёлой брони и снижает прыжок. На герметичный шлем нельзя поставить ни ПНВ, ни тепловизор, ни противогаз.");
+            add("tactical_loadout.configuration.eod", "Костюм сапёра");
+            add("tactical_loadout.configuration.eodBlastReduction", "Защита полного костюма от взрывов");
+            add("tactical_loadout.configuration.eodSlowdown", "Замедление полного костюма");
+            add("tactical_loadout.configuration.eodJumpReduction", "Снижение прыжка в полном костюме");
             add(ModItems.ZIP_TIES.get(), "Стяжки");
             add("tooltip.tactical_loadout.zip_ties", "Быстро кликните ПКМ по игроку %s раза, чтобы связать; чтобы освободиться, ему нужно %s нажатий");
             add("jei.tactical_loadout.zip_ties", "Кликните ПКМ по другому игроку %1$s раза подряд, чтобы связать его. Связанный не может ходить, прыгать, бить, стрелять и пользоваться предметами. Чтобы освободиться, он жмёт клавишу прыжка %2$s раз; любой может разрезать стяжки ножницами, тоже %1$s клика подряд. Возрождение тоже освобождает.");
