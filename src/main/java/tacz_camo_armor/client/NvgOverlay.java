@@ -63,7 +63,7 @@ public final class NvgOverlay {
             }
             case THERMAL -> vignette(graphics, THERMAL, width, height, Math.round(width * 1.12F), Math.round(height * 1.12F));
             default -> {
-                int size = Math.round(height * 1.45F);
+                int size = Math.round(height * 1.7F);
                 vignette(graphics, MONO, width, height, size, size);
             }
         }
