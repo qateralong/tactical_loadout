@@ -11,7 +11,9 @@ import java.util.function.Supplier;
 
 /** Everything the shared code needs from the mod loader. */
 public interface Platform {
+    //? if neoforge {
     Platform INSTANCE = new tacz_camo_armor.neoforge.NeoForgePlatform();
+    //?}
 
     <R, T extends R> RegistryEntry<R, T> register(ResourceKey<? extends Registry<R>> registry, String name, Supplier<T> factory);
 
