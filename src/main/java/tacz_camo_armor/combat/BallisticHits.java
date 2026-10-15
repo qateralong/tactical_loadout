@@ -11,14 +11,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.common.damagesource.DamageContainer;
-import net.neoforged.neoforge.event.entity.living.ArmorHurtEvent;
-import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
-import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
-import net.neoforged.neoforge.event.server.ServerStoppedEvent;
-import tacz_camo_armor.TaczCamoArmor;
 import tacz_camo_armor.advancement.ModAdvancements;
 import tacz_camo_armor.config.ServerConfig;
 import tacz_camo_armor.item.TacticalArmorItem;
@@ -38,7 +30,6 @@ import java.util.function.Predicate;
  * from the shooter's line of sight. Integrations that know the exact hit call {@link #expect} right before the damage
  * is dealt and {@link #claim} their damage types so the generic path leaves them alone.
  */
-@EventBusSubscriber(modid = TaczCamoArmor.MOD_ID)
 public final class BallisticHits {
     private static final List<Predicate<DamageSource>> CLAIMS = new CopyOnWriteArrayList<>();
     private static final double HITSCAN_RANGE = 256.0;
@@ -132,70 +123,60 @@ public final class BallisticHits {
         return from == null ? EquipmentSlot.CHEST : zoneSlot(box, Mth.clamp(from.y, box.minY, box.maxY));
     }
 
-    @SubscribeEvent
-    static void onIncomingDamage(LivingIncomingDamageEvent event) {
-        DamageSource source = event.getSource();
-        LivingEntity target = event.getEntity();
+    /** Called when damage is about to be dealt; returns the damage left after the zone protection. */
+    public static float onIncomingDamage(LivingEntity target, DamageSource source, float amount) {
         if (target.level().isClientSide) {
-            return;
+            return amount;
         }
         ExpectedHit hit = expected;
         if (hit != null && hit.source() == source && hit.target() == target) {
             expected = null;
             PENDING_WEAR.put(target, new Wear(source, hit.slot(), hit.damage()));
-            event.setAmount(event.getAmount() * (1.0F - reduction(target, hit.slot())));
-        } else if (source.is(ModTags.BALLISTIC) && !isClaimed(source)) {
+            return amount * (1.0F - reduction(target, hit.slot()));
+        }
+        if (source.is(ModTags.BALLISTIC) && !isClaimed(source)) {
             EquipmentSlot slot = guessSlot(target, source);
             float reduction = reduction(target, slot);
             if (reduction > 0.0F) {
-                PENDING_WEAR.put(target, new Wear(source, slot, event.getAmount()));
-                event.setAmount(event.getAmount() * (1.0F - reduction));
+                PENDING_WEAR.put(target, new Wear(source, slot, amount));
+                return amount * (1.0F - reduction);
             }
         }
-        if (!isBallistic(source) || source.is(DamageTypeTags.BYPASSES_ARMOR)) {
-            return;
-        }
-        float ownArmor = ownArmor(target);
-        if (ownArmor > 0) {
-            // Tactical armor already blocked its share by zone, so its armor points must not count twice.
-            event.addReductionModifier(DamageContainer.Reduction.ARMOR, (container, reduction) -> {
-                float damage = container.getNewDamage();
-                float armor = Math.max(0.0F, target.getArmorValue() - ownArmor);
-                float toughness = (float) target.getAttributeValue(Attributes.ARMOR_TOUGHNESS);
-                return damage - CombatRules.getDamageAfterAbsorb(target, damage, container.getSource(), armor, toughness);
-            });
-        }
+        return amount;
     }
 
-    @SubscribeEvent
-    static void onDamageDealt(LivingDamageEvent.Post event) {
-        Wear wear = PENDING_WEAR.get(event.getEntity());
-        if (wear != null && wear.source() == event.getSource()) {
-            PENDING_WEAR.remove(event.getEntity());
-            if (event.getBlockedDamage() <= 0.0F) {
-                wear(event.getEntity(), wear.slot(), wear.damage());
-                if (wear.slot() == EquipmentSlot.HEAD && event.getEntity().isAlive()) {
-                    ModAdvancements.award(event.getEntity(), ModAdvancements.HELMET_SAVE);
+    /** Whether vanilla armor absorption must ignore the tactical pieces, which already blocked their share by zone. */
+    public static boolean excludesOwnArmor(LivingEntity target, DamageSource source) {
+        return !target.level().isClientSide && isBallistic(source) && !source.is(DamageTypeTags.BYPASSES_ARMOR) && ownArmor(target) > 0;
+    }
+
+    /** Damage absorbed by the target's armor without the tactical pieces. */
+    public static float armorAbsorptionWithoutOwn(LivingEntity target, float damage, DamageSource source) {
+        float armor = Math.max(0.0F, target.getArmorValue() - ownArmor(target));
+        float toughness = (float) target.getAttributeValue(Attributes.ARMOR_TOUGHNESS);
+        return damage - CombatRules.getDamageAfterAbsorb(target, damage, source, armor, toughness);
+    }
+
+    /** Called once damage was actually dealt, after shields and invulnerability frames. */
+    public static void onDamageDealt(LivingEntity entity, DamageSource source, float blockedDamage) {
+        Wear wear = PENDING_WEAR.get(entity);
+        if (wear != null && wear.source() == source) {
+            PENDING_WEAR.remove(entity);
+            if (blockedDamage <= 0.0F) {
+                wear(entity, wear.slot(), wear.damage());
+                if (wear.slot() == EquipmentSlot.HEAD && entity.isAlive()) {
+                    ModAdvancements.award(entity, ModAdvancements.HELMET_SAVE);
                 }
             }
         }
     }
 
-    @SubscribeEvent
-    static void onArmorHurt(ArmorHurtEvent event) {
-        DamageSource source = event.getDamageSource();
-        if (!isBallistic(source) || source.is(DamageTypeTags.BYPASSES_ARMOR)) {
-            return;
-        }
-        event.getArmorMap().forEach((slot, entry) -> {
-            if (entry.armorItemStack.getItem() instanceof TacticalArmorItem) {
-                entry.newDamage = 0.0F;
-            }
-        });
+    /** Tactical pieces wear by hit zone instead of the vanilla per-hit armor damage. */
+    public static boolean skipsVanillaWear(DamageSource source, ItemStack armor) {
+        return isBallistic(source) && !source.is(DamageTypeTags.BYPASSES_ARMOR) && armor.getItem() instanceof TacticalArmorItem;
     }
 
-    @SubscribeEvent
-    static void onServerStopped(ServerStoppedEvent event) {
+    public static void onServerStopped() {
         expected = null;
         PENDING_WEAR.clear();
     }

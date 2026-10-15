@@ -3,6 +3,7 @@ package tacz_camo_armor.device;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -11,15 +12,9 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
-import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
-import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import tacz_camo_armor.TaczCamoArmor;
 import tacz_camo_armor.registry.ModDataComponents;
 
-@EventBusSubscriber(modid = TaczCamoArmor.MOD_ID)
 public final class DeviceEvents {
     private static final int EFFECT_TICKS = 300;
     private static final int REFRESH_BELOW = 220;
@@ -28,9 +23,7 @@ public final class DeviceEvents {
     private DeviceEvents() {
     }
 
-    @SubscribeEvent
-    static void onPlayerTick(PlayerTickEvent.Post event) {
-        Player player = event.getEntity();
+    public static void onPlayerTick(Player player) {
         if (player.level().isClientSide) {
             return;
         }
@@ -61,25 +54,18 @@ public final class DeviceEvents {
         return effect.isAmbient() && !effect.isVisible() && !effect.showIcon() && effect.getDuration() <= EFFECT_TICKS;
     }
 
-    @SubscribeEvent
-    static void onEffectApplicable(MobEffectEvent.Applicable event) {
-        LivingEntity entity = event.getEntity();
-        Holder<MobEffect> effect = event.getEffectInstance().getEffect();
+    /** Whether a gas mask stops the effect; spends filter only on effects that would otherwise apply. */
+    public static boolean blocksEffect(LivingEntity entity, MobEffectInstance instance) {
+        Holder<MobEffect> effect = instance.getEffect();
         if (entity.level().isClientSide || !(effect.equals(MobEffects.POISON) || effect.equals(MobEffects.WITHER))
-                || event.getResult() == MobEffectEvent.Applicable.Result.DO_NOT_APPLY || !entity.canBeAffected(event.getEffectInstance())) {
-            return;
+                || !entity.canBeAffected(instance)) {
+            return false;
         }
-        int cost = Math.max(1, event.getEffectInstance().getDuration() / 20);
-        if (consumeFilter(entity, cost)) {
-            event.setResult(MobEffectEvent.Applicable.Result.DO_NOT_APPLY);
-        }
+        return consumeFilter(entity, Math.max(1, instance.getDuration() / 20));
     }
 
-    @SubscribeEvent
-    static void onIncomingDamage(LivingIncomingDamageEvent event) {
-        if (event.getSource().is(DamageTypes.DRAGON_BREATH) && consumeFilter(event.getEntity(), 1)) {
-            event.setCanceled(true);
-        }
+    public static boolean blocksDamage(LivingEntity entity, DamageSource source) {
+        return source.is(DamageTypes.DRAGON_BREATH) && consumeFilter(entity, 1);
     }
 
     private static boolean consumeFilter(LivingEntity entity, int cost) {

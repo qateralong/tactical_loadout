@@ -7,17 +7,17 @@ import net.minecraft.util.StringUtil;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.AnvilUpdateEvent;
+import org.jetbrains.annotations.Nullable;
 import tacz_camo_armor.TaczCamoArmor;
 import tacz_camo_armor.config.ServerConfig;
 
 import java.util.List;
 
 /** Repairs any tactical armor piece in an anvil, a fixed share of durability per kit for one level each. */
-@EventBusSubscriber(modid = TaczCamoArmor.MOD_ID)
 public class RepairKitItem extends Item {
+    public record AnvilResult(ItemStack output, int cost, int kitsUsed) {
+    }
+
     public RepairKitItem(Properties properties) {
         super(properties.stacksTo(16));
     }
@@ -28,19 +28,17 @@ public class RepairKitItem extends Item {
                 Math.round(ServerConfig.repairKitFraction() * 100)).withStyle(ChatFormatting.GRAY));
     }
 
-    @SubscribeEvent
-    static void onAnvilUpdate(AnvilUpdateEvent event) {
-        ItemStack armor = event.getLeft();
-        ItemStack kits = event.getRight();
+    /** The anvil output for repairing {@code armor} with {@code kits}, or null when this is not a kit repair. */
+    @Nullable
+    public static AnvilResult repair(ItemStack armor, ItemStack kits, @Nullable String name) {
         if (!(armor.getItem() instanceof TacticalArmorItem) || !(kits.getItem() instanceof RepairKitItem) || !armor.isDamaged()) {
-            return;
+            return null;
         }
         int perKit = Math.max(1, (int) Math.round(armor.getMaxDamage() * ServerConfig.repairKitFraction()));
         int used = Math.min(kits.getCount(), (armor.getDamageValue() + perKit - 1) / perKit);
         ItemStack result = armor.copy();
         result.setDamageValue(Math.max(0, armor.getDamageValue() - used * perKit));
         int cost = used;
-        String name = event.getName();
         if (name == null || StringUtil.isBlank(name)) {
             if (armor.has(DataComponents.CUSTOM_NAME)) {
                 result.remove(DataComponents.CUSTOM_NAME);
@@ -50,8 +48,6 @@ public class RepairKitItem extends Item {
             result.set(DataComponents.CUSTOM_NAME, Component.literal(name));
             cost++;
         }
-        event.setOutput(result);
-        event.setCost(cost);
-        event.setMaterialCost(used);
+        return new AnvilResult(result, cost, used);
     }
 }

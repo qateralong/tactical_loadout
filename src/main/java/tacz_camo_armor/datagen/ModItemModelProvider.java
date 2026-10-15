@@ -17,7 +17,7 @@ public class ModItemModelProvider extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
-        ModItems.ITEMS.getEntries().stream().map(item -> item.get()).filter(item -> !hasBlockModel(item)).forEach(this::basicItem);
+        ModItems.all().stream().map(item -> (Item) item.get()).filter(item -> !hasBlockModel(item)).forEach(this::basicItem);
     }
 
     // These items use 3D element models written by tools/items.py into the main resources.

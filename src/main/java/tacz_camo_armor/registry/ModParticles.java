@@ -5,16 +5,13 @@ import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
-import tacz_camo_armor.TaczCamoArmor;
+import tacz_camo_armor.platform.Platform;
+import tacz_camo_armor.platform.RegistryEntry;
 import tacz_camo_armor.grenade.SmokePuffOptions;
 
 public final class ModParticles {
-    public static final DeferredRegister<ParticleType<?>> PARTICLE_TYPES = DeferredRegister.create(Registries.PARTICLE_TYPE, TaczCamoArmor.MOD_ID);
-
-    public static final DeferredHolder<ParticleType<?>, ParticleType<SmokePuffOptions>> SMOKE_PUFF =
-            PARTICLE_TYPES.register("smoke_puff", () -> new ParticleType<SmokePuffOptions>(true) {
+    public static final RegistryEntry<ParticleType<?>, ParticleType<SmokePuffOptions>> SMOKE_PUFF =
+            Platform.INSTANCE.register(Registries.PARTICLE_TYPE, "smoke_puff", () -> new ParticleType<SmokePuffOptions>(true) {
                 @Override
                 public MapCodec<SmokePuffOptions> codec() {
                     return SmokePuffOptions.CODEC;
@@ -27,5 +24,9 @@ public final class ModParticles {
             });
 
     private ModParticles() {
+    }
+
+    /** Loads the class so its entries get registered. */
+    public static void init() {
     }
 }

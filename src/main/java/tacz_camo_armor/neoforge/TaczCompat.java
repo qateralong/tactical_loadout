@@ -1,4 +1,4 @@
-package tacz_camo_armor.compat.tacz;
+package tacz_camo_armor.neoforge;
 
 import com.tacz.guns.api.event.common.EntityHurtByGunEvent;
 import com.tacz.guns.api.event.common.GunDamageSourcePart;

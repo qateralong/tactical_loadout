@@ -5,16 +5,11 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.biome.Biome;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.living.LivingEvent;
 import org.jetbrains.annotations.Nullable;
-import tacz_camo_armor.TaczCamoArmor;
 import tacz_camo_armor.config.ServerConfig;
 import tacz_camo_armor.item.ArmorSet;
 import tacz_camo_armor.item.TacticalArmorItem;
 
-@EventBusSubscriber(modid = TaczCamoArmor.MOD_ID)
 public final class Camouflage {
     private static final EquipmentSlot[] ARMOR_SLOTS = {
             EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
@@ -23,17 +18,14 @@ public final class Camouflage {
     private Camouflage() {
     }
 
-    @SubscribeEvent
-    static void onVisibility(LivingEvent.LivingVisibilityEvent event) {
-        if (event.getLookingEntity() == null) {
-            return;
-        }
-        LivingEntity entity = event.getEntity();
+    /** Multiplier for how far away mobs notice the entity. */
+    public static double visibility(LivingEntity entity) {
         ArmorSet set = fullCamoSet(entity);
-        if (set != null) {
-            Holder<Biome> biome = entity.level().getBiome(entity.blockPosition());
-            event.modifyVisibility(1.0 - reduction(set, entity.isDiscrete(), biome));
+        if (set == null) {
+            return 1.0;
         }
+        Holder<Biome> biome = entity.level().getBiome(entity.blockPosition());
+        return 1.0 - reduction(set, entity.isDiscrete(), biome);
     }
 
     @Nullable

@@ -4,18 +4,13 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.living.LivingEvent;
 import org.jetbrains.annotations.Nullable;
-import tacz_camo_armor.TaczCamoArmor;
 import tacz_camo_armor.config.ServerConfig;
 
 import java.util.Collections;
 import java.util.Set;
 import java.util.WeakHashMap;
 
-@EventBusSubscriber(modid = TaczCamoArmor.MOD_ID)
 public final class SmokeClouds {
     private static final Set<GrenadeEntity> ACTIVE = Collections.newSetFromMap(new WeakHashMap<>());
 
@@ -42,16 +37,13 @@ public final class SmokeClouds {
         return null;
     }
 
-    @SubscribeEvent
-    static void onVisibility(LivingEvent.LivingVisibilityEvent event) {
-        Entity looker = event.getLookingEntity();
-        LivingEntity target = event.getEntity();
-        if (looker == null || target.level().isClientSide) {
-            return;
+    /** Multiplier for how well the looker sees the target through smoke, or 0 while the looker is blinded. */
+    public static double visibility(LivingEntity target, Entity looker) {
+        if (target.level().isClientSide) {
+            return 1.0;
         }
         if (Flashbang.isBlinded(looker)) {
-            event.modifyVisibility(0.0);
-            return;
+            return 0.0;
         }
         double radius = ServerConfig.smokeRadius();
         Vec3 eye = looker.getEyePosition();
@@ -62,14 +54,13 @@ public final class SmokeClouds {
             }
             Vec3 center = smoke.position().add(0, 1.0, 0);
             if (center.distanceTo(aim) < radius) {
-                event.modifyVisibility(0.1);
-                return;
+                return 0.1;
             }
             if (segmentDistance(eye, aim, center) < radius) {
-                event.modifyVisibility(0.15);
-                return;
+                return 0.15;
             }
         }
+        return 1.0;
     }
 
     private static double segmentDistance(Vec3 from, Vec3 to, Vec3 point) {

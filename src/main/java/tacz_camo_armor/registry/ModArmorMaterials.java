@@ -6,28 +6,28 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.neoforged.neoforge.registries.DeferredRegister;
-import tacz_camo_armor.TaczCamoArmor;
 import tacz_camo_armor.item.ArmorPiece;
 import tacz_camo_armor.item.ArmorTier;
+import tacz_camo_armor.platform.Platform;
 
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
 public final class ModArmorMaterials {
-    public static final DeferredRegister<ArmorMaterial> ARMOR_MATERIALS =
-            DeferredRegister.create(Registries.ARMOR_MATERIAL, TaczCamoArmor.MOD_ID);
-
     private static final Map<ArmorTier, Holder<ArmorMaterial>> BY_TIER = new EnumMap<>(ArmorTier.class);
 
     static {
         for (ArmorTier tier : ArmorTier.values()) {
-            BY_TIER.put(tier, ARMOR_MATERIALS.register(tier.id(), () -> create(tier)));
+            BY_TIER.put(tier, Platform.INSTANCE.register(Registries.ARMOR_MATERIAL, tier.id(), () -> create(tier)).holder());
         }
     }
 
     private ModArmorMaterials() {
+    }
+
+    /** Loads the class so its entries get registered. */
+    public static void init() {
     }
 
     public static Holder<ArmorMaterial> get(ArmorTier tier) {

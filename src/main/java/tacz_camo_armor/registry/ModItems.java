@@ -1,10 +1,7 @@
 package tacz_camo_armor.registry;
 
 import net.minecraft.world.item.Item;
-import net.neoforged.neoforge.registries.DeferredItem;
-import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jetbrains.annotations.Nullable;
-import tacz_camo_armor.TaczCamoArmor;
 import tacz_camo_armor.device.DeviceItem;
 import tacz_camo_armor.device.DeviceKind;
 import tacz_camo_armor.grenade.GrenadeItem;
@@ -14,48 +11,51 @@ import tacz_camo_armor.item.ArmorSet;
 import tacz_camo_armor.item.ArmorTier;
 import tacz_camo_armor.item.RepairKitItem;
 import tacz_camo_armor.item.TacticalArmorItem;
+import tacz_camo_armor.platform.ItemEntry;
+import tacz_camo_armor.platform.Platform;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public final class ModItems {
-    public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(TaczCamoArmor.MOD_ID);
+    private static final List<ItemEntry<?>> ALL = new ArrayList<>();
 
-    public static final DeferredItem<Item> KEVLAR_INSERT = ITEMS.registerSimpleItem("kevlar_insert");
-    public static final DeferredItem<Item> RAW_CERAMIC_PLATE = ITEMS.registerSimpleItem("raw_ceramic_plate");
-    public static final DeferredItem<Item> CERAMIC_PLATE = ITEMS.registerSimpleItem("ceramic_plate");
-    public static final DeferredItem<Item> BATTERY = ITEMS.registerSimpleItem("battery");
-    public static final DeferredItem<Item> GAS_FILTER = ITEMS.registerSimpleItem("gas_filter");
-    public static final DeferredItem<RepairKitItem> ARMOR_REPAIR_KIT =
-            ITEMS.register("armor_repair_kit", () -> new RepairKitItem(new Item.Properties()));
+    public static final ItemEntry<Item> KEVLAR_INSERT = simple("kevlar_insert");
+    public static final ItemEntry<Item> RAW_CERAMIC_PLATE = simple("raw_ceramic_plate");
+    public static final ItemEntry<Item> CERAMIC_PLATE = simple("ceramic_plate");
+    public static final ItemEntry<Item> BATTERY = simple("battery");
+    public static final ItemEntry<Item> GAS_FILTER = simple("gas_filter");
+    public static final ItemEntry<RepairKitItem> ARMOR_REPAIR_KIT =
+            register("armor_repair_kit", () -> new RepairKitItem(new Item.Properties()));
 
-    private static final Map<DeviceKind, DeferredItem<DeviceItem>> DEVICES = new EnumMap<>(DeviceKind.class);
-    private static final Map<GrenadeKind, DeferredItem<GrenadeItem>> GRENADES = new EnumMap<>(GrenadeKind.class);
+    private static final Map<DeviceKind, ItemEntry<DeviceItem>> DEVICES = new EnumMap<>(DeviceKind.class);
+    private static final Map<GrenadeKind, ItemEntry<GrenadeItem>> GRENADES = new EnumMap<>(GrenadeKind.class);
 
-    private static final Map<ArmorSet, DeferredItem<Item>> FABRICS = new EnumMap<>(ArmorSet.class);
-    private static final Map<ArmorSet, Map<ArmorTier, Map<ArmorPiece, DeferredItem<TacticalArmorItem>>>> ARMOR =
+    private static final Map<ArmorSet, ItemEntry<Item>> FABRICS = new EnumMap<>(ArmorSet.class);
+    private static final Map<ArmorSet, Map<ArmorTier, Map<ArmorPiece, ItemEntry<TacticalArmorItem>>>> ARMOR =
             new EnumMap<>(ArmorSet.class);
-    private static final List<DeferredItem<TacticalArmorItem>> ALL_ARMOR = new ArrayList<>();
+    private static final List<ItemEntry<TacticalArmorItem>> ALL_ARMOR = new ArrayList<>();
 
     static {
         for (GrenadeKind kind : GrenadeKind.values()) {
-            GRENADES.put(kind, ITEMS.register(kind.id(), () -> new GrenadeItem(kind, new Item.Properties())));
+            GRENADES.put(kind, register(kind.id(), () -> new GrenadeItem(kind, new Item.Properties())));
         }
         for (DeviceKind kind : DeviceKind.values()) {
-            DEVICES.put(kind, ITEMS.register(kind.id(), () -> new DeviceItem(kind, new Item.Properties())));
+            DEVICES.put(kind, register(kind.id(), () -> new DeviceItem(kind, new Item.Properties())));
         }
         for (ArmorSet set : ArmorSet.values()) {
-            FABRICS.put(set, ITEMS.registerSimpleItem(set.fabricId()));
+            FABRICS.put(set, simple(set.fabricId()));
         }
         for (ArmorSet set : ArmorSet.values()) {
-            Map<ArmorTier, Map<ArmorPiece, DeferredItem<TacticalArmorItem>>> byTier = new EnumMap<>(ArmorTier.class);
+            Map<ArmorTier, Map<ArmorPiece, ItemEntry<TacticalArmorItem>>> byTier = new EnumMap<>(ArmorTier.class);
             for (ArmorTier tier : set.tiers()) {
-                Map<ArmorPiece, DeferredItem<TacticalArmorItem>> byPiece = new EnumMap<>(ArmorPiece.class);
+                Map<ArmorPiece, ItemEntry<TacticalArmorItem>> byPiece = new EnumMap<>(ArmorPiece.class);
                 for (ArmorPiece piece : ArmorPiece.values()) {
                     String name = set.id() + "_" + tier.id() + "_" + piece.id();
-                    DeferredItem<TacticalArmorItem> item = ITEMS.register(name,
+                    ItemEntry<TacticalArmorItem> item = register(name,
                             () -> new TacticalArmorItem(set, tier, piece, new Item.Properties()));
                     byPiece.put(piece, item);
                     ALL_ARMOR.add(item);
@@ -69,25 +69,44 @@ public final class ModItems {
     private ModItems() {
     }
 
-    public static DeferredItem<GrenadeItem> grenade(GrenadeKind kind) {
+    /** Loads the class so its entries get registered. */
+    public static void init() {
+    }
+
+    private static <T extends Item> ItemEntry<T> register(String name, Supplier<T> factory) {
+        ItemEntry<T> entry = Platform.INSTANCE.registerItem(name, factory);
+        ALL.add(entry);
+        return entry;
+    }
+
+    private static ItemEntry<Item> simple(String name) {
+        return register(name, () -> new Item(new Item.Properties()));
+    }
+
+    /** Every item of the mod in registration order. */
+    public static List<ItemEntry<?>> all() {
+        return ALL;
+    }
+
+    public static ItemEntry<GrenadeItem> grenade(GrenadeKind kind) {
         return GRENADES.get(kind);
     }
 
-    public static DeferredItem<DeviceItem> device(DeviceKind kind) {
+    public static ItemEntry<DeviceItem> device(DeviceKind kind) {
         return DEVICES.get(kind);
     }
 
-    public static DeferredItem<Item> fabric(ArmorSet set) {
+    public static ItemEntry<Item> fabric(ArmorSet set) {
         return FABRICS.get(set);
     }
 
     @Nullable
-    public static DeferredItem<TacticalArmorItem> armor(ArmorSet set, ArmorTier tier, ArmorPiece piece) {
-        Map<ArmorPiece, DeferredItem<TacticalArmorItem>> byPiece = ARMOR.get(set).get(tier);
+    public static ItemEntry<TacticalArmorItem> armor(ArmorSet set, ArmorTier tier, ArmorPiece piece) {
+        Map<ArmorPiece, ItemEntry<TacticalArmorItem>> byPiece = ARMOR.get(set).get(tier);
         return byPiece == null ? null : byPiece.get(piece);
     }
 
-    public static List<DeferredItem<TacticalArmorItem>> allArmor() {
+    public static List<ItemEntry<TacticalArmorItem>> allArmor() {
         return ALL_ARMOR;
     }
 

@@ -15,18 +15,21 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.network.PacketDistributor;
-import tacz_camo_armor.TaczCamoArmor;
 import tacz_camo_armor.advancement.ModAdvancements;
 import tacz_camo_armor.device.DeviceKind;
 import tacz_camo_armor.device.Devices;
 import tacz_camo_armor.device.MountedDevice;
 import tacz_camo_armor.config.ServerConfig;
 import tacz_camo_armor.network.FlashPayload;
+import tacz_camo_armor.platform.Platform;
+
+import java.util.Map;
+import java.util.WeakHashMap;
 
 public final class Flashbang {
     private static final double NVG_AMPLIFICATION = 1.5;
-    private static final String BLINDED_UNTIL = TaczCamoArmor.MOD_ID + ":flashed_until";
+    // Game time until which a mob is blind. Not saved: a flash lasts seconds, so a reload simply ends it.
+    private static final Map<Entity, Long> BLINDED_UNTIL = new WeakHashMap<>();
 
     private Flashbang() {
     }
@@ -49,9 +52,9 @@ public final class Flashbang {
             strength = Math.min(1.0, strength * amplification);
             int ticks = (int) Math.round(strength * ServerConfig.flashSeconds() * 20 * amplification);
             if (entity instanceof ServerPlayer player) {
-                PacketDistributor.sendToPlayer(player, new FlashPayload((float) strength, ticks));
+                Platform.INSTANCE.sendToPlayer(player, new FlashPayload((float) strength, ticks));
             } else if (entity instanceof Mob mob) {
-                mob.getPersistentData().putLong(BLINDED_UNTIL, level.getGameTime() + ticks);
+                BLINDED_UNTIL.put(mob, level.getGameTime() + ticks);
                 mob.setTarget(null);
                 mob.getNavigation().stop();
                 mob.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, ticks, 2));
@@ -75,13 +78,14 @@ public final class Flashbang {
     }
 
     public static boolean isBlinded(Entity entity) {
-        if (!(entity instanceof Mob mob) || !mob.getPersistentData().contains(BLINDED_UNTIL)) {
+        Long until = BLINDED_UNTIL.get(entity);
+        if (until == null) {
             return false;
         }
-        if (mob.getPersistentData().getLong(BLINDED_UNTIL) > mob.level().getGameTime()) {
+        if (until > entity.level().getGameTime()) {
             return true;
         }
-        mob.getPersistentData().remove(BLINDED_UNTIL);
+        BLINDED_UNTIL.remove(entity);
         return false;
     }
 }

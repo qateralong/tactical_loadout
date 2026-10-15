@@ -1,4 +1,4 @@
-package tacz_camo_armor.client;
+package tacz_camo_armor.neoforge;
 
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.ModContainer;
