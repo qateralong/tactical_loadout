@@ -1,9 +1,24 @@
 {
   "values": [
-    "#c:is_desert",
-    "#c:is_badlands",
-    "#c:is_beach",
-    "#c:is_snowy",
-    "#c:is_icy"
+    {
+      "id": "#c:is_desert",
+      "required": false
+    },
+    {
+      "id": "#c:is_badlands",
+      "required": false
+    },
+    {
+      "id": "#c:is_beach",
+      "required": false
+    },
+    {
+      "id": "#c:is_snowy",
+      "required": false
+    },
+    {
+      "id": "#c:is_icy",
+      "required": false
+    }
   ]
 }

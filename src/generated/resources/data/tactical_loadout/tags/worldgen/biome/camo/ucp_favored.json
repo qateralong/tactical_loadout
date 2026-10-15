@@ -1,8 +1,20 @@
 {
   "values": [
-    "#c:is_mountain",
-    "#c:is_stony_shores",
-    "#c:is_underground",
-    "#c:is_windswept"
+    {
+      "id": "#c:is_mountain",
+      "required": false
+    },
+    {
+      "id": "#c:is_stony_shores",
+      "required": false
+    },
+    {
+      "id": "#c:is_underground",
+      "required": false
+    },
+    {
+      "id": "#c:is_windswept",
+      "required": false
+    }
   ]
 }

@@ -6,6 +6,8 @@ mod.license = "MIT"
 
 ["1.21.1"]
 mod.mc_releases = ["1.21", "1.21.1"]
+mod.resource_pack_format = "34"
+mod.data_pack_format = "48"
 deps.parchment_mc = "1.21.1"
 deps.parchment = "2024.11.17"
 deps.geckolib = "4.9.3"
@@ -23,3 +25,9 @@ deps.fabric_loader = "0.19.5"
 deps.fabric_api = "0.116.17+1.21.1"
 deps.fcap = "v21.1.6-1.21.1-Fabric"
 deps.mezz_config = "0.6.6"
+
+[forge."1.21.1"]
+mod.mc_compat = "[1.21.1]"
+deps.forge_loader = "52.1.20"
+deps.forge_compat = "[52.1,)"
+deps.fcap = "v21.1.6-1.21.1-Forge"

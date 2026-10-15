@@ -4,6 +4,7 @@ pluginManagement {
         gradlePluginPortal()
         maven("https://maven.neoforged.net/releases/") { name = "NeoForged" }
         maven("https://maven.fabricmc.net/") { name = "FabricMC" }
+        maven("https://maven.minecraftforge.net/") { name = "MinecraftForge" }
         maven("https://maven.kikugie.dev/releases") { name = "KikuGie Releases" }
     }
 }
@@ -21,7 +22,7 @@ stonecutter {
         }
 
         // Planned matrix: 1.20.1 forge/fabric; 1.21.1, 1.21.4, 1.21.8, 1.21.11 neoforge/fabric/forge.
-        match("1.21.1", "neoforge", "fabric")
+        match("1.21.1", "neoforge", "fabric", "forge")
         vcsVersion = "1.21.1-neoforge"
     }
 }

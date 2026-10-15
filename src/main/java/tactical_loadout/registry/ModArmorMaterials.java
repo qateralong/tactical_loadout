@@ -9,17 +9,18 @@ import net.minecraft.world.item.crafting.Ingredient;
 import tactical_loadout.item.ArmorPiece;
 import tactical_loadout.item.ArmorTier;
 import tactical_loadout.platform.Platform;
+import tactical_loadout.platform.RegistryEntry;
 
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
 public final class ModArmorMaterials {
-    private static final Map<ArmorTier, Holder<ArmorMaterial>> BY_TIER = new EnumMap<>(ArmorTier.class);
+    private static final Map<ArmorTier, RegistryEntry<ArmorMaterial, ArmorMaterial>> BY_TIER = new EnumMap<>(ArmorTier.class);
 
     static {
         for (ArmorTier tier : ArmorTier.values()) {
-            BY_TIER.put(tier, Platform.INSTANCE.register(Registries.ARMOR_MATERIAL, tier.id(), () -> create(tier)).holder());
+            BY_TIER.put(tier, Platform.INSTANCE.register(Registries.ARMOR_MATERIAL, tier.id(), () -> create(tier)));
         }
     }
 
@@ -31,7 +32,7 @@ public final class ModArmorMaterials {
     }
 
     public static Holder<ArmorMaterial> get(ArmorTier tier) {
-        return BY_TIER.get(tier);
+        return BY_TIER.get(tier).holder();
     }
 
     private static ArmorMaterial create(ArmorTier tier) {

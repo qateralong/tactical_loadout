@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "tactical_loadout.mixin.armor",
+  "compatibilityLevel": "${java}",
+  "mixins": [
+    "LivingEntityArmorMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -1,7 +1,16 @@
 {
   "values": [
-    "#c:is_jungle",
-    "#c:is_swamp",
-    "#c:is_lush"
+    {
+      "id": "#c:is_jungle",
+      "required": false
+    },
+    {
+      "id": "#c:is_swamp",
+      "required": false
+    },
+    {
+      "id": "#c:is_lush",
+      "required": false
+    }
   ]
 }

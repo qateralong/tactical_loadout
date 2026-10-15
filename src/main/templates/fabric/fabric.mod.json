@@ -17,7 +17,7 @@
     "client": ["tactical_loadout.fabric.TacticalLoadoutFabricClient"],
     "jei_mod_plugin": ["tactical_loadout.compat.jei.JeiCompat"]
   },
-  "mixins": ["tactical_loadout.mixins.json", "tactical_loadout.fabric.mixins.json"],
+  "mixins": ["tactical_loadout.mixins.json", "tactical_loadout.armor.mixins.json", "tactical_loadout.fabric.mixins.json"],
   "depends": {
     "fabricloader": ">=0.16.10",
     "minecraft": "${minecraft_version_range}",

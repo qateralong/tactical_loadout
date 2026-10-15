@@ -1,7 +1,16 @@
 {
   "values": [
-    "#c:is_desert",
-    "#c:is_badlands",
-    "#c:is_beach"
+    {
+      "id": "#c:is_desert",
+      "required": false
+    },
+    {
+      "id": "#c:is_badlands",
+      "required": false
+    },
+    {
+      "id": "#c:is_beach",
+      "required": false
+    }
   ]
 }

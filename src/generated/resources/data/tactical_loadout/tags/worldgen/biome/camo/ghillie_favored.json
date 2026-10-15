@@ -1,10 +1,28 @@
 {
   "values": [
-    "#c:is_forest",
-    "#c:is_taiga",
-    "#c:is_jungle",
-    "#c:is_swamp",
-    "#c:is_plains",
-    "#c:is_savanna"
+    {
+      "id": "#c:is_forest",
+      "required": false
+    },
+    {
+      "id": "#c:is_taiga",
+      "required": false
+    },
+    {
+      "id": "#c:is_jungle",
+      "required": false
+    },
+    {
+      "id": "#c:is_swamp",
+      "required": false
+    },
+    {
+      "id": "#c:is_plains",
+      "required": false
+    },
+    {
+      "id": "#c:is_savanna",
+      "required": false
+    }
   ]
 }
