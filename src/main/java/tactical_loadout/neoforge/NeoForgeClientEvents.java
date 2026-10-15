@@ -8,6 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.InputEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import tactical_loadout.client.DownedOverlay;
 import tactical_loadout.client.RestraintOverlay;
 import tactical_loadout.gear.Helpless;
@@ -76,6 +77,13 @@ public final class NeoForgeClientEvents {
     @SubscribeEvent
     static void onClientTick(ClientTickEvent.Post event) {
         ClientHooks.onClientTick();
+    }
+
+    @SubscribeEvent
+    static void onPlayerTick(PlayerTickEvent.Post event) {
+        if (event.getEntity().level().isClientSide) {
+            ClientHooks.onPlayerTick(event.getEntity());
+        }
     }
 
     @SubscribeEvent

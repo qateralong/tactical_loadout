@@ -507,24 +507,25 @@ def riot_shield_models(size):
     g.box((-6, 3, -1.5), (6, 4.5, 1), "metal_dark")
     elements += g.elements
     textures = {"0": f"{NS}:item/gear_parts", "1": f"{NS}:item/riot_shield", "particle": f"{NS}:item/riot_shield"}
+    # Carried: upright at the side in third person, lowered at the bottom corner in first person (the left hand mirrors these).
     held = {
-        "thirdperson_righthand": {"rotation": [0, 90, 0], "translation": [10, 6, -4], "scale": [0.8, 0.8, 0.8]},
-        "thirdperson_lefthand": {"rotation": [0, 90, 0], "translation": [10, 6, 12], "scale": [0.8, 0.8, 0.8]},
-        "firstperson_righthand": {"rotation": [0, 180, 5], "translation": [-6, -2, -10], "scale": [0.7, 0.7, 0.7]},
-        "firstperson_lefthand": {"rotation": [0, 180, 5], "translation": [6, -4, -10], "scale": [0.7, 0.7, 0.7]},
+        "thirdperson_righthand": {"rotation": [-180, 90, -90], "translation": [7.5, 4.4, 7], "scale": [0.8, 0.8, 0.8]},
+        "thirdperson_lefthand": {"rotation": [0, 90, 90], "translation": [7.5, -8.4, 7], "scale": [0.8, 0.8, 0.8]},
+        "firstperson_righthand": {"rotation": [0, 180, 0], "translation": [-4.96, 1.72, -6.63], "scale": [0.6, 0.6, 0.6]},
+        "firstperson_lefthand": {"rotation": [0, 180, 0], "translation": [4.64, 1.72, -6.63], "scale": [0.6, 0.6, 0.6]},
         "gui": {"rotation": [0, 160, 0], "translation": [0, -0.5, 0], "scale": [0.4, 0.4, 0.4]},
         "fixed": {"rotation": [0, 180, 0], "translation": [0, 0, -5], "scale": [0.38, 0.38, 0.38]},
         "ground": {"rotation": [0, 0, 0], "translation": [2, 3, 2], "scale": [0.2, 0.2, 0.2]},
     }
-    # Raised in first person: the viewport sits right in front of the eye (the item origin is 0.56 to the side and 0.52 below;
-    # the left hand mirrors x). In third person the values put the shield upright in front of the body, solved for the blocking arm pose.
+    # Raised in first person: the viewport sits right in front of the eye. The item origin is 0.56 to the side and 0.52 below the eye,
+    # the model's corner offset lands half a block to the right after the half turn, and the left hand mirrors the x translation. In third person the values put the shield upright in front of the body, solved for the blocking arm pose.
     slit_y = ((y0 + y1) / 2) / 16 - 0.5
     lift = round((0.52 - slit_y) * 16, 2)
     blocking = dict(held)
     blocking.update({
         "thirdperson_righthand": {"rotation": [-144, 30, -180], "translation": [-5.63, 9.37, -3.95], "scale": [1, 1, 1]},
         "thirdperson_lefthand": {"rotation": [-144, 30, 180], "translation": [8.22, 4.67, 2.52], "scale": [1, 1, 1]},
-        "firstperson_righthand": {"rotation": [0, 180, 0], "translation": [-0.96, lift, -3.5], "scale": [1, 1, 1]},
+        "firstperson_righthand": {"rotation": [0, 180, 0], "translation": [-16.96, lift, -3.5], "scale": [1, 1, 1]},
         "firstperson_lefthand": {"rotation": [0, 180, 0], "translation": [-0.96, lift, -3.5], "scale": [1, 1, 1]},
     })
     write_model("riot_shield_blocking", {"textures": textures, "gui_light": "front", "elements": elements, "display": blocking})

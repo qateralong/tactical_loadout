@@ -30,7 +30,7 @@ public final class NeoForgeNetwork {
                 .playToClient(RestraintPayload.TYPE, RestraintPayload.STREAM_CODEC,
                         (payload, context) -> context.enqueueWork(() -> Restraints.setClientRemaining(payload.remaining())))
                 .playToClient(DownedPayload.TYPE, DownedPayload.STREAM_CODEC,
-                        (payload, context) -> context.enqueueWork(() -> ClientHooks.onDowned(payload.ticks())))
+                        (payload, context) -> context.enqueueWork(() -> ClientHooks.onDowned(payload.entityId(), payload.ticks())))
                 .playToServer(StrugglePayload.TYPE, StrugglePayload.STREAM_CODEC,
                         (payload, context) -> context.enqueueWork(() -> {
                             if (context.player() instanceof ServerPlayer player) {

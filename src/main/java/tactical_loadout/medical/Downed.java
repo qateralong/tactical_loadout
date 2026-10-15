@@ -25,7 +25,9 @@ import tactical_loadout.platform.Platform;
 import tactical_loadout.registry.ModItems;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -42,6 +44,8 @@ public final class Downed {
     private static final Map<UUID, Revive> REVIVES = new HashMap<>();
     // The local player's remaining bleed-out ticks, counted down between server updates; 0 when not down.
     private static int clientTicks;
+    // Entity ids of downed players the client knows about, so they crawl on everyone's screen.
+    private static final Set<Integer> CLIENT_DOWNED = new HashSet<>();
 
     private record Revive(UUID target, int progress, long lastTick) {
     }
@@ -59,6 +63,32 @@ public final class Downed {
 
     public static void setClientTicks(int ticks) {
         clientTicks = ticks;
+    }
+
+    public static void setClientDowned(int entityId, boolean downed) {
+        if (downed) {
+            CLIENT_DOWNED.add(entityId);
+        } else {
+            CLIENT_DOWNED.remove(entityId);
+        }
+    }
+
+    public static boolean isClientDowned(Player player) {
+        return CLIENT_DOWNED.contains(player.getId());
+    }
+
+    public static void clearClient() {
+        clientTicks = 0;
+        CLIENT_DOWNED.clear();
+    }
+
+    /**
+     * Keeps a downed player crawling. Called after the player's tick, because other mods (TaCZ's prone crawl) reset the forced
+     * pose every tick; setting the pose directly as well keeps the hitbox and camera low until the next update.
+     */
+    public static void applyPose(Player player) {
+        player.setForcedPose(Pose.SWIMMING);
+        player.setPose(Pose.SWIMMING);
     }
 
     public static void clientTick() {
@@ -95,7 +125,7 @@ public final class Downed {
         if (!isDowned(player)) {
             return;
         }
-        player.setForcedPose(Pose.SWIMMING);
+        applyPose(player);
         int left = TICKS_LEFT.getOrDefault(player.getUUID(), 1) - 1;
         TICKS_LEFT.put(player.getUUID(), left);
         if (left <= 0) {
@@ -148,6 +178,10 @@ public final class Downed {
 
     private static void revive(ServerPlayer player, float health) {
         clear(player);
+        // A moment of grace so a bleed tick, flames or a stray hit landing as they stand up does not drop them straight back.
+        Medical.stopBleeding(player);
+        player.clearFire();
+        player.invulnerableTime = 20;
         player.setHealth(Math.min(player.getMaxHealth(), health));
         player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ARMOR_EQUIP_LEATHER.value(), SoundSource.PLAYERS,
                 1.0F, 0.8F);
@@ -190,8 +224,16 @@ public final class Downed {
         }
     }
 
+    /** No natural regeneration while down. */
+    public static boolean blocksHealing(Player player) {
+        return !player.level().isClientSide && isDowned(player);
+    }
+
     private static void sync(ServerPlayer player) {
-        Platform.INSTANCE.sendToPlayer(player, new DownedPayload(isDowned(player) ? TICKS_LEFT.getOrDefault(player.getUUID(), 0) : 0));
+        DownedPayload payload = new DownedPayload(player.getId(), isDowned(player) ? TICKS_LEFT.getOrDefault(player.getUUID(), 0) : 0);
+        for (ServerPlayer other : player.serverLevel().players()) {
+            Platform.INSTANCE.sendToPlayer(other, payload);
+        }
     }
 
     private static MutableComponent message(String key, Object... args) {

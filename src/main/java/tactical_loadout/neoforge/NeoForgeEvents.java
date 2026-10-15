@@ -37,6 +37,7 @@ import tactical_loadout.gear.ZipTiesItem;
 import tactical_loadout.medical.Downed;
 import tactical_loadout.medical.Medical;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
+import net.neoforged.neoforge.event.entity.living.LivingHealEvent;
 
 /** Forwards NeoForge game events to the shared handlers. */
 @EventBusSubscriber(modid = TacticalLoadout.MOD_ID)
@@ -204,6 +205,13 @@ public final class NeoForgeEvents {
         if (handled) {
             event.setCanceled(true);
             event.setCancellationResult(InteractionResult.SUCCESS);
+        }
+    }
+
+    @SubscribeEvent
+    static void onHeal(LivingHealEvent event) {
+        if (event.getEntity() instanceof Player player && Downed.blocksHealing(player)) {
+            event.setCanceled(true);
         }
     }
 

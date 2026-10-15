@@ -4,7 +4,6 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.Input;
-import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import org.lwjgl.glfw.GLFW;
 import tactical_loadout.TacticalLoadout;
@@ -57,14 +56,24 @@ public final class ClientHooks {
     public static void onLoggingOut() {
         FlashOverlay.reset();
         Restraints.setClientRemaining(0);
-        Downed.setClientTicks(0);
+        Downed.clearClient();
     }
 
-    public static void onDowned(int ticks) {
-        Downed.setClientTicks(ticks);
-        Player player = Minecraft.getInstance().player;
-        if (player != null) {
-            player.setForcedPose(ticks > 0 ? Pose.SWIMMING : null);
+    public static void onDowned(int entityId, int ticks) {
+        Downed.setClientDowned(entityId, ticks > 0);
+        Player local = Minecraft.getInstance().player;
+        if (local != null && local.getId() == entityId) {
+            Downed.setClientTicks(ticks);
+        }
+        if (ticks <= 0 && local != null && local.level().getEntity(entityId) instanceof Player player) {
+            player.setForcedPose(null);
+        }
+    }
+
+    /** After every player's tick on the client: downed players keep crawling. */
+    public static void onPlayerTick(Player player) {
+        if (Downed.isClientDowned(player)) {
+            Downed.applyPose(player);
         }
     }
 
