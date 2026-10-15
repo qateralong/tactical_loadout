@@ -4,7 +4,12 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.InputEvent;
+import tactical_loadout.client.RestraintOverlay;
+import tactical_loadout.gear.Helpless;
 import net.neoforged.neoforge.client.event.ComputeFovModifierEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
@@ -37,6 +42,7 @@ public final class NeoForgeClientEvents {
     @SubscribeEvent
     static void registerLayers(RegisterGuiLayersEvent event) {
         event.registerAbove(VanillaGuiLayers.CAMERA_OVERLAYS, TacticalLoadout.id("nvg"), NvgOverlay::render);
+        event.registerAbove(VanillaGuiLayers.HOTBAR, TacticalLoadout.id("restraint"), RestraintOverlay::render);
         event.registerAboveAll(TacticalLoadout.id("flash"), FlashOverlay::render);
     }
 
@@ -68,5 +74,14 @@ public final class NeoForgeClientEvents {
     @SubscribeEvent
     static void onClientTick(ClientTickEvent.Post event) {
         ClientHooks.onClientTick();
+    }
+
+    @SubscribeEvent
+    static void onInteractionKey(InputEvent.InteractionKeyMappingTriggered event) {
+        Player player = Minecraft.getInstance().player;
+        if (player != null && Helpless.is(player)) {
+            event.setSwingHand(false);
+            event.setCanceled(true);
+        }
     }
 }

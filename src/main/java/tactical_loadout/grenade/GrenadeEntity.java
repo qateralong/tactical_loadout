@@ -39,6 +39,8 @@ public class GrenadeEntity extends ThrowableItemProjectile {
     private static final int FILL_TICKS = 40;
     private static final double RESEND_RANGE = 160.0;
     private static final double GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5));
+    // An impact grenade arms only after flying this far, so one dropped at the feet does not go off.
+    private static final double IMPACT_ARM_DISTANCE = 3.5;
     private int fuse = GrenadeKind.FRAG.fuseTicks();
     // Ticks left of the lasting effect (smoke, fire or decoy shots); -1 while the grenade is still live.
     private int activeTicks = -1;
@@ -51,6 +53,7 @@ public class GrenadeEntity extends ThrowableItemProjectile {
     private float spin;
     private float spinO;
     private float heading;
+    private Vec3 origin;
 
     public GrenadeEntity(EntityType<? extends GrenadeEntity> type, Level level) {
         super(type, level);
@@ -60,12 +63,14 @@ public class GrenadeEntity extends ThrowableItemProjectile {
         super(ModEntities.GRENADE.get(), thrower, level);
         setItem(stack.copyWithCount(1));
         fuse = kind().fuseTicks();
+        origin = position();
     }
 
     public GrenadeEntity(Level level, Position pos, ItemStack stack) {
         super(ModEntities.GRENADE.get(), pos.x(), pos.y(), pos.z(), level);
         setItem(stack.copyWithCount(1));
         fuse = kind().fuseTicks();
+        origin = position();
     }
 
     public GrenadeKind kind() {
@@ -257,6 +262,10 @@ public class GrenadeEntity extends ThrowableItemProjectile {
                 level.explode(this, getX(), getY(0.5), getZ(), (float) ServerConfig.heRadius(), Level.ExplosionInteraction.TNT);
                 discard();
             }
+            case IMPACT -> {
+                level.explode(this, getX(), getY(0.5), getZ(), (float) ServerConfig.impactRadius(), Level.ExplosionInteraction.TNT);
+                discard();
+            }
             case FLASH -> {
                 Flashbang.detonate(level, this);
                 discard();
@@ -284,10 +293,19 @@ public class GrenadeEntity extends ThrowableItemProjectile {
         activate(ServerConfig.fireSeconds() * 20);
     }
 
+    private boolean impactArmed() {
+        return kind() == GrenadeKind.IMPACT && origin != null && position().distanceTo(origin) >= IMPACT_ARM_DISTANCE;
+    }
+
     @Override
     protected void onHitBlock(BlockHitResult hit) {
         super.onHitBlock(hit);
         if (activeTicks >= 0 && kind().isFire()) {
+            return;
+        }
+        if (impactArmed() && level() instanceof ServerLevel level) {
+            setPos(hit.getLocation());
+            detonate(level);
             return;
         }
         setNoGravity(false);
@@ -318,6 +336,10 @@ public class GrenadeEntity extends ThrowableItemProjectile {
 
     @Override
     protected void onHitEntity(EntityHitResult hit) {
+        if (impactArmed() && level() instanceof ServerLevel level) {
+            detonate(level);
+            return;
+        }
         setDeltaMovement(getDeltaMovement().scale(-0.2));
     }
 
@@ -335,6 +357,11 @@ public class GrenadeEntity extends ThrowableItemProjectile {
         tag.putInt("Fuse", fuse);
         tag.putInt("ActiveTicks", activeTicks);
         tag.putInt("ActiveTotal", activeTotal);
+        if (origin != null) {
+            tag.putDouble("OriginX", origin.x);
+            tag.putDouble("OriginY", origin.y);
+            tag.putDouble("OriginZ", origin.z);
+        }
     }
 
     @Override
@@ -344,6 +371,9 @@ public class GrenadeEntity extends ThrowableItemProjectile {
         String key = tag.contains("ActiveTicks") ? "ActiveTicks" : "SmokeTicks";
         activeTicks = tag.contains(key) ? tag.getInt(key) : -1;
         activeTotal = tag.contains("ActiveTotal") ? tag.getInt("ActiveTotal") : Math.max(activeTicks, ServerConfig.smokeSeconds() * 20);
+        if (tag.contains("OriginX")) {
+            origin = new Vec3(tag.getDouble("OriginX"), tag.getDouble("OriginY"), tag.getDouble("OriginZ"));
+        }
         if (isSmoking() && !level().isClientSide) {
             SmokeClouds.add(this);
         }

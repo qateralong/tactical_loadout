@@ -14,6 +14,7 @@ import net.minecraft.world.level.Level;
 import tactical_loadout.grenade.GrenadeEntity;
 *///?}
 import tactical_loadout.registry.ModArmorMaterials;
+import tactical_loadout.registry.ModBlocks;
 import tactical_loadout.registry.ModCreativeTabs;
 import tactical_loadout.registry.ModDataComponents;
 import tactical_loadout.registry.ModEntities;
@@ -33,6 +34,7 @@ public final class TacticalLoadout {
     public static void init() {
         ModArmorMaterials.init();
         ModDataComponents.init();
+        ModBlocks.init();
         ModItems.init();
         ModRecipes.init();
         ModEntities.init();

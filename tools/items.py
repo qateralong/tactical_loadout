@@ -44,6 +44,7 @@ SWATCHES = [
     "frag_side", "frag_top", "fuze", "spoon", "ring", "he_side", "he_band", "flash_side",
     "flash_top", "smoke_side", "smoke_top", "battery_side", "battery_top", "battery_bottom", "filter_side", "filter_top",
     "metal_dark", "glass", "glass_top", "rag", "incendiary_side", "incendiary_top", "decoy_side", "decoy_top",
+    "impact_side", "impact_top", "can_side", "can_top",
 ]
 
 
@@ -133,6 +134,23 @@ def paint_swatch(name, rng):
     elif name == "decoy_top":
         rgb = flat("5a5f52")
         rgb[3:5, 3:5] = hex_rgb("23251f")
+    elif name == "impact_side":
+        rgb = flat("5c6236")
+        rgb[1:3] = hex_rgb("9e2b25")
+        rgb[SWATCH // 2 + 1] *= 0.82
+        rgb[0] *= 1.12
+    elif name == "impact_top":
+        rgb = flat("565c32")
+        rgb[3:5, 3:5] = hex_rgb("9e2b25")
+    elif name == "can_side":
+        rgb = flat("a7abae")
+        rgb[ys % 2 == 0] *= 0.88
+        rgb[3:6] = hex_rgb("b5482f")
+        rgb[4, 2:6] = hex_rgb("d9c9a3")
+    elif name == "can_top":
+        rgb = flat("bcc0c3")
+        rgb[1:7, 1:7] *= 0.85
+        rgb[3:5, 3:5] *= 0.8
     elif name == "metal_dark":
         rgb = flat("3a3c3e")
         rgb[ys % 2 == 0] *= 1.25
@@ -256,6 +274,13 @@ def gear_models(size):
     models["decoy_grenade"] = (g, 1.45)
 
     g = Gear(size)
+    g.cylinder(8, 8, 2.25, 4, 8.5, "impact_side", "impact_top")
+    g.cylinder(8, 8, 1.6, 3, 4, "impact_side", "impact_top")
+    g.cylinder(8, 8, 1.6, 8.5, 9.5, "impact_side", "impact_top")
+    g.fuze(9.5, 1.6, 6.4)
+    models["impact_grenade"] = (g, 1.4)
+
+    g = Gear(size)
     g.cylinder(8, 8, 1.25, 4, 11, "battery_side", "battery_top", "battery_bottom")
     g.box((7.6, 11, 7.6), (8.4, 11.6, 8.4), "fuze")
     models["battery"] = (g, 1.5)
@@ -370,9 +395,30 @@ def armor_models():
     return count
 
 
+# Two tin cans tied to a wire across the block; the wire itself uses the vanilla tripwire texture.
+def tripwire_alarm_model(size):
+    g = Gear(size)
+    for cx in (2, 14):
+        g.cylinder(cx, 8, 1.5, 0, 4, "can_side", "can_top")
+    wire = {"up": {"uv": [0, 0, 16, 2], "texture": "#wire"}, "down": {"uv": [0, 2, 16, 0], "texture": "#wire"}}
+    side = {"north": {"uv": [0, 0, 16, 2], "texture": "#wire"}, "south": {"uv": [0, 0, 16, 2], "texture": "#wire"}}
+    model = {
+        "render_type": "minecraft:cutout",
+        "ambientocclusion": False,
+        "textures": {"0": f"{NS}:item/gear_parts", "particle": f"{NS}:item/gear_parts", "wire": "minecraft:block/tripwire"},
+        "elements": g.elements + [
+            {"from": [3.5, 1.5, 8], "to": [12.5, 1.5, 8], "shade": False, "faces": wire},
+            {"from": [3.5, 1, 8], "to": [12.5, 2, 8], "shade": False, "faces": side},
+        ],
+    }
+    path = ASSETS / "models/block/tripwire_alarm.json"
+    path.write_text(json.dumps(model, indent=2) + "\n")
+
+
 def main():
     size = gear_texture()
     gear_models(size)
+    tripwire_alarm_model(size)
     print(f"wrote {armor_models() + 9} item models")
 
 

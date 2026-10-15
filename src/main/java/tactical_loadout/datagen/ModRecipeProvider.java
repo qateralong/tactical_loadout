@@ -193,6 +193,7 @@ public class ModRecipeProvider extends RecipeProvider {
         grenade(output, GrenadeKind.SMOKE, 'C', Ingredient.of(ItemTags.COALS), "IGI");
         grenade(output, GrenadeKind.INCENDIARY, 'B', Ingredient.of(Items.BLAZE_POWDER), "IGI");
         grenade(output, GrenadeKind.DECOY, 'R', Ingredient.of(Tags.Items.DUSTS_REDSTONE), "INI");
+        grenade(output, GrenadeKind.IMPACT, 'T', Ingredient.of(Items.TNT), "IGI");
         ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.grenade(GrenadeKind.MOLOTOV), 2)
                 .pattern(" S ")
                 .pattern("GCG")
@@ -211,6 +212,20 @@ public class ModRecipeProvider extends RecipeProvider {
                 .define('F', ModTags.FABRICS)
                 .define('I', Tags.Items.INGOTS_IRON)
                 .unlockedBy("has_kevlar_insert", has(ModItems.KEVLAR_INSERT))
+                .save(output);
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, ModItems.ZIP_TIES, 4)
+                .requires(Tags.Items.STRINGS)
+                .requires(Tags.Items.STRINGS)
+                .requires(Tags.Items.STRINGS)
+                .requires(Tags.Items.NUGGETS_IRON)
+                .unlockedBy("has_string", has(Tags.Items.STRINGS))
+                .save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, ModItems.TRIPWIRE_ALARM, 2)
+                .pattern("N N")
+                .pattern("SSS")
+                .define('N', Tags.Items.NUGGETS_IRON)
+                .define('S', Tags.Items.STRINGS)
+                .unlockedBy("has_string", has(Tags.Items.STRINGS))
                 .save(output);
         SpecialRecipeBuilder.special(AttachDeviceRecipe::new).save(output, TacticalLoadout.id("attach_device"));
         SpecialRecipeBuilder.special(DetachDeviceRecipe::new).save(output, TacticalLoadout.id("detach_device"));

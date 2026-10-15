@@ -1,0 +1,36 @@
+{
+  "variants": {
+    "facing=north,triggered=false": {
+      "model": "tactical_loadout:block/tripwire_alarm",
+      "y": 0
+    },
+    "facing=north,triggered=true": {
+      "model": "tactical_loadout:block/tripwire_alarm",
+      "y": 0
+    },
+    "facing=east,triggered=false": {
+      "model": "tactical_loadout:block/tripwire_alarm",
+      "y": 90
+    },
+    "facing=east,triggered=true": {
+      "model": "tactical_loadout:block/tripwire_alarm",
+      "y": 90
+    },
+    "facing=south,triggered=false": {
+      "model": "tactical_loadout:block/tripwire_alarm",
+      "y": 180
+    },
+    "facing=south,triggered=true": {
+      "model": "tactical_loadout:block/tripwire_alarm",
+      "y": 180
+    },
+    "facing=west,triggered=false": {
+      "model": "tactical_loadout:block/tripwire_alarm",
+      "y": 270
+    },
+    "facing=west,triggered=true": {
+      "model": "tactical_loadout:block/tripwire_alarm",
+      "y": 270
+    }
+  }
+}

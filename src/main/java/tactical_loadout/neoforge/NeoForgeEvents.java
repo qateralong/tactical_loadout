@@ -13,12 +13,24 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Items;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
+import net.neoforged.neoforge.event.level.BlockEvent;
 import tactical_loadout.TacticalLoadout;
 import tactical_loadout.advancement.ModAdvancements;
 import tactical_loadout.camo.Camouflage;
 import tactical_loadout.combat.BallisticHits;
 import tactical_loadout.device.DeviceEvents;
 import tactical_loadout.grenade.SmokeClouds;
+import tactical_loadout.gear.Helpless;
+import tactical_loadout.gear.Restraints;
 import tactical_loadout.item.RepairKitItem;
 
 /** Forwards NeoForge game events to the shared handlers. */
@@ -58,6 +70,7 @@ public final class NeoForgeEvents {
     @SubscribeEvent
     static void onServerStopped(ServerStoppedEvent event) {
         BallisticHits.onServerStopped();
+        Restraints.onServerStopped();
     }
 
     @SubscribeEvent
@@ -95,5 +108,97 @@ public final class NeoForgeEvents {
     @SubscribeEvent
     static void onEquipmentChange(LivingEquipmentChangeEvent event) {
         ModAdvancements.onEquipmentChange(event.getEntity(), event.getSlot());
+    }
+
+    // Tied players can look around but not fight, use items or build.
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    static void onAttack(AttackEntityEvent event) {
+        if (Helpless.is(event.getEntity())) {
+            event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    static void onRightClickItem(PlayerInteractEvent.RightClickItem event) {
+        if (Helpless.is(event.getEntity())) {
+            event.setCanceled(true);
+            event.setCancellationResult(InteractionResult.FAIL);
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
+        if (Helpless.is(event.getEntity())) {
+            event.setCanceled(true);
+            event.setCancellationResult(InteractionResult.FAIL);
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    static void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
+        if (Helpless.is(event.getEntity())) {
+            event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    static void onInteractEntity(PlayerInteractEvent.EntityInteract event) {
+        if (Helpless.is(event.getEntity())) {
+            event.setCanceled(true);
+            event.setCancellationResult(InteractionResult.FAIL);
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    static void onInteractEntityAt(PlayerInteractEvent.EntityInteractSpecific event) {
+        if (Helpless.is(event.getEntity())) {
+            event.setCanceled(true);
+            event.setCancellationResult(InteractionResult.FAIL);
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    static void onUseItem(LivingEntityUseItemEvent.Start event) {
+        if (event.getEntity() instanceof Player player && Helpless.is(player)) {
+            event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    static void onBreak(BlockEvent.BreakEvent event) {
+        if (Helpless.is(event.getPlayer())) {
+            event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    static void onPlace(BlockEvent.EntityPlaceEvent event) {
+        if (event.getEntity() instanceof Player player && Helpless.is(player)) {
+            event.setCanceled(true);
+        }
+    }
+
+    // Shears cut a tied player loose, three quick clicks like tying.
+    @SubscribeEvent
+    static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
+        if (event.getItemStack().is(Items.SHEARS) && event.getEntity() instanceof ServerPlayer cutter
+                && event.getTarget() instanceof ServerPlayer victim && Restraints.cutClick(cutter, victim)) {
+            event.setCanceled(true);
+            event.setCancellationResult(InteractionResult.SUCCESS);
+        }
+    }
+
+    @SubscribeEvent
+    static void onLogin(PlayerEvent.PlayerLoggedInEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            Restraints.onLogin(player);
+        }
+    }
+
+    @SubscribeEvent
+    static void onRespawn(PlayerEvent.PlayerRespawnEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            Restraints.onRespawn(player);
+        }
     }
 }

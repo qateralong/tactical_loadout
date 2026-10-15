@@ -24,9 +24,11 @@ public final class ServerConfig {
     private static final ModConfigSpec.DoubleValue GHILLIE_STRENGTH;
     private static final ModConfigSpec.BooleanValue NVG_USES_BATTERY;
     private static final ModConfigSpec.IntValue NVG_BATTERY_SECONDS;
+    private static final ModConfigSpec.IntValue ZIP_TIE_STRUGGLES;
     private static final ModConfigSpec.IntValue GAS_FILTER_SECONDS;
     private static final ModConfigSpec.DoubleValue FRAG_RADIUS;
     private static final ModConfigSpec.DoubleValue HE_RADIUS;
+    private static final ModConfigSpec.DoubleValue IMPACT_RADIUS;
     private static final ModConfigSpec.DoubleValue FLASH_RADIUS;
     private static final ModConfigSpec.IntValue FLASH_SECONDS;
     private static final ModConfigSpec.IntValue SMOKE_SECONDS;
@@ -116,6 +118,8 @@ public final class ServerConfig {
                 .translation(key("fragRadius")).defineInRange("fragRadius", 3.0, 0.5, 8.0);
         HE_RADIUS = builder.comment("Explosion power of the HE grenade (breaks blocks like TNT).")
                 .translation(key("heRadius")).defineInRange("heRadius", 3.0, 0.5, 8.0);
+        IMPACT_RADIUS = builder.comment("Explosion power of the impact grenade (breaks blocks like TNT).")
+                .translation(key("impactRadius")).defineInRange("impactRadius", 2.5, 0.5, 8.0);
         FLASH_RADIUS = builder.comment("Range of the flashbang in blocks.")
                 .translation(key("flashRadius")).defineInRange("flashRadius", 20.0, 4.0, 48.0);
         FLASH_SECONDS = builder.comment("Blindness duration in seconds at full strength.")
@@ -139,6 +143,11 @@ public final class ServerConfig {
         builder.translation(key("repair")).push("repair");
         REPAIR_KIT_FRACTION = builder.comment("Share of a piece's durability restored by one armor repair kit in an anvil.")
                 .translation(key("repairKitFraction")).defineInRange("repairKitFraction", 0.5, 0.05, 1.0);
+        builder.pop();
+
+        builder.translation(key("restraints")).push("restraints");
+        ZIP_TIE_STRUGGLES = builder.comment("How many key presses a zip-tied player needs to break free.")
+                .translation(key("zipTieStruggles")).defineInRange("zipTieStruggles", 100, 5, 1000);
         builder.pop();
 
         SPEC = builder.build();
@@ -214,6 +223,10 @@ public final class ServerConfig {
         return SPEC.isLoaded() ? NVG_USES_BATTERY.get() : NVG_USES_BATTERY.getDefault();
     }
 
+    public static int zipTieStruggles() {
+        return SPEC.isLoaded() ? ZIP_TIE_STRUGGLES.get() : ZIP_TIE_STRUGGLES.getDefault();
+    }
+
     public static int nvgBatterySeconds() {
         return SPEC.isLoaded() ? NVG_BATTERY_SECONDS.get() : NVG_BATTERY_SECONDS.getDefault();
     }
@@ -228,6 +241,10 @@ public final class ServerConfig {
 
     public static double heRadius() {
         return get(HE_RADIUS);
+    }
+
+    public static double impactRadius() {
+        return get(IMPACT_RADIUS);
     }
 
     public static double flashRadius() {

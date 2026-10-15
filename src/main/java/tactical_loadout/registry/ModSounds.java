@@ -9,6 +9,7 @@ import tactical_loadout.platform.RegistryEntry;
 public final class ModSounds {
     public static final RegistryEntry<SoundEvent, SoundEvent> DECOY_SHOT = register("grenade.decoy_shot");
     public static final RegistryEntry<SoundEvent, SoundEvent> GRENADE_PIN = register("grenade.pin");
+    public static final RegistryEntry<SoundEvent, SoundEvent> TRIPWIRE_RATTLE = register("tripwire_alarm.rattle");
 
     private ModSounds() {
     }

@@ -60,6 +60,26 @@ def pin():
     return signal / np.max(np.abs(signal)) * 0.8
 
 
+# Tin cans on a tripwire: a burst of tinny clanks that rattle on and slowly die down.
+def can_rattle(seed):
+    rng = np.random.default_rng(seed)
+    n = int(RATE * 1.6)
+    signal = np.zeros(n)
+    at = 0.0
+    while at < 1.3:
+        start = int(at * RATE)
+        m = n - start
+        t = np.arange(m) / RATE
+        loud = (1.0 - at / 1.4) ** 1.5 * (0.6 + 0.4 * rng.random())
+        hit = (rng.standard_normal(m) - lowpass(rng.standard_normal(m), 2500)) * envelope(m, 0.0004, 0.006)
+        for freq in (850, 1630, 2580, 3970):
+            f = freq * (0.9 + 0.2 * rng.random())
+            hit += 0.45 * rng.random() * np.sin(2 * np.pi * f * t) * envelope(m, 0.0008, 0.04 + 0.08 * rng.random())
+        signal[start:] += hit * loud
+        at += 0.025 + 0.12 * rng.random() * (0.4 + at)
+    return signal / np.max(np.abs(signal)) * 0.95
+
+
 def write_ogg(path, signal):
     path.parent.mkdir(parents=True, exist_ok=True)
     pcm = (np.clip(signal, -1, 1) * 32767).astype(np.int16)
@@ -79,12 +99,17 @@ def main():
         write_ogg(SOUND_DIR / f"decoy_shot{i + 1}.ogg", gunshot(i + 1))
         shots.append(f"{NS}:grenade/decoy_shot{i + 1}")
     write_ogg(SOUND_DIR / "pin.ogg", pin())
+    rattles = []
+    for i in range(2):
+        write_ogg(ASSETS / f"sounds/gear/can_rattle{i + 1}.ogg", can_rattle(10 + i))
+        rattles.append(f"{NS}:gear/can_rattle{i + 1}")
     sounds = {
         "grenade.decoy_shot": {"subtitle": f"subtitles.{NS}.grenade.decoy_shot", "sounds": shots},
         "grenade.pin": {"subtitle": f"subtitles.{NS}.grenade.pin", "sounds": [f"{NS}:grenade/pin"]},
+        "tripwire_alarm.rattle": {"subtitle": f"subtitles.{NS}.tripwire_alarm.rattle", "sounds": rattles},
     }
     (ASSETS / "sounds.json").write_text(json.dumps(sounds, indent=2) + "\n")
-    print(f"wrote {len(shots) + 1} sounds to {SOUND_DIR.relative_to(ROOT)}")
+    print(f"wrote {len(shots) + 1 + len(rattles)} sounds")
 
 
 if __name__ == "__main__":

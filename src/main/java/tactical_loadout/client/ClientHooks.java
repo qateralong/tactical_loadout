@@ -8,7 +8,9 @@ import net.minecraft.world.entity.player.Player;
 import org.lwjgl.glfw.GLFW;
 import tactical_loadout.TacticalLoadout;
 import tactical_loadout.config.ClientConfig;
+import tactical_loadout.gear.Restraints;
 import tactical_loadout.grenade.GrenadeItem;
+import tactical_loadout.network.StrugglePayload;
 import tactical_loadout.network.ToggleNvgPayload;
 import tactical_loadout.platform.Platform;
 
@@ -47,6 +49,7 @@ public final class ClientHooks {
 
     public static void onLoggingOut() {
         FlashOverlay.reset();
+        Restraints.setClientRemaining(0);
     }
 
     public static void onClientTick() {
@@ -54,6 +57,13 @@ public final class ClientHooks {
         while (TOGGLE_NVG.consumeClick()) {
             if (Minecraft.getInstance().player != null) {
                 Platform.INSTANCE.sendToServer(new ToggleNvgPayload());
+            }
+        }
+        // Tied players hammer the jump key to break free; jumping itself is already disabled.
+        KeyMapping jump = Minecraft.getInstance().options.keyJump;
+        if (Restraints.clientRemaining() > 0) {
+            while (jump.consumeClick()) {
+                Platform.INSTANCE.sendToServer(new StrugglePayload());
             }
         }
     }

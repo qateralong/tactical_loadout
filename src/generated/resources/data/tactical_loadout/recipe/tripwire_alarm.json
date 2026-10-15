@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "N": {
+      "tag": "c:nuggets/iron"
+    },
+    "S": {
+      "tag": "c:strings"
+    }
+  },
+  "pattern": [
+    "N N",
+    "SSS"
+  ],
+  "result": {
+    "count": 2,
+    "id": "tactical_loadout:tripwire_alarm"
+  }
+}

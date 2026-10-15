@@ -19,6 +19,7 @@ import tactical_loadout.TacticalLoadout;
 import tactical_loadout.config.ServerConfig;
 import tactical_loadout.device.DeviceKind;
 import tactical_loadout.device.Devices;
+import tactical_loadout.gear.Restraints;
 import tactical_loadout.device.MountedDevice;
 import tactical_loadout.grenade.GrenadeKind;
 import tactical_loadout.item.ArmorPiece;
@@ -80,6 +81,9 @@ public class JeiCompat implements IModPlugin {
         registration.addItemStackInfo(new ItemStack(ModItems.ARMOR_REPAIR_KIT.get()),
                 Component.translatable(INFO + "repair_kit", percent(ServerConfig.repairKitFraction())));
         registration.addItemStackInfo(new ItemStack(ModItems.GAS_FILTER.get()), Component.translatable(INFO + "gas_filter"));
+        registration.addItemStackInfo(new ItemStack(ModItems.ZIP_TIES.get()),
+                Component.translatable(INFO + "zip_ties", Restraints.CLICKS, ServerConfig.zipTieStruggles()));
+        registration.addItemStackInfo(new ItemStack(ModItems.TRIPWIRE_ALARM.get()), Component.translatable(INFO + "tripwire_alarm"));
         registration.addRecipes(RecipeTypes.CRAFTING, deviceRecipes());
     }
 

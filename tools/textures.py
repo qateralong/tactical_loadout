@@ -202,6 +202,47 @@ REPAIR_KIT_COLORS = {"#": "26291d", "o": "56603a", "f": "636e43", "b": "8f9295",
                      "y": "c2a94a", "K": "9e8838"}
 
 
+ZIP_TIES = [
+    "................",
+    "................",
+    ".....######.....",
+    "....#hhhhhh#....",
+    "...#h......h#...",
+    "...#h......h#...",
+    "...#h......h#...",
+    "...#h......g#...",
+    "....#hhhhhgg#...",
+    ".....######gg...",
+    "............g#..",
+    "............h#..",
+    "............h#..",
+    ".............#..",
+    "................",
+    "................",
+]
+ZIP_TIES_COLORS = {"#": "141414", "h": "3c3c3c", "g": "5a5a5a"}
+
+TRIPWIRE_ALARM = [
+    "................",
+    "................",
+    "................",
+    "................",
+    "..hhh......hhh..",
+    ".#sss#....#sss#.",
+    ".#sRs#----#sRs#.",
+    ".#sss#....#sss#.",
+    ".#sRs#....#sRs#.",
+    ".#sss#....#sss#.",
+    "..###......###..",
+    "................",
+    "................",
+    "................",
+    "................",
+    "................",
+]
+TRIPWIRE_ALARM_COLORS = {"#": "4a4d50", "h": "c9ccce", "s": "9a9ea2", "R": "6f7377", "-": "e2ddd0"}
+
+
 def pixel_icon(rows, colors):
     img = np.zeros((16, 16, 4))
     for y, row in enumerate(rows):
@@ -303,6 +344,8 @@ def main():
     save(colorize(PLATE_MASK, solid("9a8f86")), "raw_ceramic_plate")
     save(colorize(PLATE_MASK, solid("ddd8cc")), "ceramic_plate")
     save(pixel_icon(REPAIR_KIT, REPAIR_KIT_COLORS), "armor_repair_kit")
+    save(pixel_icon(ZIP_TIES, ZIP_TIES_COLORS), "zip_ties")
+    save(pixel_icon(TRIPWIRE_ALARM, TRIPWIRE_ALARM_COLORS), "tripwire_alarm")
     overlays()
     smoke_puffs()
     print(f"wrote {len(list(ITEM_DIR.glob('*.png')))} textures to {ITEM_DIR.relative_to(ROOT)}")

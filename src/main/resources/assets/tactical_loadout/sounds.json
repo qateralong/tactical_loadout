@@ -12,5 +12,12 @@
     "sounds": [
       "tactical_loadout:grenade/pin"
     ]
+  },
+  "tripwire_alarm.rattle": {
+    "subtitle": "subtitles.tactical_loadout.tripwire_alarm.rattle",
+    "sounds": [
+      "tactical_loadout:gear/can_rattle1",
+      "tactical_loadout:gear/can_rattle2"
+    ]
   }
 }

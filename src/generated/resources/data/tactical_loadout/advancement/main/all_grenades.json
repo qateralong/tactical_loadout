@@ -13,6 +13,9 @@
     "he_grenade": {
       "trigger": "minecraft:impossible"
     },
+    "impact_grenade": {
+      "trigger": "minecraft:impossible"
+    },
     "incendiary_grenade": {
       "trigger": "minecraft:impossible"
     },
@@ -57,6 +60,9 @@
     ],
     [
       "decoy_grenade"
+    ],
+    [
+      "impact_grenade"
     ]
   ],
   "sends_telemetry_event": true
