@@ -6,17 +6,32 @@ Bullet-resistant tactical armor for NeoForge 1.21.1 with working camouflage, hel
 
 ## Features
 
-**Armor sets.** CS2 CT and T kits, US Woodland, Desert, OD Green, MultiCam and Snow, Russian Ratnik (EMR), ghillie suits (woodland and snow) and SWAT. Each set comes as a helmet, plate carrier, leggings and boots in light, medium and heavy tiers (ghillie suits are light only). The tiers look different, with plates, shoulder pads and extra pouches.
+**Armor sets.** 15 sets:
+- CS2 CT and T kits;
+- US Woodland, Desert, OD Green, MultiCam, Snow, UCP and Tiger Stripe;
+- Russian Ratnik in EMR and Flora;
+- ghillie suits (woodland, snow and desert);
+- SWAT.
 
-**Zone protection.** A hit is blocked by the piece that covers where it lands: helmet for the head, plate carrier for the torso, leggings for the legs, boots for the feet. Light blocks 25%, medium 40% and heavy 60%. Each heavy piece slows you down by 3%. Hit pieces lose durability.
+Each set comes as a helmet, plate carrier, leggings and boots in light, medium and heavy tiers (ghillie suits are light only). The tiers look different, with plates, shoulder pads and extra pouches.
+
+**Zone protection.** A hit is blocked by the piece that covers where it lands: helmet for the head, plate carrier for the torso, leggings for the legs, boots for the feet. Light blocks 25%, medium 40% and heavy 60%. Each heavy piece slows you down by 3%. Hit pieces lose durability. An armor repair kit fixes half a piece's durability in an anvil for one level, whatever the tier.
 
 **Camouflage.** A full camo set makes mobs notice you from 30% closer (50% while sneaking). It works better in biomes that match the pattern and worse in ones that clash with it. Ghillie suits are 1.5 times stronger.
 
 **Helmet devices.** A PVS-14, GPNVG-18 (white or green phosphor) or a thermal imager mounts on the US, Ratnik, SWAT and CT helmets. Any helmet takes a gas mask. You attach and detach devices in a crafting grid. Night vision runs on batteries and the gas mask uses filters; both refill in a crafting grid. The thermal imager shows living things through smoke.
 
-**Grenades.** Frag (no block damage), HE (breaks blocks), flashbang and smoke. Hold right-click to wind up and let go to throw. A tap lobs the grenade at your feet, and a full second of wind-up throws it furthest. Grenades bounce, tumble in flight and go off on a timer.
-- The flashbang whites out players' screens and blinds mobs.
-- Smoke hides everyone inside or behind the cloud from mobs.
+**Grenades.** Every CS2 grenade plus a frag. Hold right-click to wind up and let go to throw. A tap lobs the grenade at your feet, and a full second of wind-up throws it furthest. Grenades bounce and tumble in flight. Dispensers throw them too.
+- **Frag** explodes without breaking blocks; **HE** breaks blocks like TNT.
+- **Flashbang** whites out players' screens and blinds mobs. Night vision tubes make it worse.
+- **Smoke** hides everyone inside or behind the cloud from mobs.
+- **Molotov** and **incendiary** burst on the first floor they land on and cover it in fire. The fire flows along the floor and up and down steps, but not through walls or into water, and it never sets blocks alight. Smoke puts it out.
+- **Decoy** fires fake shots in bursts. Monsters without a target walk over to it, and sculk sensors and wardens hear it.
+
+**Extras.** Advancements, and loot:
+- grenades in pillager outposts;
+- batteries, filters and repair kits in dungeons;
+- night vision and thermal devices in ancient cities.
 
 ## Controls
 
@@ -47,7 +62,10 @@ You can change both config files in game from the Mods screen.
   - heavy slowdown;
   - camouflage strength;
   - battery and filter life;
-  - grenade power, range and duration.
+  - grenade power, range and duration;
+  - fire spread, damage and duration;
+  - decoy duration and lure range;
+  - repair kit strength.
 - **`tacz_camo_armor-client.toml`**
   - the field-of-view change while winding up a throw;
   - the strongest flashbang white-out, for players sensitive to bright flashes;
@@ -69,4 +87,5 @@ The jar goes to `build/libs`. Models, textures, item models and the logo are gen
 - `armor.py` makes the armor models and their textures;
 - `textures.py` makes the material icons and overlays;
 - `items.py` makes the 3D item models;
+- `sounds.py` makes the decoy and grenade pin sounds (needs FFmpeg);
 - `logo.py` makes the logo.
