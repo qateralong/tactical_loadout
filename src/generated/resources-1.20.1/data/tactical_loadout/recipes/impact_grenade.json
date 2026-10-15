@@ -2,15 +2,30 @@
   "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
-    "G": {
-      "tag": "c:gunpowders"
-    },
-    "I": {
-      "tag": "c:ingots/iron"
-    },
-    "N": {
-      "tag": "c:nuggets/iron"
-    },
+    "G": [
+      {
+        "item": "minecraft:gunpowder"
+      },
+      {
+        "tag": "forge:gunpowder"
+      }
+    ],
+    "I": [
+      {
+        "item": "minecraft:iron_ingot"
+      },
+      {
+        "tag": "forge:ingots/iron"
+      }
+    ],
+    "N": [
+      {
+        "item": "minecraft:iron_nugget"
+      },
+      {
+        "tag": "forge:nuggets/iron"
+      }
+    ],
     "T": {
       "item": "minecraft:tnt"
     }

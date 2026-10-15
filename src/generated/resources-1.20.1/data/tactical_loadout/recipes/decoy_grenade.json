@@ -2,15 +2,30 @@
   "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
-    "I": {
-      "tag": "c:ingots/iron"
-    },
-    "N": {
-      "tag": "c:nuggets/iron"
-    },
-    "R": {
-      "tag": "c:dusts/redstone"
-    }
+    "I": [
+      {
+        "item": "minecraft:iron_ingot"
+      },
+      {
+        "tag": "forge:ingots/iron"
+      }
+    ],
+    "N": [
+      {
+        "item": "minecraft:iron_nugget"
+      },
+      {
+        "tag": "forge:nuggets/iron"
+      }
+    ],
+    "R": [
+      {
+        "item": "minecraft:redstone"
+      },
+      {
+        "tag": "forge:dusts/redstone"
+      }
+    ]
   },
   "pattern": [
     " N ",

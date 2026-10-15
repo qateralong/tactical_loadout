@@ -3,6 +3,8 @@ package tactical_loadout.medical;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
@@ -20,16 +22,25 @@ public final class Medical {
     private Medical() {
     }
 
+    /** The leather rustle of a bandage or a helping hand. */
+    public static SoundEvent patchSound() {
+        //? if >=1.21 {
+        return SoundEvents.ARMOR_EQUIP_LEATHER.value();
+        //?} else {
+        /*return SoundEvents.ARMOR_EQUIP_LEATHER;
+        *///?}
+    }
+
     public static DamageSource bleedingSource(ServerLevel level) {
         return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(BLEEDING_DAMAGE));
     }
 
     public static boolean isBleeding(LivingEntity entity) {
-        return entity.hasEffect(ModEffects.BLEEDING.holder());
+        return entity.hasEffect(ModEffects.bleeding());
     }
 
     public static void stopBleeding(LivingEntity entity) {
-        entity.removeEffect(ModEffects.BLEEDING.holder());
+        entity.removeEffect(ModEffects.bleeding());
     }
 
     /** Called once damage was actually dealt. */
@@ -41,7 +52,7 @@ public final class Medical {
             return;
         }
         if (entity.getRandom().nextDouble() < ServerConfig.bleedChance()) {
-            entity.addEffect(new MobEffectInstance(ModEffects.BLEEDING.holder(), ServerConfig.bleedSeconds() * 20, 0, false, true, true));
+            entity.addEffect(new MobEffectInstance(ModEffects.bleeding(), ServerConfig.bleedSeconds() * 20, 0, false, true, true));
         }
     }
 }

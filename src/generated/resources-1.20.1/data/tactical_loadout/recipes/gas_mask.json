@@ -5,15 +5,30 @@
     "F": {
       "item": "tactical_loadout:gas_filter"
     },
-    "G": {
-      "tag": "c:glass_panes"
-    },
-    "I": {
-      "tag": "c:ingots/iron"
-    },
-    "L": {
-      "tag": "c:leathers"
-    }
+    "G": [
+      {
+        "item": "minecraft:glass_pane"
+      },
+      {
+        "tag": "forge:glass_panes"
+      }
+    ],
+    "I": [
+      {
+        "item": "minecraft:iron_ingot"
+      },
+      {
+        "tag": "forge:ingots/iron"
+      }
+    ],
+    "L": [
+      {
+        "item": "minecraft:leather"
+      },
+      {
+        "tag": "forge:leather"
+      }
+    ]
   },
   "pattern": [
     " L ",

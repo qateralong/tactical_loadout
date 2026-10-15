@@ -5,9 +5,14 @@
     "F": {
       "tag": "tactical_loadout:fabrics"
     },
-    "I": {
-      "tag": "c:ingots/iron"
-    }
+    "I": [
+      {
+        "item": "minecraft:iron_ingot"
+      },
+      {
+        "tag": "forge:ingots/iron"
+      }
+    ]
   },
   "pattern": [
     "F",

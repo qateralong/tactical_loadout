@@ -108,7 +108,7 @@ tasks {
         inputs.property("mixin_java", mixinJava)
         // Before 1.21 armor wear and the HUD work differently, so a few mixins only join the configs there.
         val extraMixins = if (sc.current.parsed < "1.21") {
-            mapOf("LivingEntityArmorMixin" to "InventoryArmorMixin", "MinecraftMixin" to "GameRendererMixin")
+            mapOf("LivingEntityArmorMixin" to "InventoryArmorMixin,LivingEntityJumpMixin", "MinecraftMixin" to "GameRendererMixin")
         } else {
             emptyMap()
         }
@@ -116,7 +116,7 @@ tasks {
         filesMatching("*.mixins.json") {
             expand("java" to mixinJava)
             for ((anchor, extra) in extraMixins) {
-                filter { line -> line.replace("\"$anchor\"", "\"$anchor\",\n    \"$extra\"") }
+                filter { line -> line.replace("\"$anchor\"", (listOf(anchor) + extra.split(",")).joinToString(",\n    ") { "\"$it\"" }) }
             }
         }
         // NeoForge loot modifiers; Fabric adds the same supply tables from code.

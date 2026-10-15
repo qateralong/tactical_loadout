@@ -5,18 +5,38 @@
     "B": {
       "item": "tactical_loadout:battery"
     },
-    "E": {
-      "tag": "c:gems/emerald"
-    },
-    "G": {
-      "tag": "c:glass_panes"
-    },
-    "I": {
-      "tag": "c:ingots/iron"
-    },
-    "R": {
-      "tag": "c:dusts/redstone"
-    }
+    "E": [
+      {
+        "item": "minecraft:emerald"
+      },
+      {
+        "tag": "forge:gems/emerald"
+      }
+    ],
+    "G": [
+      {
+        "item": "minecraft:glass_pane"
+      },
+      {
+        "tag": "forge:glass_panes"
+      }
+    ],
+    "I": [
+      {
+        "item": "minecraft:iron_ingot"
+      },
+      {
+        "tag": "forge:ingots/iron"
+      }
+    ],
+    "R": [
+      {
+        "item": "minecraft:redstone"
+      },
+      {
+        "tag": "forge:dusts/redstone"
+      }
+    ]
   },
   "pattern": [
     "GIG",

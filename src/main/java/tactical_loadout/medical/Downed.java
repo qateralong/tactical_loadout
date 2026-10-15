@@ -1,7 +1,6 @@
 package tactical_loadout.medical;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -12,14 +11,11 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Pose;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import tactical_loadout.TacticalLoadout;
 import tactical_loadout.config.ServerConfig;
+import tactical_loadout.gear.Modifiers;
 import tactical_loadout.network.DownedPayload;
 import tactical_loadout.platform.Platform;
 import tactical_loadout.registry.ModItems;
@@ -83,11 +79,10 @@ public final class Downed {
     }
 
     /**
-     * Keeps a downed player crawling. Called after the player's tick, because other mods (TaCZ's prone crawl) reset the forced
-     * pose every tick; setting the pose directly as well keeps the hitbox and camera low until the next update.
+     * Keeps a downed player crawling. Called after the player's tick on both sides: the pose update during the tick (and mods
+     * like TaCZ with their own prone crawl) would stand them up again, and this keeps the hitbox and camera low until the next one.
      */
     public static void applyPose(Player player) {
-        player.setForcedPose(Pose.SWIMMING);
         player.setPose(Pose.SWIMMING);
     }
 
@@ -108,8 +103,8 @@ public final class Downed {
         TICKS_LEFT.put(player.getUUID(), ServerConfig.downedSeconds() * 20);
         Medical.stopBleeding(player);
         player.stopUsingItem();
-        player.setForcedPose(Pose.SWIMMING);
-        modify(player, Attributes.JUMP_STRENGTH, true);
+        applyPose(player);
+        Modifiers.jump(player, MODIFIER, -1.0);
         player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.PLAYER_HURT, SoundSource.PLAYERS, 1.0F, 0.6F);
         player.displayClientMessage(message("down_self").withStyle(ChatFormatting.RED), true);
         sync(player);
@@ -184,15 +179,14 @@ public final class Downed {
         player.clearFire();
         player.invulnerableTime = 20;
         player.setHealth(Math.min(player.getMaxHealth(), health));
-        player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ARMOR_EQUIP_LEATHER.value(), SoundSource.PLAYERS,
+        player.level().playSound(null, player.getX(), player.getY(), player.getZ(), Medical.patchSound(), SoundSource.PLAYERS,
                 1.0F, 0.8F);
     }
 
     private static void clear(ServerPlayer player) {
         player.removeTag(TAG);
         TICKS_LEFT.remove(player.getUUID());
-        player.setForcedPose(null);
-        modify(player, Attributes.JUMP_STRENGTH, false);
+        Modifiers.jump(player, MODIFIER, 0.0);
         sync(player);
     }
 
@@ -209,7 +203,7 @@ public final class Downed {
     public static void onLogin(ServerPlayer player) {
         if (player.getTags().contains(TAG)) {
             TICKS_LEFT.put(player.getUUID(), 1);
-            player.setForcedPose(Pose.SWIMMING);
+            applyPose(player);
         }
         sync(player);
     }
@@ -221,17 +215,6 @@ public final class Downed {
     public static void onServerStopped() {
         TICKS_LEFT.clear();
         REVIVES.clear();
-    }
-
-    private static void modify(ServerPlayer player, Holder<Attribute> attribute, boolean add) {
-        AttributeInstance instance = player.getAttribute(attribute);
-        if (instance == null) {
-            return;
-        }
-        instance.removeModifier(MODIFIER);
-        if (add) {
-            instance.addTransientModifier(new AttributeModifier(MODIFIER, -1.0, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
-        }
     }
 
     /** No natural regeneration while down. */

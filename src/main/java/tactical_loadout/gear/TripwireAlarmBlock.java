@@ -1,6 +1,8 @@
 package tactical_loadout.gear;
 
+//? if >=1.20.5 {
 import com.mojang.serialization.MapCodec;
+//?}
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -28,7 +30,9 @@ import tactical_loadout.registry.ModSounds;
 
 /** A wire with tin cans across a passage: anything that walks through it sets off a loud rattle. */
 public class TripwireAlarmBlock extends HorizontalDirectionalBlock {
+    //? if >=1.20.5 {
     public static final MapCodec<TripwireAlarmBlock> CODEC = simpleCodec(TripwireAlarmBlock::new);
+    //?}
     public static final BooleanProperty TRIGGERED = BlockStateProperties.TRIGGERED;
     private static final int REARM_TICKS = 30;
     private static final VoxelShape ACROSS_X = Block.box(0, 0, 6.5, 16, 4, 9.5);
@@ -39,10 +43,12 @@ public class TripwireAlarmBlock extends HorizontalDirectionalBlock {
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(TRIGGERED, false));
     }
 
+    //? if >=1.20.5 {
     @Override
     protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
         return CODEC;
     }
+    //?}
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
@@ -56,23 +62,40 @@ public class TripwireAlarmBlock extends HorizontalDirectionalBlock {
     }
 
     @Override
+    //? if >=1.20.5 {
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    //?} else {
+    /*public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    *///?}
         return state.getValue(FACING).getAxis() == Direction.Axis.Z ? ACROSS_X : ACROSS_Z;
     }
 
     @Override
+    //? if >=1.20.5 {
     protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    //?} else {
+    /*public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    *///?}
         return Shapes.empty();
     }
 
     @Override
+    //? if >=1.20.5 {
     protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+    //?} else {
+    /*public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+    *///?}
         return level.getBlockState(pos.below()).isFaceSturdy(level, pos.below(), Direction.UP);
     }
 
     @Override
+    //? if >=1.20.5 {
     protected BlockState updateShape(BlockState state, Direction direction, BlockState neighbor, LevelAccessor level, BlockPos pos,
                                      BlockPos neighborPos) {
+    //?} else {
+    /*public BlockState updateShape(BlockState state, Direction direction, BlockState neighbor, LevelAccessor level, BlockPos pos,
+                                  BlockPos neighborPos) {
+    *///?}
         if (direction == Direction.DOWN && !canSurvive(state, level, pos)) {
             return Blocks.AIR.defaultBlockState();
         }
@@ -80,7 +103,11 @@ public class TripwireAlarmBlock extends HorizontalDirectionalBlock {
     }
 
     @Override
+    //? if >=1.20.5 {
     protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+    //?} else {
+    /*public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+    *///?}
         if (level.isClientSide || state.getValue(TRIGGERED) || !(entity instanceof LivingEntity) || entity.isSpectator()) {
             return;
         }
@@ -94,7 +121,11 @@ public class TripwireAlarmBlock extends HorizontalDirectionalBlock {
     }
 
     @Override
+    //? if >=1.20.5 {
     protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+    //?} else {
+    /*public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+    *///?}
         if (state.getValue(TRIGGERED)) {
             level.setBlock(pos, state.setValue(TRIGGERED, false), Block.UPDATE_ALL);
         }

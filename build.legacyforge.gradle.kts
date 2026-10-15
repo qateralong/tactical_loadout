@@ -122,14 +122,14 @@ tasks {
         inputs.property("mixin_java", "JAVA_17")
         val refmap = "$modId.refmap.json"
         // Armor wear and the HUD work differently before 1.21, so a few mixins only join the configs here.
-        val extraMixins = mapOf("LivingEntityArmorMixin" to "InventoryArmorMixin", "MinecraftMixin" to "GameRendererMixin")
+        val extraMixins = mapOf("LivingEntityArmorMixin" to "InventoryArmorMixin,LivingEntityJumpMixin", "MinecraftMixin" to "GameRendererMixin")
         inputs.property("extra_mixins", extraMixins)
         filesMatching("*.mixins.json") {
             expand("java" to "JAVA_17")
             // SRG-named production needs the refmap written by the mixin annotation processor.
             filter { line -> line.replace("\"compatibilityLevel\"", "\"refmap\": \"$refmap\",\n  \"compatibilityLevel\"") }
             for ((anchor, extra) in extraMixins) {
-                filter { line -> line.replace("\"$anchor\"", "\"$anchor\",\n    \"$extra\"") }
+                filter { line -> line.replace("\"$anchor\"", (listOf(anchor) + extra.split(",")).joinToString(",\n    ") { "\"$it\"" }) }
             }
         }
         from(rootProject.file("src/generated/resources-1.20.1"))

@@ -6,7 +6,12 @@ import net.minecraftforge.network.simple.SimpleChannel;
 import tactical_loadout.TacticalLoadout;
 import tactical_loadout.client.FlashOverlay;
 import tactical_loadout.device.Devices;
+import tactical_loadout.client.ClientHooks;
+import tactical_loadout.gear.Restraints;
+import tactical_loadout.network.DownedPayload;
 import tactical_loadout.network.FlashPayload;
+import tactical_loadout.network.RestraintPayload;
+import tactical_loadout.network.StrugglePayload;
 import tactical_loadout.network.ToggleNvgPayload;
 
 import java.util.Optional;
@@ -26,6 +31,18 @@ final class LegacyForgeNetwork {
         }, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
         CHANNEL.registerMessage(1, ToggleNvgPayload.class, ToggleNvgPayload::write, ToggleNvgPayload::read, (payload, context) -> {
             context.get().enqueueWork(() -> Devices.toggleNvg(context.get().getSender()));
+            context.get().setPacketHandled(true);
+        }, Optional.of(NetworkDirection.PLAY_TO_SERVER));
+        CHANNEL.registerMessage(2, RestraintPayload.class, RestraintPayload::write, RestraintPayload::read, (payload, context) -> {
+            context.get().enqueueWork(() -> Restraints.setClientRemaining(payload.remaining()));
+            context.get().setPacketHandled(true);
+        }, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        CHANNEL.registerMessage(3, DownedPayload.class, DownedPayload::write, DownedPayload::read, (payload, context) -> {
+            context.get().enqueueWork(() -> ClientHooks.onDowned(payload.entityId(), payload.ticks()));
+            context.get().setPacketHandled(true);
+        }, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        CHANNEL.registerMessage(4, StrugglePayload.class, StrugglePayload::write, StrugglePayload::read, (payload, context) -> {
+            context.get().enqueueWork(() -> Restraints.struggle(context.get().getSender()));
             context.get().setPacketHandled(true);
         }, Optional.of(NetworkDirection.PLAY_TO_SERVER));
     }

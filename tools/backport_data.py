@@ -25,6 +25,26 @@ FOLDERS = {
 ITEM_RENAMES = {
     "minecraft:short_grass": "minecraft:grass",
 }
+# Common "c:" item tags are 1.21 names; before that Forge used "forge:" tags and Fabric its own names. Recipes get
+# the vanilla item plus the Forge tag instead, which works on both loaders.
+C_TAGS = {
+    "c:strings": (["minecraft:string"], "forge:string"),
+    "c:ingots/iron": (["minecraft:iron_ingot"], "forge:ingots/iron"),
+    "c:ingots/copper": (["minecraft:copper_ingot"], "forge:ingots/copper"),
+    "c:nuggets/iron": (["minecraft:iron_nugget"], "forge:nuggets/iron"),
+    "c:dusts/redstone": (["minecraft:redstone"], "forge:dusts/redstone"),
+    "c:dusts/glowstone": (["minecraft:glowstone_dust"], "forge:dusts/glowstone"),
+    "c:gunpowders": (["minecraft:gunpowder"], "forge:gunpowder"),
+    "c:glass_panes": (["minecraft:glass_pane"], "forge:glass_panes"),
+    "c:glass_blocks/colorless": (["minecraft:glass"], "forge:glass/colorless"),
+    "c:leathers": (["minecraft:leather"], "forge:leather"),
+    "c:gems/diamond": (["minecraft:diamond"], "forge:gems/diamond"),
+    "c:gems/emerald": (["minecraft:emerald"], "forge:gems/emerald"),
+    "c:rods/wooden": (["minecraft:stick"], "forge:rods/wooden"),
+}
+for color in ("white", "orange", "magenta", "light_blue", "yellow", "lime", "pink", "gray", "light_gray", "cyan", "purple", "blue",
+              "brown", "green", "red", "black"):
+    C_TAGS[f"c:dyes/{color}"] = ([f"minecraft:{color}_dye"], f"forge:dyes/{color}")
 # NeoForge loot modifiers; Fabric and Forge add the same tables from code.
 SKIPPED = ("neoforge/", "tactical_loadout/loot_modifiers/")
 
@@ -43,7 +63,28 @@ def item_stack(stack: dict) -> dict:
     return stack
 
 
+def legacy_ingredient(value):
+    if isinstance(value, list):
+        out = []
+        for v in value:
+            converted = legacy_ingredient(v)
+            out.extend(converted if isinstance(converted, list) else [converted])
+        return out
+    if isinstance(value, dict) and value.get("tag", "").startswith("c:"):
+        if value["tag"] not in C_TAGS:
+            raise ValueError(f"no 1.20.1 mapping for {value['tag']}")
+        items, forge = C_TAGS[value["tag"]]
+        return [{"item": item} for item in items] + [{"tag": forge}]
+    return value
+
+
 def recipe(data: dict) -> dict:
+    if "key" in data:
+        data["key"] = {k: legacy_ingredient(v) for k, v in data["key"].items()}
+    if "ingredients" in data:
+        data["ingredients"] = [legacy_ingredient(v) for v in data["ingredients"]]
+    if "ingredient" in data:
+        data["ingredient"] = legacy_ingredient(data["ingredient"])
     result = data.get("result")
     if isinstance(result, dict) and "id" in result:
         if data["type"] in ("minecraft:smelting", "minecraft:blasting", "minecraft:smoking", "minecraft:campfire_cooking"):

@@ -15,7 +15,16 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import tactical_loadout.TacticalLoadout;
 import tactical_loadout.client.ClientHooks;
+import tactical_loadout.client.DownedOverlay;
 import tactical_loadout.client.FlashOverlay;
+import tactical_loadout.client.RestraintOverlay;
+import tactical_loadout.gear.Helpless;
+import tactical_loadout.registry.ModItems;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.client.event.InputEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import tactical_loadout.client.GrenadeRenderer;
 import tactical_loadout.client.NvgOverlay;
 import tactical_loadout.client.SmokePuffParticle;
@@ -44,7 +53,16 @@ public final class ForgeClientEvents {
             // At the root, under the HUD stack, so F1 hides the HUD but not the view through the tubes.
             draw.add(TacticalLoadout.id("nvg"), NvgOverlay::render);
             draw.putBelow(ForgeLayeredDraw.VANILLA_ROOT, TacticalLoadout.id("nvg"), ForgeLayeredDraw.PRE_SLEEP_STACK);
+            draw.add(TacticalLoadout.id("downed"), DownedOverlay::render);
+            draw.add(TacticalLoadout.id("restraint"), RestraintOverlay::render);
             draw.add(TacticalLoadout.id("flash"), FlashOverlay::render);
+        }
+
+        @SubscribeEvent
+        public static void setup(FMLClientSetupEvent event) {
+            // The riot shield swaps to its raised model while blocking, like the vanilla shield.
+            event.enqueueWork(() -> ItemProperties.register(ModItems.RIOT_SHIELD.get(), TacticalLoadout.location("minecraft", "blocking"),
+                    (stack, level, entity, seed) -> entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F));
         }
 
         @SubscribeEvent
@@ -81,6 +99,22 @@ public final class ForgeClientEvents {
         @SubscribeEvent
         public static void onClientTick(TickEvent.ClientTickEvent.Post event) {
             ClientHooks.onClientTick();
+        }
+
+        @SubscribeEvent
+        public static void onPlayerTick(TickEvent.PlayerTickEvent.Post event) {
+            if (event.player.level().isClientSide) {
+                ClientHooks.onPlayerTick(event.player);
+            }
+        }
+
+        @SubscribeEvent
+        public static void onInteractionKey(InputEvent.InteractionKeyMappingTriggered event) {
+            Player player = Minecraft.getInstance().player;
+            if (player != null && Helpless.is(player)) {
+                event.setSwingHand(false);
+                event.setCanceled(true);
+            }
         }
     }
 }

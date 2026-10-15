@@ -96,15 +96,20 @@ public class TacticalArmorItem extends ArmorItem implements GeoItem {
         if (tier != ArmorTier.HEAVY || slot != getEquipmentSlot()) {
             return modifiers;
         }
-        double slowdown = ServerConfig.heavySlowdownPerPiece();
-        if (slowdown <= 0) {
-            return modifiers;
-        }
-        UUID id = UUID.nameUUIDFromBytes(TacticalLoadout.id("heavy_slowdown_" + piece.id()).toString().getBytes());
         ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
         builder.putAll(modifiers);
-        builder.put(Attributes.MOVEMENT_SPEED, new AttributeModifier(id, "Heavy armor slowdown", -slowdown,
-                AttributeModifier.Operation.MULTIPLY_BASE));
+        double slowdown = ServerConfig.heavySlowdownPerPiece();
+        if (slowdown > 0) {
+            UUID id = UUID.nameUUIDFromBytes(TacticalLoadout.id("heavy_slowdown_" + piece.id()).toString().getBytes());
+            builder.put(Attributes.MOVEMENT_SPEED, new AttributeModifier(id, "Heavy armor slowdown", -slowdown,
+                    AttributeModifier.Operation.MULTIPLY_BASE));
+        }
+        if (set == ArmorSet.EOD) {
+            // Each piece carries a quarter of the full suit's weight; the lower jump comes from LivingEntityJumpMixin.
+            UUID id = UUID.nameUUIDFromBytes(TacticalLoadout.id("eod_slowdown_" + piece.id()).toString().getBytes());
+            builder.put(Attributes.MOVEMENT_SPEED, new AttributeModifier(id, "Bomb suit weight", -ServerConfig.eodSlowdown() / 4,
+                    AttributeModifier.Operation.MULTIPLY_BASE));
+        }
         return builder.build();
     }
     *///?}

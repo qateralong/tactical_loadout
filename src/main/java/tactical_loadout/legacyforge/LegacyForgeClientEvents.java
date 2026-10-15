@@ -14,7 +14,16 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import tactical_loadout.TacticalLoadout;
 import tactical_loadout.client.ClientHooks;
+import tactical_loadout.client.DownedOverlay;
 import tactical_loadout.client.FlashOverlay;
+import tactical_loadout.client.RestraintOverlay;
+import tactical_loadout.gear.Helpless;
+import tactical_loadout.registry.ModItems;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.client.event.InputEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import tactical_loadout.client.GrenadeRenderer;
 import tactical_loadout.client.SmokePuffParticle;
 import tactical_loadout.registry.ModEntities;
@@ -38,7 +47,16 @@ public final class LegacyForgeClientEvents {
 
         @SubscribeEvent
         public static void registerOverlays(RegisterGuiOverlaysEvent event) {
+            event.registerAboveAll("downed", (gui, graphics, partialTick, width, height) -> DownedOverlay.render(graphics, partialTick));
+            event.registerAboveAll("restraint", (gui, graphics, partialTick, width, height) -> RestraintOverlay.render(graphics, partialTick));
             event.registerAboveAll("flash", (gui, graphics, partialTick, width, height) -> FlashOverlay.render(graphics, partialTick));
+        }
+
+        @SubscribeEvent
+        public static void setup(FMLClientSetupEvent event) {
+            // The riot shield swaps to its raised model while blocking, like the vanilla shield.
+            event.enqueueWork(() -> ItemProperties.register(ModItems.RIOT_SHIELD.get(), TacticalLoadout.location("minecraft", "blocking"),
+                    (stack, level, entity, seed) -> entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F));
         }
 
         @SubscribeEvent
@@ -70,6 +88,22 @@ public final class LegacyForgeClientEvents {
         @SubscribeEvent
         public static void onLoggingOut(ClientPlayerNetworkEvent.LoggingOut event) {
             ClientHooks.onLoggingOut();
+        }
+
+        @SubscribeEvent
+        public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
+            if (event.phase == TickEvent.Phase.END && event.player.level().isClientSide) {
+                ClientHooks.onPlayerTick(event.player);
+            }
+        }
+
+        @SubscribeEvent
+        public static void onInteractionKey(InputEvent.InteractionKeyMappingTriggered event) {
+            Player player = Minecraft.getInstance().player;
+            if (player != null && Helpless.is(player)) {
+                event.setSwingHand(false);
+                event.setCanceled(true);
+            }
         }
 
         @SubscribeEvent

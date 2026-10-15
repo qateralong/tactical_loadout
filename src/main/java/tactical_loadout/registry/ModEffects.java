@@ -10,6 +10,16 @@ public final class ModEffects {
     public static final RegistryEntry<MobEffect, BleedingEffect> BLEEDING =
             Platform.INSTANCE.register(Registries.MOB_EFFECT, "bleeding", BleedingEffect::new);
 
+    //? if >=1.20.5 {
+    public static net.minecraft.core.Holder<MobEffect> bleeding() {
+        return BLEEDING.holder();
+    }
+    //?} else {
+    /*public static MobEffect bleeding() {
+        return BLEEDING.get();
+    }
+    *///?}
+
     private ModEffects() {
     }
 

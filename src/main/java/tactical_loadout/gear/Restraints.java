@@ -1,17 +1,12 @@
 package tactical_loadout.gear;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import tactical_loadout.TacticalLoadout;
@@ -170,24 +165,13 @@ public final class Restraints {
     }
 
     private static void apply(ServerPlayer player) {
-        modify(player, Attributes.MOVEMENT_SPEED, true);
-        modify(player, Attributes.JUMP_STRENGTH, true);
+        Modifiers.speed(player, MODIFIER, -1.0);
+        Modifiers.jump(player, MODIFIER, -1.0);
     }
 
     private static void remove(ServerPlayer player) {
-        modify(player, Attributes.MOVEMENT_SPEED, false);
-        modify(player, Attributes.JUMP_STRENGTH, false);
-    }
-
-    private static void modify(ServerPlayer player, Holder<Attribute> attribute, boolean add) {
-        AttributeInstance instance = player.getAttribute(attribute);
-        if (instance == null) {
-            return;
-        }
-        instance.removeModifier(MODIFIER);
-        if (add) {
-            instance.addTransientModifier(new AttributeModifier(MODIFIER, -1.0, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
-        }
+        Modifiers.speed(player, MODIFIER, 0.0);
+        Modifiers.jump(player, MODIFIER, 0.0);
     }
 
     private static void sync(ServerPlayer player) {

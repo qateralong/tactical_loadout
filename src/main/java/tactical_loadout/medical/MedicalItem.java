@@ -70,7 +70,11 @@ public class MedicalItem extends Item {
     }
 
     @Override
+    //? if >=1.21 {
     public int getUseDuration(ItemStack stack, LivingEntity entity) {
+    //?} else {
+    /*public int getUseDuration(ItemStack stack) {
+    *///?}
         return kind.useTicks;
     }
 
@@ -94,7 +98,7 @@ public class MedicalItem extends Item {
             if (kind == Kind.MEDKIT) {
                 entity.heal((float) ServerConfig.medkitHealth());
             }
-            level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.ARMOR_EQUIP_LEATHER.value(), SoundSource.PLAYERS,
+            level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), Medical.patchSound(), SoundSource.PLAYERS,
                     1.0F, 1.0F);
             if (!(entity instanceof Player player) || !player.getAbilities().instabuild) {
                 stack.shrink(1);

@@ -11,9 +11,14 @@
     {
       "tag": "minecraft:wool"
     },
-    {
-      "tag": "c:dyes/red"
-    },
+    [
+      {
+        "item": "minecraft:red_dye"
+      },
+      {
+        "tag": "forge:dyes/red"
+      }
+    ],
     {
       "item": "minecraft:glistering_melon_slice"
     }

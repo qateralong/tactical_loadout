@@ -2,6 +2,7 @@ package tactical_loadout.legacyforge;
 
 import com.tacz.guns.api.event.common.EntityHurtByGunEvent;
 import com.tacz.guns.api.event.common.GunDamageSourcePart;
+import com.tacz.guns.api.event.common.GunShootEvent;
 import com.tacz.guns.init.ModDamageTypes;
 import com.tacz.guns.util.HitboxHelper;
 import net.minecraft.world.entity.Entity;
@@ -14,7 +15,9 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.entity.PartEntity;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.fml.LogicalSide;
+import net.minecraft.world.entity.player.Player;
 import tactical_loadout.combat.BallisticHits;
+import tactical_loadout.gear.Helpless;
 
 /** Exact hit zones for TaCZ bullets, including its own headshot detection and armor-piercing split. */
 public final class TaczCompat {
@@ -24,6 +27,11 @@ public final class TaczCompat {
     public static void init() {
         BallisticHits.claim(source -> source.is(ModDamageTypes.BULLETS_TAG));
         MinecraftForge.EVENT_BUS.addListener(EventPriority.LOWEST, TaczCompat::onGunHurt);
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGHEST, (GunShootEvent event) -> {
+            if (event.getShooter() instanceof Player player && Helpless.is(player)) {
+                event.setCanceled(true);
+            }
+        });
     }
 
     private static void onGunHurt(EntityHurtByGunEvent.Pre event) {

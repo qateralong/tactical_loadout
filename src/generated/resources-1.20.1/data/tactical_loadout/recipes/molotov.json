@@ -5,12 +5,22 @@
     "C": {
       "tag": "minecraft:coals"
     },
-    "G": {
-      "tag": "c:glass_blocks/colorless"
-    },
-    "S": {
-      "tag": "c:strings"
-    }
+    "G": [
+      {
+        "item": "minecraft:glass"
+      },
+      {
+        "tag": "forge:glass/colorless"
+      }
+    ],
+    "S": [
+      {
+        "item": "minecraft:string"
+      },
+      {
+        "tag": "forge:string"
+      }
+    ]
   },
   "pattern": [
     " S ",

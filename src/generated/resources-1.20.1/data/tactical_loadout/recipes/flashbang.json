@@ -2,18 +2,38 @@
   "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
-    "D": {
-      "tag": "c:dusts/glowstone"
-    },
-    "G": {
-      "tag": "c:gunpowders"
-    },
-    "I": {
-      "tag": "c:ingots/iron"
-    },
-    "N": {
-      "tag": "c:nuggets/iron"
-    }
+    "D": [
+      {
+        "item": "minecraft:glowstone_dust"
+      },
+      {
+        "tag": "forge:dusts/glowstone"
+      }
+    ],
+    "G": [
+      {
+        "item": "minecraft:gunpowder"
+      },
+      {
+        "tag": "forge:gunpowder"
+      }
+    ],
+    "I": [
+      {
+        "item": "minecraft:iron_ingot"
+      },
+      {
+        "tag": "forge:ingots/iron"
+      }
+    ],
+    "N": [
+      {
+        "item": "minecraft:iron_nugget"
+      },
+      {
+        "tag": "forge:nuggets/iron"
+      }
+    ]
   },
   "pattern": [
     " N ",

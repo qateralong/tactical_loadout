@@ -8,21 +8,46 @@
     {
       "tag": "minecraft:wool"
     },
-    {
-      "tag": "c:strings"
-    },
-    {
-      "tag": "c:strings"
-    },
-    {
-      "tag": "c:dyes/light_gray"
-    },
-    {
-      "tag": "c:dyes/gray"
-    },
-    {
-      "tag": "c:dyes/lime"
-    }
+    [
+      {
+        "item": "minecraft:string"
+      },
+      {
+        "tag": "forge:string"
+      }
+    ],
+    [
+      {
+        "item": "minecraft:string"
+      },
+      {
+        "tag": "forge:string"
+      }
+    ],
+    [
+      {
+        "item": "minecraft:light_gray_dye"
+      },
+      {
+        "tag": "forge:dyes/light_gray"
+      }
+    ],
+    [
+      {
+        "item": "minecraft:gray_dye"
+      },
+      {
+        "tag": "forge:dyes/gray"
+      }
+    ],
+    [
+      {
+        "item": "minecraft:lime_dye"
+      },
+      {
+        "tag": "forge:dyes/lime"
+      }
+    ]
   ],
   "result": {
     "count": 2,

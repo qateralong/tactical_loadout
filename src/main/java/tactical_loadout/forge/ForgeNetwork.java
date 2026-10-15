@@ -8,7 +8,12 @@ import net.minecraftforge.network.ChannelBuilder;
 import tactical_loadout.TacticalLoadout;
 import tactical_loadout.client.FlashOverlay;
 import tactical_loadout.device.Devices;
+import tactical_loadout.client.ClientHooks;
+import tactical_loadout.gear.Restraints;
+import tactical_loadout.network.DownedPayload;
 import tactical_loadout.network.FlashPayload;
+import tactical_loadout.network.RestraintPayload;
+import tactical_loadout.network.StrugglePayload;
 import tactical_loadout.network.ToggleNvgPayload;
 
 final class ForgeNetwork {
@@ -19,9 +24,15 @@ final class ForgeNetwork {
                 .clientbound()
                     .addMain(FlashPayload.TYPE, codec(FlashPayload.STREAM_CODEC),
                             (payload, context) -> FlashOverlay.trigger(payload.strength(), payload.ticks()))
+                    .addMain(RestraintPayload.TYPE, codec(RestraintPayload.STREAM_CODEC),
+                            (payload, context) -> Restraints.setClientRemaining(payload.remaining()))
+                    .addMain(DownedPayload.TYPE, codec(DownedPayload.STREAM_CODEC),
+                            (payload, context) -> ClientHooks.onDowned(payload.entityId(), payload.ticks()))
                 .serverbound()
                     .addMain(ToggleNvgPayload.TYPE, codec(ToggleNvgPayload.STREAM_CODEC),
                             (payload, context) -> Devices.toggleNvg(context.getSender()))
+                    .addMain(StrugglePayload.TYPE, codec(StrugglePayload.STREAM_CODEC),
+                            (payload, context) -> Restraints.struggle(context.getSender()))
             .build();
 
     private ForgeNetwork() {

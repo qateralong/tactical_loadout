@@ -8,15 +8,30 @@
     {
       "tag": "minecraft:wool"
     },
-    {
-      "tag": "c:strings"
-    },
-    {
-      "tag": "c:strings"
-    },
-    {
-      "tag": "c:dyes/blue"
-    }
+    [
+      {
+        "item": "minecraft:string"
+      },
+      {
+        "tag": "forge:string"
+      }
+    ],
+    [
+      {
+        "item": "minecraft:string"
+      },
+      {
+        "tag": "forge:string"
+      }
+    ],
+    [
+      {
+        "item": "minecraft:blue_dye"
+      },
+      {
+        "tag": "forge:dyes/blue"
+      }
+    ]
   ],
   "result": {
     "count": 2,

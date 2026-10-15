@@ -16,6 +16,7 @@ public class BleedingEffect extends MobEffect {
         super(MobEffectCategory.HARMFUL, 0x8A0303);
     }
 
+    //? if >=1.20.5 {
     @Override
     public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
         return duration % Math.max(10, INTERVAL >> amplifier) == 0;
@@ -23,11 +24,26 @@ public class BleedingEffect extends MobEffect {
 
     @Override
     public boolean applyEffectTick(LivingEntity entity, int amplifier) {
+        bleed(entity);
+        return true;
+    }
+    //?} else {
+    /*@Override
+    public boolean isDurationEffectTick(int duration, int amplifier) {
+        return duration % Math.max(10, INTERVAL >> amplifier) == 0;
+    }
+
+    @Override
+    public void applyEffectTick(LivingEntity entity, int amplifier) {
+        bleed(entity);
+    }
+    *///?}
+
+    private static void bleed(LivingEntity entity) {
         if (entity.level() instanceof ServerLevel level) {
             entity.hurt(Medical.bleedingSource(level), 1.0F);
             level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.REDSTONE_BLOCK.defaultBlockState()),
                     entity.getX(), entity.getY(0.5), entity.getZ(), 6, 0.2, 0.3, 0.2, 0.05);
         }
-        return true;
     }
 }

@@ -5,15 +5,25 @@
     "F": {
       "tag": "tactical_loadout:fabrics"
     },
-    "I": {
-      "tag": "c:ingots/iron"
-    },
+    "I": [
+      {
+        "item": "minecraft:iron_ingot"
+      },
+      {
+        "tag": "forge:ingots/iron"
+      }
+    ],
     "K": {
       "item": "tactical_loadout:kevlar_insert"
     },
-    "S": {
-      "tag": "c:strings"
-    }
+    "S": [
+      {
+        "item": "minecraft:string"
+      },
+      {
+        "tag": "forge:string"
+      }
+    ]
   },
   "pattern": [
     " S ",

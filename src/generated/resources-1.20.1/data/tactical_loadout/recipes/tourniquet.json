@@ -2,18 +2,38 @@
   "type": "minecraft:crafting_shapeless",
   "category": "equipment",
   "ingredients": [
-    {
-      "tag": "c:leathers"
-    },
-    {
-      "tag": "c:strings"
-    },
-    {
-      "tag": "c:strings"
-    },
-    {
-      "tag": "c:rods/wooden"
-    }
+    [
+      {
+        "item": "minecraft:leather"
+      },
+      {
+        "tag": "forge:leather"
+      }
+    ],
+    [
+      {
+        "item": "minecraft:string"
+      },
+      {
+        "tag": "forge:string"
+      }
+    ],
+    [
+      {
+        "item": "minecraft:string"
+      },
+      {
+        "tag": "forge:string"
+      }
+    ],
+    [
+      {
+        "item": "minecraft:stick"
+      },
+      {
+        "tag": "forge:rods/wooden"
+      }
+    ]
   ],
   "result": {
     "count": 2,

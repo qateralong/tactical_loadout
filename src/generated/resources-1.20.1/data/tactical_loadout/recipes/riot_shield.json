@@ -5,9 +5,14 @@
     "C": {
       "item": "tactical_loadout:ceramic_plate"
     },
-    "G": {
-      "tag": "c:glass_panes"
-    },
+    "G": [
+      {
+        "item": "minecraft:glass_pane"
+      },
+      {
+        "tag": "forge:glass_panes"
+      }
+    ],
     "K": {
       "item": "tactical_loadout:kevlar_insert"
     }

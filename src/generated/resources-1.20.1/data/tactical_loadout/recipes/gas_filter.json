@@ -8,9 +8,14 @@
     {
       "item": "minecraft:paper"
     },
-    {
-      "tag": "c:nuggets/iron"
-    }
+    [
+      {
+        "item": "minecraft:iron_nugget"
+      },
+      {
+        "tag": "forge:nuggets/iron"
+      }
+    ]
   ],
   "result": {
     "count": 1,

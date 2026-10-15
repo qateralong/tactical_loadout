@@ -5,9 +5,14 @@
     "B": {
       "item": "tactical_loadout:battery"
     },
-    "I": {
-      "tag": "c:ingots/iron"
-    },
+    "I": [
+      {
+        "item": "minecraft:iron_ingot"
+      },
+      {
+        "tag": "forge:ingots/iron"
+      }
+    ],
     "T": {
       "item": "tactical_loadout:nvg_thermal"
     }

@@ -65,8 +65,19 @@ public final class ClientHooks {
         if (local != null && local.getId() == entityId) {
             Downed.setClientTicks(ticks);
         }
-        if (ticks <= 0 && local != null && local.level().getEntity(entityId) instanceof Player player) {
-            player.setForcedPose(null);
+    }
+
+    /** On loaders without an interaction key event: tied or downed players can't start attacking or using anything. */
+    public static void blockHelplessInput() {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null || !tactical_loadout.gear.Helpless.is(mc.player)) {
+            return;
+        }
+        for (KeyMapping key : new KeyMapping[]{mc.options.keyAttack, mc.options.keyUse, mc.options.keyPickItem}) {
+            while (key.consumeClick()) {
+                // Swallowed.
+            }
+            key.setDown(false);
         }
     }
 
