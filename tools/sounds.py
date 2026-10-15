@@ -9,10 +9,10 @@ from pathlib import Path
 import numpy as np
 
 ROOT = Path(__file__).resolve().parent.parent
-ASSETS = ROOT / "src/main/resources/assets/tacz_camo_armor"
+ASSETS = ROOT / "src/main/resources/assets/tactical_loadout"
 SOUND_DIR = ASSETS / "sounds/grenade"
 RATE = 44100
-NS = "tacz_camo_armor"
+NS = "tactical_loadout"
 
 
 def lowpass(signal, cutoff):

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "F": {
+      "item": "tactical_loadout:flora_fabric"
+    },
+    "K": {
+      "item": "tactical_loadout:kevlar_insert"
+    }
+  },
+  "pattern": [
+    "FKF",
+    "F F",
+    "F F"
+  ],
+  "result": {
+    "count": 1,
+    "id": "tactical_loadout:ru_flora_light_leggings"
+  }
+}

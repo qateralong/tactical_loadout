@@ -6,7 +6,7 @@ import numpy as np
 from PIL import Image
 
 ROOT = Path(__file__).resolve().parent.parent
-ITEM_DIR = ROOT / "src/main/resources/assets/tacz_camo_armor/textures/item"
+ITEM_DIR = ROOT / "src/main/resources/assets/tactical_loadout/textures/item"
 
 SETS = ["ct", "t", "us_woodland", "us_desert", "us_green", "us_multicam", "us_snow", "us_ucp", "us_tiger", "ru_emr", "ru_flora",
         "ghillie", "ghillie_snow", "ghillie_desert", "swat"]
@@ -229,7 +229,7 @@ def colorize(rows, fill):
 
 
 def overlays():
-    misc = ROOT / "src/main/resources/assets/tacz_camo_armor/textures/misc"
+    misc = ROOT / "src/main/resources/assets/tactical_loadout/textures/misc"
     misc.mkdir(parents=True, exist_ok=True)
     Image.new("RGBA", (16, 16), (255, 255, 255, 255)).save(misc / "white.png")
     rng = np.random.default_rng(9)
@@ -263,7 +263,7 @@ def overlays():
 
 
 def smoke_puffs():
-    out = ROOT / "src/main/resources/assets/tacz_camo_armor/textures/particle"
+    out = ROOT / "src/main/resources/assets/tactical_loadout/textures/particle"
     out.mkdir(parents=True, exist_ok=True)
     size = 16
     ys, xs = np.mgrid[0:size, 0:size].astype(np.float64)

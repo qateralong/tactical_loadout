@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_fabric": {
+      "conditions": {
+        "items": [
+          {
+            "items": "tactical_loadout:beige_fabric"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "tactical_loadout:t_light_plate_carrier"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_fabric"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "tactical_loadout:t_light_plate_carrier"
+    ]
+  }
+}

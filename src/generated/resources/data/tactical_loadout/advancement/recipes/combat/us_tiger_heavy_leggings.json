@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_fabric": {
+      "conditions": {
+        "items": [
+          {
+            "items": "tactical_loadout:tiger_stripe_fabric"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "tactical_loadout:us_tiger_heavy_leggings"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_fabric"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "tactical_loadout:us_tiger_heavy_leggings"
+    ]
+  }
+}

@@ -10,12 +10,12 @@ from PIL import Image
 from textures import hex_rgb
 
 ROOT = Path(__file__).resolve().parent.parent
-ASSETS = ROOT / "src/main/resources/assets/tacz_camo_armor"
+ASSETS = ROOT / "src/main/resources/assets/tactical_loadout"
 MODEL_DIR = ASSETS / "models/item"
 GEO_DIR = ASSETS / "geo/armor"
 TEX_DIR = ASSETS / "textures"
 ATLAS = ROOT / "src/main/resources/assets/minecraft/atlases/blocks.json"
-NS = "tacz_camo_armor"
+NS = "tactical_loadout"
 
 FORMS = {
     "ct": ["ct"], "t": ["t"], "ru": ["ru_emr", "ru_flora"], "swat": ["swat"],

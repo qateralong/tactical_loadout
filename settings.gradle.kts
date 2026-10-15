@@ -25,4 +25,4 @@ stonecutter {
     }
 }
 
-rootProject.name = "tacz_camo_armor"
+rootProject.name = "tactical_loadout"

@@ -1,0 +1,27 @@
+{
+  "parent": "tactical_loadout:main/root",
+  "criteria": {
+    "done": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.tactical_loadout.suit_up.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "tactical_loadout:us_woodland_heavy_plate_carrier"
+    },
+    "title": {
+      "translate": "advancement.tactical_loadout.suit_up.title"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

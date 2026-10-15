@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "F": {
+      "item": "tactical_loadout:snow_fabric"
+    },
+    "K": {
+      "item": "tactical_loadout:kevlar_insert"
+    }
+  },
+  "pattern": [
+    "F F",
+    "FKF",
+    "FFF"
+  ],
+  "result": {
+    "count": 1,
+    "id": "tactical_loadout:us_snow_light_plate_carrier"
+  }
+}

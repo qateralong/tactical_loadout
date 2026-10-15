@@ -8,7 +8,7 @@ import numpy as np
 from PIL import Image, ImageDraw
 
 ROOT = Path(__file__).resolve().parent.parent
-ASSETS = ROOT / "src/main/resources/assets/tacz_camo_armor"
+ASSETS = ROOT / "src/main/resources/assets/tactical_loadout"
 SCALE = 7
 BODY = [
     ((-4, 24, -4), (4, 32, 4)), ((-4, 12, -2), (4, 24, 2)),

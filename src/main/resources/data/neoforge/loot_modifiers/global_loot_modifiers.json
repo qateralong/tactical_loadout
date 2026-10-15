@@ -1,8 +1,8 @@
 {
   "replace": false,
   "entries": [
-    "tacz_camo_armor:outpost_supplies",
-    "tacz_camo_armor:dungeon_supplies",
-    "tacz_camo_armor:ancient_city_supplies"
+    "tactical_loadout:outpost_supplies",
+    "tactical_loadout:dungeon_supplies",
+    "tactical_loadout:ancient_city_supplies"
   ]
 }

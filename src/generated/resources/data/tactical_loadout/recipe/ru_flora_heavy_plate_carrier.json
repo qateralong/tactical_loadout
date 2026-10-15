@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "tactical_loadout:ceramic_plate"
+    },
+    "F": {
+      "item": "tactical_loadout:flora_fabric"
+    },
+    "K": {
+      "item": "tactical_loadout:kevlar_insert"
+    }
+  },
+  "pattern": [
+    "F F",
+    "KCK",
+    "FKF"
+  ],
+  "result": {
+    "count": 1,
+    "id": "tactical_loadout:ru_flora_heavy_plate_carrier"
+  }
+}

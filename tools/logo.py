@@ -10,11 +10,11 @@ from preview import render
 from textures import pattern
 
 ROOT = Path(__file__).resolve().parent.parent
-ASSETS = ROOT / "src/main/resources/assets/tacz_camo_armor"
-OUT = ROOT / "src/main/resources/tacz_camo_armor_logo.png"
+ASSETS = ROOT / "src/main/resources/assets/tactical_loadout"
+OUT = ROOT / "src/main/resources/tactical_loadout_logo.png"
 FONT = "/usr/share/fonts/noto/NotoSans-Black.ttf"
 W, H = 512, 256
-TITLE = "TACTICAL CAMO ARMOR"
+TITLE = "TACTICAL LOADOUT"
 SOLDIERS = [
     ("t", "t", ("medium", "heavy"), {"gas_mask"}, 22),
     ("ru", "ru_emr", ("medium", "heavy"), {"nvg_mount", "nvg_thermal"}, 28),

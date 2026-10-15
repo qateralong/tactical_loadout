@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "F": {
+      "tag": "tactical_loadout:fabrics"
+    },
+    "I": {
+      "tag": "c:ingots/iron"
+    },
+    "K": {
+      "item": "tactical_loadout:kevlar_insert"
+    },
+    "S": {
+      "tag": "c:strings"
+    }
+  },
+  "pattern": [
+    " S ",
+    "KFK",
+    " I "
+  ],
+  "result": {
+    "count": 1,
+    "id": "tactical_loadout:armor_repair_kit"
+  }
+}

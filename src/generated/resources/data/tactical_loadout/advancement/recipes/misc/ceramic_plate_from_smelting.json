@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_raw_ceramic_plate": {
+      "conditions": {
+        "items": [
+          {
+            "items": "tactical_loadout:raw_ceramic_plate"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "tactical_loadout:ceramic_plate_from_smelting"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_raw_ceramic_plate"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "tactical_loadout:ceramic_plate_from_smelting"
+    ]
+  }
+}

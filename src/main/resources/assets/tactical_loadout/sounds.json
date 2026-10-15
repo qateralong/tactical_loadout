@@ -1,0 +1,16 @@
+{
+  "grenade.decoy_shot": {
+    "subtitle": "subtitles.tactical_loadout.grenade.decoy_shot",
+    "sounds": [
+      "tactical_loadout:grenade/decoy_shot1",
+      "tactical_loadout:grenade/decoy_shot2",
+      "tactical_loadout:grenade/decoy_shot3"
+    ]
+  },
+  "grenade.pin": {
+    "subtitle": "subtitles.tactical_loadout.grenade.pin",
+    "sounds": [
+      "tactical_loadout:grenade/pin"
+    ]
+  }
+}

@@ -2,63 +2,63 @@
   "sources": [
     {
       "type": "single",
-      "resource": "tacz_camo_armor:armor/ct"
+      "resource": "tactical_loadout:armor/ct"
     },
     {
       "type": "single",
-      "resource": "tacz_camo_armor:armor/t"
+      "resource": "tactical_loadout:armor/t"
     },
     {
       "type": "single",
-      "resource": "tacz_camo_armor:armor/ru_emr"
+      "resource": "tactical_loadout:armor/ru_emr"
     },
     {
       "type": "single",
-      "resource": "tacz_camo_armor:armor/ru_flora"
+      "resource": "tactical_loadout:armor/ru_flora"
     },
     {
       "type": "single",
-      "resource": "tacz_camo_armor:armor/swat"
+      "resource": "tactical_loadout:armor/swat"
     },
     {
       "type": "single",
-      "resource": "tacz_camo_armor:armor/us_woodland"
+      "resource": "tactical_loadout:armor/us_woodland"
     },
     {
       "type": "single",
-      "resource": "tacz_camo_armor:armor/us_desert"
+      "resource": "tactical_loadout:armor/us_desert"
     },
     {
       "type": "single",
-      "resource": "tacz_camo_armor:armor/us_green"
+      "resource": "tactical_loadout:armor/us_green"
     },
     {
       "type": "single",
-      "resource": "tacz_camo_armor:armor/us_multicam"
+      "resource": "tactical_loadout:armor/us_multicam"
     },
     {
       "type": "single",
-      "resource": "tacz_camo_armor:armor/us_snow"
+      "resource": "tactical_loadout:armor/us_snow"
     },
     {
       "type": "single",
-      "resource": "tacz_camo_armor:armor/us_ucp"
+      "resource": "tactical_loadout:armor/us_ucp"
     },
     {
       "type": "single",
-      "resource": "tacz_camo_armor:armor/us_tiger"
+      "resource": "tactical_loadout:armor/us_tiger"
     },
     {
       "type": "single",
-      "resource": "tacz_camo_armor:armor/ghillie"
+      "resource": "tactical_loadout:armor/ghillie"
     },
     {
       "type": "single",
-      "resource": "tacz_camo_armor:armor/ghillie_snow"
+      "resource": "tactical_loadout:armor/ghillie_snow"
     },
     {
       "type": "single",
-      "resource": "tacz_camo_armor:armor/ghillie_desert"
+      "resource": "tactical_loadout:armor/ghillie_desert"
     }
   ]
 }

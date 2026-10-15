@@ -1,0 +1,63 @@
+{
+  "parent": "tactical_loadout:main/flash_mob",
+  "criteria": {
+    "decoy_grenade": {
+      "trigger": "minecraft:impossible"
+    },
+    "flashbang": {
+      "trigger": "minecraft:impossible"
+    },
+    "frag_grenade": {
+      "trigger": "minecraft:impossible"
+    },
+    "he_grenade": {
+      "trigger": "minecraft:impossible"
+    },
+    "incendiary_grenade": {
+      "trigger": "minecraft:impossible"
+    },
+    "molotov": {
+      "trigger": "minecraft:impossible"
+    },
+    "smoke_grenade": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.tactical_loadout.all_grenades.description"
+    },
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "tactical_loadout:molotov"
+    },
+    "title": {
+      "translate": "advancement.tactical_loadout.all_grenades.title"
+    }
+  },
+  "requirements": [
+    [
+      "frag_grenade"
+    ],
+    [
+      "he_grenade"
+    ],
+    [
+      "flashbang"
+    ],
+    [
+      "smoke_grenade"
+    ],
+    [
+      "molotov"
+    ],
+    [
+      "incendiary_grenade"
+    ],
+    [
+      "decoy_grenade"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

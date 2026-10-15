@@ -10,7 +10,7 @@ from PIL import Image
 from textures import hex_rgb, pattern
 
 ROOT = Path(__file__).resolve().parent.parent
-ASSETS = ROOT / "src/main/resources/assets/tacz_camo_armor"
+ASSETS = ROOT / "src/main/resources/assets/tactical_loadout"
 GEO_DIR = ASSETS / "geo/armor"
 TEX_DIR = ASSETS / "textures/armor"
 ANIM_DIR = ASSETS / "animations"
@@ -418,7 +418,7 @@ def build(form):
         "format_version": "1.12.0",
         "minecraft:geometry": [{
             "description": {
-                "identifier": f"geometry.tacz_camo_armor.{form}",
+                "identifier": f"geometry.tactical_loadout.{form}",
                 "texture_width": ATLAS_W,
                 "texture_height": height,
                 "visible_bounds_width": 3,
