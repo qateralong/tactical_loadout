@@ -127,6 +127,11 @@ tasks {
         exclude("fabric.mod.json")
     }
 
+    jar {
+        val licenseName = "LICENSE_$modId"
+        from(rootProject.file("LICENSE")) { rename { licenseName } }
+    }
+
     withType<JavaCompile>().configureEach {
         options.encoding = "UTF-8"
     }
