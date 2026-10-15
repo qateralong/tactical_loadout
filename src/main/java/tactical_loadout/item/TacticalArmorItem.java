@@ -58,8 +58,8 @@ public class TacticalArmorItem extends ArmorItem implements GeoItem {
     }
 
     @Override
-    public ItemAttributeModifiers getDefaultAttributeModifiers(ItemStack stack) {
-        ItemAttributeModifiers modifiers = super.getDefaultAttributeModifiers(stack);
+    public ItemAttributeModifiers getDefaultAttributeModifiers() {
+        ItemAttributeModifiers modifiers = super.getDefaultAttributeModifiers();
         if (tier != ArmorTier.HEAVY) {
             return modifiers;
         }

@@ -150,6 +150,11 @@ public final class BallisticHits {
         return !target.level().isClientSide && isBallistic(source) && !source.is(DamageTypeTags.BYPASSES_ARMOR) && ownArmor(target) > 0;
     }
 
+    /** The armor value vanilla absorption should use: without the tactical pieces when they already blocked by zone. */
+    public static int armorWithoutOwn(LivingEntity target, DamageSource source, int armor) {
+        return excludesOwnArmor(target, source) ? Math.max(0, armor - (int) ownArmor(target)) : armor;
+    }
+
     /** Damage absorbed by the target's armor without the tactical pieces. */
     public static float armorAbsorptionWithoutOwn(LivingEntity target, float damage, DamageSource source) {
         float armor = Math.max(0.0F, target.getArmorValue() - ownArmor(target));

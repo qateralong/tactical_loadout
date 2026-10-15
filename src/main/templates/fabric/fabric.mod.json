@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "${mod_id}",
+  "version": "${mod_version}",
+  "name": "${mod_name}",
+  "description": "Bullet-resistant tactical armor with working camouflage, helmet-mounted night vision and thermal imagers, and every CS2 grenade.",
+  "authors": ["qateralong"],
+  "contact": {
+    "sources": "https://github.com/qateralong/tactical_loadout",
+    "issues": "https://github.com/qateralong/tactical_loadout/issues"
+  },
+  "license": "${mod_license}",
+  "icon": "tactical_loadout_icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["tactical_loadout.fabric.TacticalLoadoutFabric"],
+    "client": ["tactical_loadout.fabric.TacticalLoadoutFabricClient"],
+    "jei_mod_plugin": ["tactical_loadout.compat.jei.JeiCompat"]
+  },
+  "mixins": ["tactical_loadout.mixins.json", "tactical_loadout.fabric.mixins.json"],
+  "depends": {
+    "fabricloader": ">=0.16.10",
+    "minecraft": "${minecraft_version_range}",
+    "java": ">=21",
+    "fabric-api": "*",
+    "geckolib": ">=${geckolib_version}",
+    "forgeconfigapiport": "*"
+  },
+  "suggests": {
+    "jei": "*"
+  }
+}

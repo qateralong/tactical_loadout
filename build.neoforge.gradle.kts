@@ -124,7 +124,7 @@ tasks {
         val mixinJava = "JAVA_${requiredJava.majorVersion}"
         inputs.property("mixin_java", mixinJava)
         filesMatching("*.mixins.json") { expand("java" to mixinJava) }
-        exclude("fabric.mod.json")
+        exclude("tactical_loadout.fabric.mixins.json")
     }
 
     jar {

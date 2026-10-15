@@ -13,7 +13,9 @@ import java.util.function.Supplier;
 public interface Platform {
     //? if neoforge {
     Platform INSTANCE = new tactical_loadout.neoforge.NeoForgePlatform();
-    //?}
+    //?} elif fabric {
+    /*Platform INSTANCE = new tactical_loadout.fabric.FabricPlatform();
+    *///?}
 
     <R, T extends R> RegistryEntry<R, T> register(ResourceKey<? extends Registry<R>> registry, String name, Supplier<T> factory);
 

@@ -12,6 +12,7 @@ import tactical_loadout.TacticalLoadout;
 import tactical_loadout.device.DeviceKind;
 import tactical_loadout.device.Devices;
 import tactical_loadout.device.MountedDevice;
+import tactical_loadout.mixin.GameRendererAccessor;
 
 public final class ThermalVision {
     private static final ResourceLocation SHADER = TacticalLoadout.id("shaders/post/thermal.json");
@@ -57,7 +58,7 @@ public final class ThermalVision {
         boolean ours = current != null && current.getName().equals(SHADER.toString());
         if (active) {
             if (!ours) {
-                mc.gameRenderer.loadEffect(SHADER);
+                ((GameRendererAccessor) mc.gameRenderer).tactical_loadout$loadEffect(SHADER);
             }
         } else if (ours) {
             mc.gameRenderer.shutdownEffect();

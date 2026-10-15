@@ -1,7 +1,6 @@
 package tactical_loadout.registry;
 
 import net.minecraft.core.registries.Registries;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.item.Item;
@@ -9,8 +8,8 @@ import net.minecraft.world.level.biome.Biome;
 import tactical_loadout.TacticalLoadout;
 
 public final class ModTags {
-    public static final TagKey<Item> FABRICS = ItemTags.create(TacticalLoadout.id("fabrics"));
-    public static final TagKey<Item> TACTICAL_ARMOR = ItemTags.create(TacticalLoadout.id("tactical_armor"));
+    public static final TagKey<Item> FABRICS = TagKey.create(Registries.ITEM, TacticalLoadout.id("fabrics"));
+    public static final TagKey<Item> TACTICAL_ARMOR = TagKey.create(Registries.ITEM, TacticalLoadout.id("tactical_armor"));
     public static final TagKey<DamageType> BALLISTIC = TagKey.create(Registries.DAMAGE_TYPE, TacticalLoadout.id("ballistic"));
 
     public static final TagKey<Biome> WOODLAND_FAVORED = biome("camo/woodland_favored");

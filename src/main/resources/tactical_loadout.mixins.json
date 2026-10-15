@@ -4,6 +4,7 @@
   "package": "tactical_loadout.mixin",
   "compatibilityLevel": "${java}",
   "client": [
+    "GameRendererAccessor",
     "MinecraftMixin"
   ],
   "injectors": {
