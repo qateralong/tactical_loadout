@@ -32,6 +32,10 @@ import tactical_loadout.grenade.SmokeClouds;
 import tactical_loadout.gear.Helpless;
 import tactical_loadout.gear.Restraints;
 import tactical_loadout.item.RepairKitItem;
+import tactical_loadout.gear.ZipTiesItem;
+import tactical_loadout.medical.Downed;
+import tactical_loadout.medical.Medical;
+import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 
 /** Forwards NeoForge game events to the shared handlers. */
 @EventBusSubscriber(modid = TacticalLoadout.MOD_ID)
@@ -42,6 +46,10 @@ public final class NeoForgeEvents {
     @SubscribeEvent
     static void onIncomingDamage(LivingIncomingDamageEvent event) {
         LivingEntity target = event.getEntity();
+        if (target instanceof ServerPlayer player && Downed.isDowned(player)) {
+            event.setAmount(Downed.incomingDamage(player, event.getAmount()));
+            return;
+        }
         if (DeviceEvents.blocksDamage(target, event.getSource())) {
             event.setCanceled(true);
             return;
@@ -56,6 +64,7 @@ public final class NeoForgeEvents {
     @SubscribeEvent
     static void onDamageDealt(LivingDamageEvent.Post event) {
         BallisticHits.onDamageDealt(event.getEntity(), event.getSource(), event.getBlockedDamage());
+        Medical.onDamageDealt(event.getEntity(), event.getSource(), event.getNewDamage());
     }
 
     @SubscribeEvent
@@ -71,11 +80,15 @@ public final class NeoForgeEvents {
     static void onServerStopped(ServerStoppedEvent event) {
         BallisticHits.onServerStopped();
         Restraints.onServerStopped();
+        Downed.onServerStopped();
     }
 
     @SubscribeEvent
     static void onPlayerTick(PlayerTickEvent.Post event) {
         DeviceEvents.onPlayerTick(event.getEntity());
+        if (event.getEntity() instanceof ServerPlayer player) {
+            Downed.tick(player);
+        }
     }
 
     @SubscribeEvent
@@ -181,10 +194,22 @@ public final class NeoForgeEvents {
     // Shears cut a tied player loose, three quick clicks like tying.
     @SubscribeEvent
     static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
-        if (event.getItemStack().is(Items.SHEARS) && event.getEntity() instanceof ServerPlayer cutter
-                && event.getTarget() instanceof ServerPlayer victim && Restraints.cutClick(cutter, victim)) {
+        if (!(event.getEntity() instanceof ServerPlayer actor) || !(event.getTarget() instanceof ServerPlayer victim)) {
+            return;
+        }
+        boolean handled = event.getItemStack().is(Items.SHEARS) ? Restraints.cutClick(actor, victim)
+                : !(event.getItemStack().getItem() instanceof ZipTiesItem) && Downed.reviveClick(actor, victim);
+        if (handled) {
             event.setCanceled(true);
             event.setCancellationResult(InteractionResult.SUCCESS);
+        }
+    }
+
+    // A player who would die goes down instead when the downed state is on.
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    static void onDeath(LivingDeathEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player && Downed.tryGoDown(player, event.getSource())) {
+            event.setCanceled(true);
         }
     }
 
@@ -192,6 +217,7 @@ public final class NeoForgeEvents {
     static void onLogin(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
             Restraints.onLogin(player);
+            Downed.onLogin(player);
         }
     }
 
@@ -199,6 +225,7 @@ public final class NeoForgeEvents {
     static void onRespawn(PlayerEvent.PlayerRespawnEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
             Restraints.onRespawn(player);
+            Downed.onRespawn(player);
         }
     }
 }

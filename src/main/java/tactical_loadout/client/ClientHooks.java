@@ -4,11 +4,13 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.Input;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import org.lwjgl.glfw.GLFW;
 import tactical_loadout.TacticalLoadout;
 import tactical_loadout.config.ClientConfig;
 import tactical_loadout.gear.Restraints;
+import tactical_loadout.medical.Downed;
 import tactical_loadout.grenade.GrenadeItem;
 import tactical_loadout.network.StrugglePayload;
 import tactical_loadout.network.ToggleNvgPayload;
@@ -50,10 +52,20 @@ public final class ClientHooks {
     public static void onLoggingOut() {
         FlashOverlay.reset();
         Restraints.setClientRemaining(0);
+        Downed.setClientTicks(0);
+    }
+
+    public static void onDowned(int ticks) {
+        Downed.setClientTicks(ticks);
+        Player player = Minecraft.getInstance().player;
+        if (player != null) {
+            player.setForcedPose(ticks > 0 ? Pose.SWIMMING : null);
+        }
     }
 
     public static void onClientTick() {
         ThermalVision.tick();
+        Downed.clientTick();
         while (TOGGLE_NVG.consumeClick()) {
             if (Minecraft.getInstance().player != null) {
                 Platform.INSTANCE.sendToServer(new ToggleNvgPayload());

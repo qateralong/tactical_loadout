@@ -81,6 +81,10 @@ public class JeiCompat implements IModPlugin {
         registration.addItemStackInfo(new ItemStack(ModItems.ARMOR_REPAIR_KIT.get()),
                 Component.translatable(INFO + "repair_kit", percent(ServerConfig.repairKitFraction())));
         registration.addItemStackInfo(new ItemStack(ModItems.GAS_FILTER.get()), Component.translatable(INFO + "gas_filter"));
+        registration.addItemStackInfo(new ItemStack(ModItems.MEDKIT.get()),
+                Component.translatable(INFO + "medkit", Math.round(ServerConfig.medkitHealth() / 2), percent(ServerConfig.bleedChance())));
+        registration.addItemStackInfo(new ItemStack(ModItems.TOURNIQUET.get()),
+                Component.translatable(INFO + "tourniquet", percent(ServerConfig.bleedChance()), ServerConfig.bleedSeconds()));
         registration.addItemStackInfo(new ItemStack(ModItems.ZIP_TIES.get()),
                 Component.translatable(INFO + "zip_ties", Restraints.CLICKS, ServerConfig.zipTieStruggles()));
         registration.addItemStackInfo(new ItemStack(ModItems.TRIPWIRE_ALARM.get()), Component.translatable(INFO + "tripwire_alarm"));

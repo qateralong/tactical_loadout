@@ -18,6 +18,7 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import tactical_loadout.TacticalLoadout;
 import tactical_loadout.grenade.IncendiaryFire;
+import tactical_loadout.medical.Medical;
 
 import java.util.List;
 import java.util.Set;
@@ -42,9 +43,11 @@ public final class DataGenerators {
         generator.addProvider(event.includeServer(), new ModItemTagsProvider(output, lookup, noBlockTags, fileHelper));
         generator.addProvider(event.includeServer(), new ModRecipeProvider(output, lookup));
         generator.addProvider(event.includeServer(), new ModBiomeTagsProvider(output, lookup, fileHelper));
-        RegistrySetBuilder registries = new RegistrySetBuilder().add(Registries.DAMAGE_TYPE, context -> context.register(
-                IncendiaryFire.DAMAGE, new DamageType(TacticalLoadout.MOD_ID + ".incendiary",
-                        DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER, 0.1F, DamageEffects.BURNING)));
+        RegistrySetBuilder registries = new RegistrySetBuilder().add(Registries.DAMAGE_TYPE, context -> {
+            context.register(IncendiaryFire.DAMAGE, new DamageType(TacticalLoadout.MOD_ID + ".incendiary",
+                    DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER, 0.1F, DamageEffects.BURNING));
+            context.register(Medical.BLEEDING_DAMAGE, new DamageType(TacticalLoadout.MOD_ID + ".bleeding", DamageScaling.NEVER, 0.0F));
+        });
         DatapackBuiltinEntriesProvider builtin = generator.addProvider(event.includeServer(),
                 new DatapackBuiltinEntriesProvider(output, lookup, registries, Set.of(TacticalLoadout.MOD_ID)));
         generator.addProvider(event.includeServer(), new ModDamageTypeTagsProvider(output, builtin.getRegistryProvider(), fileHelper));

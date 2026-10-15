@@ -243,12 +243,75 @@ TRIPWIRE_ALARM = [
 TRIPWIRE_ALARM_COLORS = {"#": "4a4d50", "h": "c9ccce", "s": "9a9ea2", "R": "6f7377", "-": "e2ddd0"}
 
 
+MEDKIT = [
+    "................",
+    "................",
+    "......mmmm......",
+    ".....m....m.....",
+    "..############..",
+    "..#rrrrrrrrrr#..",
+    "..#rrrrwwrrrr#..",
+    "..#rrrrwwrrrr#..",
+    "..#rrwwwwwwrr#..",
+    "..#rrwwwwwwrr#..",
+    "..#rrrrwwrrrr#..",
+    "..#rrrrwwrrrr#..",
+    "..#RRRRRRRRRR#..",
+    "..############..",
+    "................",
+    "................",
+]
+MEDKIT_COLORS = {"#": "3a1414", "r": "b3262a", "R": "8e1d21", "w": "f0ece4", "m": "3a3c3e"}
+
+TOURNIQUET = [
+    "................",
+    "................",
+    "...........##...",
+    "..........#bb#..",
+    ".........#bb#...",
+    "........#bb#....",
+    ".......#bb#.....",
+    "......#bb#......",
+    ".....#bbrr#.....",
+    "....#bbbrr#.....",
+    "...#bb#ss##.....",
+    "..#bb#.ss.......",
+    ".#bb#..ss.......",
+    "..##...gg.......",
+    "................",
+    "................",
+]
+TOURNIQUET_COLORS = {"#": "111111", "b": "2b2b2b", "r": "c0352b", "s": "6a6d70", "g": "9a9ea2"}
+
+BLEEDING = [
+    "..................",
+    "........##........",
+    ".......#rr#.......",
+    ".......#rr#.......",
+    "......#rrrr#......",
+    "......#rrrr#......",
+    ".....#rrrrrr#.....",
+    ".....#rrrrrr#.....",
+    "....#rrrrrrrr#....",
+    "....#rrhrrrrr#....",
+    "....#rrhrrrrr#....",
+    "....#rrrhrrrr#....",
+    "....#rrrrrrrr#....",
+    ".....#rrrrrr#.....",
+    "......#RRRR#......",
+    ".......####.......",
+    "..................",
+    "..................",
+]
+BLEEDING_COLORS = {"#": "3a0606", "r": "b01414", "R": "7a0c0c", "h": "e36a6a"}
+
+
 def pixel_icon(rows, colors):
-    img = np.zeros((16, 16, 4))
+    img = np.zeros((len(rows), len(rows[0]), 4))
     for y, row in enumerate(rows):
         for x, c in enumerate(row):
             if c != ".":
-                img[y, x, :3] = hex_rgb(colors[c]) * (1.1 - 0.2 * y / 15)
+                img[y, x, :3] = hex_rgb(colors[c]) * (1.1 - 0.2 * y / (len(rows) - 1))
                 img[y, x, 3] = 255
     return Image.fromarray(np.clip(img, 0, 255).astype(np.uint8), "RGBA")
 
@@ -345,6 +408,11 @@ def main():
     save(colorize(PLATE_MASK, solid("ddd8cc")), "ceramic_plate")
     save(pixel_icon(REPAIR_KIT, REPAIR_KIT_COLORS), "armor_repair_kit")
     save(pixel_icon(ZIP_TIES, ZIP_TIES_COLORS), "zip_ties")
+    save(pixel_icon(MEDKIT, MEDKIT_COLORS), "medkit")
+    save(pixel_icon(TOURNIQUET, TOURNIQUET_COLORS), "tourniquet")
+    effect = pixel_icon(BLEEDING, BLEEDING_COLORS)
+    (ITEM_DIR.parent / "mob_effect").mkdir(parents=True, exist_ok=True)
+    effect.save(ITEM_DIR.parent / "mob_effect/bleeding.png")
     save(pixel_icon(TRIPWIRE_ALARM, TRIPWIRE_ALARM_COLORS), "tripwire_alarm")
     overlays()
     smoke_puffs()

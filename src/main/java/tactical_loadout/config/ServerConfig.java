@@ -25,6 +25,14 @@ public final class ServerConfig {
     private static final ModConfigSpec.BooleanValue NVG_USES_BATTERY;
     private static final ModConfigSpec.IntValue NVG_BATTERY_SECONDS;
     private static final ModConfigSpec.IntValue ZIP_TIE_STRUGGLES;
+    private static final ModConfigSpec.DoubleValue BLEED_CHANCE;
+    private static final ModConfigSpec.IntValue BLEED_SECONDS;
+    private static final ModConfigSpec.DoubleValue MEDKIT_HEALTH;
+    private static final ModConfigSpec.BooleanValue DOWNED_ENABLED;
+    private static final ModConfigSpec.IntValue DOWNED_SECONDS;
+    private static final ModConfigSpec.IntValue REVIVE_SECONDS;
+    private static final ModConfigSpec.DoubleValue REVIVE_HEALTH;
+    private static final ModConfigSpec.DoubleValue SELF_REVIVE_CHANCE;
     private static final ModConfigSpec.IntValue GAS_FILTER_SECONDS;
     private static final ModConfigSpec.DoubleValue FRAG_RADIUS;
     private static final ModConfigSpec.DoubleValue HE_RADIUS;
@@ -150,6 +158,28 @@ public final class ServerConfig {
                 .translation(key("zipTieStruggles")).defineInRange("zipTieStruggles", 100, 5, 1000);
         builder.pop();
 
+        builder.translation(key("medical")).push("medical");
+        BLEED_CHANCE = builder.comment("Chance that a bullet or explosion wound starts bleeding. 0 turns bleeding off.")
+                .translation(key("bleedChance")).defineInRange("bleedChance", 0.3, 0.0, 1.0);
+        BLEED_SECONDS = builder.comment("How long bleeding lasts if nothing stops it; it costs half a heart every 3 seconds.")
+                .translation(key("bleedSeconds")).defineInRange("bleedSeconds", 45, 5, 600);
+        MEDKIT_HEALTH = builder.comment("Health restored by a medkit (2 = one heart).")
+                .translation(key("medkitHealth")).defineInRange("medkitHealth", 10.0, 1.0, 40.0);
+        builder.pop();
+
+        builder.translation(key("downed")).push("downed");
+        DOWNED_ENABLED = builder.comment("Lethal damage knocks players down instead of killing them, like in Rust. Off by default.")
+                .translation(key("downedEnabled")).define("enabled", false);
+        DOWNED_SECONDS = builder.comment("How long a downed player lasts before bleeding out.")
+                .translation(key("downedSeconds")).defineInRange("bleedOutSeconds", 60, 5, 600);
+        REVIVE_SECONDS = builder.comment("How long another player has to hold right-click on a downed player to revive them (half with a medkit).")
+                .translation(key("reviveSeconds")).defineInRange("reviveSeconds", 5, 1, 60);
+        REVIVE_HEALTH = builder.comment("Health of a revived player (2 = one heart).")
+                .translation(key("reviveHealth")).defineInRange("reviveHealth", 4.0, 1.0, 20.0);
+        SELF_REVIVE_CHANCE = builder.comment("Chance to get back up alone when the bleed-out timer runs out.")
+                .translation(key("selfReviveChance")).defineInRange("selfReviveChance", 0.15, 0.0, 1.0);
+        builder.pop();
+
         SPEC = builder.build();
     }
 
@@ -221,6 +251,38 @@ public final class ServerConfig {
 
     public static boolean nvgUsesBattery() {
         return SPEC.isLoaded() ? NVG_USES_BATTERY.get() : NVG_USES_BATTERY.getDefault();
+    }
+
+    public static boolean downedEnabled() {
+        return SPEC.isLoaded() ? DOWNED_ENABLED.get() : DOWNED_ENABLED.getDefault();
+    }
+
+    public static int downedSeconds() {
+        return SPEC.isLoaded() ? DOWNED_SECONDS.get() : DOWNED_SECONDS.getDefault();
+    }
+
+    public static int reviveSeconds() {
+        return SPEC.isLoaded() ? REVIVE_SECONDS.get() : REVIVE_SECONDS.getDefault();
+    }
+
+    public static float reviveHealth() {
+        return (float) get(REVIVE_HEALTH);
+    }
+
+    public static double selfReviveChance() {
+        return get(SELF_REVIVE_CHANCE);
+    }
+
+    public static double bleedChance() {
+        return get(BLEED_CHANCE);
+    }
+
+    public static int bleedSeconds() {
+        return SPEC.isLoaded() ? BLEED_SECONDS.get() : BLEED_SECONDS.getDefault();
+    }
+
+    public static double medkitHealth() {
+        return get(MEDKIT_HEALTH);
     }
 
     public static int zipTieStruggles() {

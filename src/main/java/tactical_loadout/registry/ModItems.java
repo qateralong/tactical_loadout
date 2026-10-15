@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import tactical_loadout.device.DeviceItem;
 import tactical_loadout.device.DeviceKind;
 import tactical_loadout.gear.ZipTiesItem;
+import tactical_loadout.medical.MedicalItem;
 import tactical_loadout.grenade.GrenadeItem;
 import tactical_loadout.grenade.GrenadeKind;
 import tactical_loadout.item.ArmorPiece;
@@ -32,6 +33,10 @@ public final class ModItems {
     public static final ItemEntry<Item> GAS_FILTER = simple("gas_filter");
     public static final ItemEntry<RepairKitItem> ARMOR_REPAIR_KIT =
             register("armor_repair_kit", () -> new RepairKitItem(new Item.Properties()));
+    public static final ItemEntry<MedicalItem> MEDKIT =
+            register("medkit", () -> new MedicalItem(MedicalItem.Kind.MEDKIT, new Item.Properties()));
+    public static final ItemEntry<MedicalItem> TOURNIQUET =
+            register("tourniquet", () -> new MedicalItem(MedicalItem.Kind.TOURNIQUET, new Item.Properties()));
     public static final ItemEntry<ZipTiesItem> ZIP_TIES = register("zip_ties", () -> new ZipTiesItem(new Item.Properties()));
     public static final ItemEntry<BlockItem> TRIPWIRE_ALARM =
             register("tripwire_alarm", () -> new BlockItem(ModBlocks.TRIPWIRE_ALARM.get(), new Item.Properties()));

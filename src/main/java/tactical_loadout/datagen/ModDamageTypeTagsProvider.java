@@ -10,6 +10,7 @@ import net.minecraft.world.damagesource.DamageType;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import tactical_loadout.TacticalLoadout;
 import tactical_loadout.grenade.IncendiaryFire;
+import tactical_loadout.medical.Medical;
 import tactical_loadout.registry.ModTags;
 
 import java.util.concurrent.CompletableFuture;
@@ -31,6 +32,10 @@ public class ModDamageTypeTagsProvider extends TagsProvider<DamageType> {
                 .addOptional(ResourceLocation.fromNamespaceAndPath("superbwarfare", "gunfire"))
                 .addOptional(ResourceLocation.fromNamespaceAndPath("superbwarfare", "gunfire_headshot"));
         tag(DamageTypeTags.IS_FIRE).add(IncendiaryFire.DAMAGE);
+        tag(DamageTypeTags.BYPASSES_ARMOR).add(Medical.BLEEDING_DAMAGE);
+        tag(DamageTypeTags.BYPASSES_SHIELD).add(Medical.BLEEDING_DAMAGE);
+        tag(DamageTypeTags.NO_KNOCKBACK).add(Medical.BLEEDING_DAMAGE);
+        tag(DamageTypeTags.NO_IMPACT).add(Medical.BLEEDING_DAMAGE);
         tag(DamageTypeTags.NO_KNOCKBACK).add(IncendiaryFire.DAMAGE);
         tag(DamageTypeTags.BURNS_ARMOR_STANDS).add(IncendiaryFire.DAMAGE);
     }

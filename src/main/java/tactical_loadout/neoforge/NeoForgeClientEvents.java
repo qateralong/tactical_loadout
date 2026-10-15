@@ -8,6 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.InputEvent;
+import tactical_loadout.client.DownedOverlay;
 import tactical_loadout.client.RestraintOverlay;
 import tactical_loadout.gear.Helpless;
 import net.neoforged.neoforge.client.event.ComputeFovModifierEvent;
@@ -42,6 +43,7 @@ public final class NeoForgeClientEvents {
     @SubscribeEvent
     static void registerLayers(RegisterGuiLayersEvent event) {
         event.registerAbove(VanillaGuiLayers.CAMERA_OVERLAYS, TacticalLoadout.id("nvg"), NvgOverlay::render);
+        event.registerAbove(VanillaGuiLayers.CAMERA_OVERLAYS, TacticalLoadout.id("downed"), DownedOverlay::render);
         event.registerAbove(VanillaGuiLayers.HOTBAR, TacticalLoadout.id("restraint"), RestraintOverlay::render);
         event.registerAboveAll(TacticalLoadout.id("flash"), FlashOverlay::render);
     }

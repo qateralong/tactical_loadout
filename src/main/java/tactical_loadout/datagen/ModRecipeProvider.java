@@ -213,6 +213,21 @@ public class ModRecipeProvider extends RecipeProvider {
                 .define('I', Tags.Items.INGOTS_IRON)
                 .unlockedBy("has_kevlar_insert", has(ModItems.KEVLAR_INSERT))
                 .save(output);
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, ModItems.MEDKIT)
+                .requires(Items.PAPER)
+                .requires(Items.PAPER)
+                .requires(ItemTags.WOOL)
+                .requires(Tags.Items.DYES_RED)
+                .requires(Items.GLISTERING_MELON_SLICE)
+                .unlockedBy("has_glistering_melon", has(Items.GLISTERING_MELON_SLICE))
+                .save(output);
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, ModItems.TOURNIQUET, 2)
+                .requires(Tags.Items.LEATHERS)
+                .requires(Tags.Items.STRINGS)
+                .requires(Tags.Items.STRINGS)
+                .requires(Tags.Items.RODS_WOODEN)
+                .unlockedBy("has_leather", has(Tags.Items.LEATHERS))
+                .save(output);
         ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, ModItems.ZIP_TIES, 4)
                 .requires(Tags.Items.STRINGS)
                 .requires(Tags.Items.STRINGS)
