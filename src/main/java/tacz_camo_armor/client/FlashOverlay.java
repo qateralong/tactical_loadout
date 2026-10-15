@@ -17,6 +17,10 @@ public final class FlashOverlay {
     private FlashOverlay() {
     }
 
+    public static void reset() {
+        duration = 0;
+    }
+
     public static void trigger(float value, int ticks) {
         float current = alpha();
         if (value >= current) {

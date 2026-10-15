@@ -63,6 +63,13 @@ public final class Flashbang {
     }
 
     public static boolean isBlinded(Entity entity) {
-        return entity instanceof Mob mob && mob.getPersistentData().getLong(BLINDED_UNTIL) > mob.level().getGameTime();
+        if (!(entity instanceof Mob mob) || !mob.getPersistentData().contains(BLINDED_UNTIL)) {
+            return false;
+        }
+        if (mob.getPersistentData().getLong(BLINDED_UNTIL) > mob.level().getGameTime()) {
+            return true;
+        }
+        mob.getPersistentData().remove(BLINDED_UNTIL);
+        return false;
     }
 }

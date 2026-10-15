@@ -8,12 +8,14 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.damagesource.DamageContainer;
 import net.neoforged.neoforge.event.entity.living.ArmorHurtEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import tacz_camo_armor.TaczCamoArmor;
@@ -22,6 +24,8 @@ import tacz_camo_armor.item.TacticalArmorItem;
 import tacz_camo_armor.registry.ModTags;
 
 import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
 
@@ -37,10 +41,16 @@ import java.util.function.Predicate;
 public final class BallisticHits {
     private static final List<Predicate<DamageSource>> CLAIMS = new CopyOnWriteArrayList<>();
     private static final double HITSCAN_RANGE = 256.0;
+    // Armor only wears once the hit gets past shields and invulnerability frames, which vanilla checks after the
+    // incoming damage event, so the wear waits here until the damage is actually dealt.
+    private static final Map<LivingEntity, Wear> PENDING_WEAR = new WeakHashMap<>();
     // Set by an integration and consumed by the hurt call that follows it on the same thread.
     private static ExpectedHit expected;
 
-    private record ExpectedHit(LivingEntity target, DamageSource source, EquipmentSlot slot) {
+    private record ExpectedHit(LivingEntity target, DamageSource source, EquipmentSlot slot, float damage) {
+    }
+
+    private record Wear(DamageSource source, EquipmentSlot slot, float damage) {
     }
 
     private BallisticHits() {
@@ -52,15 +62,12 @@ public final class BallisticHits {
     }
 
     /**
-     * Announces that {@code source} is about to hurt {@code target} on {@code slot}: wears the armor piece in that slot
-     * by {@code damage} and reduces the next hurt call with this exact source by the piece's protection.
+     * Announces that {@code source} is about to hurt {@code target} on {@code slot}: the next hurt call with this exact
+     * source is reduced by the piece's protection, and the piece wears by {@code damage} if the hit goes through.
      */
     public static void expect(LivingEntity target, DamageSource source, EquipmentSlot slot, float damage) {
-        expected = null;
-        if (target.getItemBySlot(slot).getItem() instanceof TacticalArmorItem) {
-            wear(target, slot, damage);
-            expected = new ExpectedHit(target, source, slot);
-        }
+        expected = target.getItemBySlot(slot).getItem() instanceof TacticalArmorItem
+                ? new ExpectedHit(target, source, slot, damage) : null;
     }
 
     public static void cancelExpected() {
@@ -97,8 +104,11 @@ public final class BallisticHits {
     }
 
     private static void wear(LivingEntity target, EquipmentSlot slot, float damage) {
-        int wear = Math.max(1, Math.round(damage * (float) ServerConfig.durabilityPerDamage()));
-        target.getItemBySlot(slot).hurtAndBreak(wear, target, slot);
+        ItemStack stack = target.getItemBySlot(slot);
+        if (stack.getItem() instanceof TacticalArmorItem) {
+            int wear = Math.max(1, Math.round(damage * (float) ServerConfig.durabilityPerDamage()));
+            stack.hurtAndBreak(wear, target, slot);
+        }
     }
 
     private static float reduction(LivingEntity target, EquipmentSlot slot) {
@@ -131,12 +141,13 @@ public final class BallisticHits {
         ExpectedHit hit = expected;
         if (hit != null && hit.source() == source && hit.target() == target) {
             expected = null;
+            PENDING_WEAR.put(target, new Wear(source, hit.slot(), hit.damage()));
             event.setAmount(event.getAmount() * (1.0F - reduction(target, hit.slot())));
         } else if (source.is(ModTags.BALLISTIC) && !isClaimed(source)) {
             EquipmentSlot slot = guessSlot(target, source);
             float reduction = reduction(target, slot);
             if (reduction > 0.0F) {
-                wear(target, slot, event.getAmount());
+                PENDING_WEAR.put(target, new Wear(source, slot, event.getAmount()));
                 event.setAmount(event.getAmount() * (1.0F - reduction));
             }
         }
@@ -156,6 +167,17 @@ public final class BallisticHits {
     }
 
     @SubscribeEvent
+    static void onDamageDealt(LivingDamageEvent.Post event) {
+        Wear wear = PENDING_WEAR.get(event.getEntity());
+        if (wear != null && wear.source() == event.getSource()) {
+            PENDING_WEAR.remove(event.getEntity());
+            if (event.getBlockedDamage() <= 0.0F) {
+                wear(event.getEntity(), wear.slot(), wear.damage());
+            }
+        }
+    }
+
+    @SubscribeEvent
     static void onArmorHurt(ArmorHurtEvent event) {
         DamageSource source = event.getDamageSource();
         if (!isBallistic(source) || source.is(DamageTypeTags.BYPASSES_ARMOR)) {
@@ -171,6 +193,7 @@ public final class BallisticHits {
     @SubscribeEvent
     static void onServerStopped(ServerStoppedEvent event) {
         expected = null;
+        PENDING_WEAR.clear();
     }
 
     private static float ownArmor(LivingEntity entity) {

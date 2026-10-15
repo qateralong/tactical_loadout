@@ -20,10 +20,11 @@ import tacz_camo_armor.config.ServerConfig;
 import tacz_camo_armor.registry.ModEntities;
 import tacz_camo_armor.registry.ModItems;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
+import java.util.WeakHashMap;
 
 public class GrenadeEntity extends ThrowableItemProjectile {
     private static final int PUFFS = 120;
@@ -32,7 +33,8 @@ public class GrenadeEntity extends ThrowableItemProjectile {
     private static final double GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5));
     private int fuse = GrenadeKind.FRAG.fuseTicks();
     private int smokeTicks = -1;
-    private final Set<UUID> smokeViewers = new HashSet<>();
+    // Identity, not UUID: a player who relogs gets a new ServerPlayer and an empty particle engine.
+    private final Set<ServerPlayer> smokeViewers = Collections.newSetFromMap(new WeakHashMap<>());
     private float spin;
     private float spinO;
     private float heading;
@@ -70,19 +72,24 @@ public class GrenadeEntity extends ThrowableItemProjectile {
 
     @Override
     public void tick() {
+        if (isNoGravity() && level().noCollision(this, getBoundingBox().move(0.0, -0.1, 0.0))) {
+            setNoGravity(false);
+        }
         super.tick();
         if (!(level() instanceof ServerLevel level)) {
             updateSpin();
             return;
         }
         if (smokeTicks >= 0) {
-            int elapsed = ServerConfig.smokeSeconds() * 20 - smokeTicks;
+            int elapsed = Math.max(0, ServerConfig.smokeSeconds() * 20 - smokeTicks);
             if (elapsed < FILL_TICKS) {
+                List<ServerPlayer> nearby = nearbyPlayers(level);
                 if (elapsed == 0) {
-                    level.players().forEach(player -> smokeViewers.add(player.getUUID()));
+                    smokeViewers.addAll(nearby);
                 }
+                nearby.removeIf(player -> !smokeViewers.contains(player));
                 for (int i = 0; i < PUFFS / FILL_TICKS; i++) {
-                    emitPuff(level, level.players(), elapsed * (PUFFS / FILL_TICKS) + i, smokeTicks + random.nextInt(40));
+                    emitPuff(level, nearby, elapsed * (PUFFS / FILL_TICKS) + i, smokeTicks + random.nextInt(40));
                 }
             } else if (tickCount % 10 == 0) {
                 resendCloud(level);
@@ -115,14 +122,23 @@ public class GrenadeEntity extends ThrowableItemProjectile {
     // Fills a dome evenly from the centre outwards; each puff lives until the smoke ends, so the cloud never thins out.
     // Players who arrive late, or after the world was reloaded, get the whole cloud at once.
     private void resendCloud(ServerLevel level) {
-        List<ServerPlayer> late = level.players().stream()
-                .filter(player -> player.distanceToSqr(this) < RESEND_RANGE * RESEND_RANGE && smokeViewers.add(player.getUUID()))
-                .toList();
+        List<ServerPlayer> late = nearbyPlayers(level);
+        late.removeIf(player -> !smokeViewers.add(player));
         if (!late.isEmpty()) {
             for (int i = 0; i < PUFFS; i++) {
                 emitPuff(level, late, i, smokeTicks + random.nextInt(40));
             }
         }
+    }
+
+    private List<ServerPlayer> nearbyPlayers(ServerLevel level) {
+        List<ServerPlayer> players = new ArrayList<>();
+        for (ServerPlayer player : level.players()) {
+            if (player.distanceToSqr(this) < RESEND_RANGE * RESEND_RANGE) {
+                players.add(player);
+            }
+        }
+        return players;
     }
 
     private void emitPuff(ServerLevel level, List<ServerPlayer> players, int index, int lifetime) {
@@ -166,6 +182,7 @@ public class GrenadeEntity extends ThrowableItemProjectile {
     @Override
     protected void onHitBlock(BlockHitResult hit) {
         super.onHitBlock(hit);
+        setNoGravity(false);
         Vec3 velocity = getDeltaMovement();
         Direction.Axis axis = hit.getDirection().getAxis();
         double bounce = 0.35;
@@ -177,8 +194,11 @@ public class GrenadeEntity extends ThrowableItemProjectile {
         };
         if (velocity.lengthSqr() > 0.01) {
             level().playSound(null, getX(), getY(), getZ(), SoundEvents.CHAIN_HIT, SoundSource.NEUTRAL, 0.5F, 1.6F);
-        } else if (axis == Direction.Axis.Y) {
+        } else if (hit.getDirection() == Direction.UP) {
+            // Resting on the ground: stop falling so the grenade does not hit the block again every tick
+            // (that would ring bells, power targets and trigger sculk sensors until it goes off).
             velocity = Vec3.ZERO;
+            setNoGravity(true);
         }
         setDeltaMovement(velocity);
         setPos(hit.getLocation().add(Vec3.atLowerCornerOf(hit.getDirection().getNormal()).scale(0.05)));
@@ -191,7 +211,9 @@ public class GrenadeEntity extends ThrowableItemProjectile {
 
     @Override
     public void remove(RemovalReason reason) {
-        SmokeClouds.remove(this);
+        if (!level().isClientSide) {
+            SmokeClouds.remove(this);
+        }
         super.remove(reason);
     }
 
@@ -205,9 +227,9 @@ public class GrenadeEntity extends ThrowableItemProjectile {
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
-        fuse = tag.getInt("Fuse");
+        fuse = tag.contains("Fuse") ? tag.getInt("Fuse") : kind().fuseTicks();
         smokeTicks = tag.contains("SmokeTicks") ? tag.getInt("SmokeTicks") : -1;
-        if (smokeTicks > 0) {
+        if (smokeTicks > 0 && !level().isClientSide) {
             SmokeClouds.add(this);
         }
     }

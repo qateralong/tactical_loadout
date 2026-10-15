@@ -60,7 +60,8 @@ public final class DeviceEvents {
     static void onEffectApplicable(MobEffectEvent.Applicable event) {
         LivingEntity entity = event.getEntity();
         Holder<MobEffect> effect = event.getEffectInstance().getEffect();
-        if (entity.level().isClientSide || !(effect.equals(MobEffects.POISON) || effect.equals(MobEffects.WITHER))) {
+        if (entity.level().isClientSide || !(effect.equals(MobEffects.POISON) || effect.equals(MobEffects.WITHER))
+                || event.getResult() == MobEffectEvent.Applicable.Result.DO_NOT_APPLY || !entity.canBeAffected(event.getEffectInstance())) {
             return;
         }
         int cost = Math.max(1, event.getEffectInstance().getDuration() / 20);
