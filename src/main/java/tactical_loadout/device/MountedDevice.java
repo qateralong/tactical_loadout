@@ -3,11 +3,13 @@ package tactical_loadout.device;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.world.item.ItemStack;
+//? if >=1.20.5 {
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ByIdMap;
-import net.minecraft.world.item.ItemStack;
+//?}
 import tactical_loadout.registry.ModDataComponents;
 import tactical_loadout.registry.ModItems;
 
@@ -19,11 +21,13 @@ public record MountedDevice(DeviceKind kind, int charge) {
             Codec.INT.fieldOf("charge").forGetter(MountedDevice::charge)
     ).apply(instance, MountedDevice::new));
 
+    //? if >=1.20.5 {
     public static final StreamCodec<ByteBuf, MountedDevice> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.idMapper(ByIdMap.continuous(DeviceKind::ordinal, DeviceKind.values(), ByIdMap.OutOfBoundsStrategy.ZERO),
                     DeviceKind::ordinal), MountedDevice::kind,
             ByteBufCodecs.VAR_INT, MountedDevice::charge,
             MountedDevice::new);
+    //?}
 
     private static DataResult<DeviceKind> parseKind(String name) {
         for (DeviceKind kind : DeviceKind.values()) {
@@ -53,7 +57,7 @@ public record MountedDevice(DeviceKind kind, int charge) {
 
     public ItemStack toStack() {
         ItemStack stack = new ItemStack(ModItems.device(kind).get());
-        stack.set(ModDataComponents.CHARGE.get(), charge);
+        ModDataComponents.CHARGE.set(stack, charge);
         return stack;
     }
 }

@@ -1,6 +1,10 @@
 package tactical_loadout.config;
 
+//? if >=1.20.5 {
 import net.neoforged.neoforge.common.ModConfigSpec;
+//?} else {
+/*import net.minecraftforge.common.ModConfigSpec;
+*///?}
 import tactical_loadout.item.ArmorTier;
 
 public final class ServerConfig {

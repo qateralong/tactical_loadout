@@ -1,0 +1,52 @@
+{
+  "values": [
+    {
+      "id": "#c:is_mountain",
+      "required": false
+    },
+    {
+      "id": "#c:mountain",
+      "required": false
+    },
+    {
+      "id": "#forge:is_mountain",
+      "required": false
+    },
+    {
+      "id": "#c:is_stony_shores",
+      "required": false
+    },
+    {
+      "id": "#c:stony_shores",
+      "required": false
+    },
+    {
+      "id": "#forge:is_stony_shores",
+      "required": false
+    },
+    {
+      "id": "#c:is_underground",
+      "required": false
+    },
+    {
+      "id": "#c:underground",
+      "required": false
+    },
+    {
+      "id": "#forge:is_underground",
+      "required": false
+    },
+    {
+      "id": "#c:is_windswept",
+      "required": false
+    },
+    {
+      "id": "#c:windswept",
+      "required": false
+    },
+    {
+      "id": "#forge:is_windswept",
+      "required": false
+    }
+  ]
+}

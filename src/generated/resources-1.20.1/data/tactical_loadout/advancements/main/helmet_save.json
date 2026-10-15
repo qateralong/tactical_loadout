@@ -1,0 +1,27 @@
+{
+  "parent": "tactical_loadout:main/suit_up",
+  "criteria": {
+    "done": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.tactical_loadout.helmet_save.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "item": "tactical_loadout:us_woodland_heavy_helmet"
+    },
+    "title": {
+      "translate": "advancement.tactical_loadout.helmet_save.title"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

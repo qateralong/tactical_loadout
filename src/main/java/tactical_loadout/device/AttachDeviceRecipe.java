@@ -1,18 +1,30 @@
 package tactical_loadout.device;
 
-import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
-import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import tactical_loadout.registry.ModRecipes;
+//? if >=1.21 {
+import net.minecraft.core.HolderLookup;
+import net.minecraft.world.item.crafting.CraftingInput;
+//?} else {
+/*import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.CraftingContainer;
+*///?}
 
 public class AttachDeviceRecipe extends CustomRecipe {
+    //? if >=1.21 {
     public AttachDeviceRecipe(CraftingBookCategory category) {
         super(category);
     }
+    //?} else {
+    /*public AttachDeviceRecipe(ResourceLocation id, CraftingBookCategory category) {
+        super(id, category);
+    }
+    *///?}
 
     private static ItemStack[] find(CraftingInput input) {
         ItemStack helmet = ItemStack.EMPTY;
@@ -48,7 +60,7 @@ public class AttachDeviceRecipe extends CustomRecipe {
         }
         ItemStack result = found[0].copyWithCount(1);
         MountedDevice device = MountedDevice.of(found[1]);
-        result.set(Devices.component(device.kind()), device);
+        Devices.component(device.kind()).set(result, device);
         return result;
     }
 

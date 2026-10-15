@@ -1,6 +1,10 @@
 package tactical_loadout.advancement;
 
+//? if >=1.21 {
 import net.minecraft.advancements.AdvancementHolder;
+//?} else {
+/*import net.minecraft.advancements.Advancement;
+*///?}
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -33,7 +37,11 @@ public final class ModAdvancements {
 
     public static void award(@Nullable Entity entity, String name, String criterion) {
         if (entity instanceof ServerPlayer player) {
+            //? if >=1.21 {
             AdvancementHolder holder = player.server.getAdvancements().get(TacticalLoadout.id("main/" + name));
+            //?} else {
+            /*Advancement holder = player.server.getAdvancements().getAdvancement(TacticalLoadout.id("main/" + name));
+            *///?}
             if (holder != null) {
                 player.getAdvancements().award(holder, criterion);
             }

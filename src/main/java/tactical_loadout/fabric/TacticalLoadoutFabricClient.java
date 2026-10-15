@@ -20,8 +20,15 @@ public final class TacticalLoadoutFabricClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         KeyBindingHelper.registerKeyBinding(ClientHooks.TOGGLE_NVG);
+        //? if >=1.21 {
         ClientPlayNetworking.registerGlobalReceiver(FlashPayload.TYPE,
                 (payload, context) -> context.client().execute(() -> FlashOverlay.trigger(payload.strength(), payload.ticks())));
+        //?} else {
+        /*ClientPlayNetworking.registerGlobalReceiver(FlashPayload.ID, (client, handler, buf, sender) -> {
+            FlashPayload payload = FlashPayload.read(buf);
+            client.execute(() -> FlashOverlay.trigger(payload.strength(), payload.ticks()));
+        });
+        *///?}
         ParticleFactoryRegistry.getInstance().register(ModParticles.SMOKE_PUFF.get(), SmokePuffParticle.Provider::new);
         EntityRendererRegistry.register(ModEntities.GRENADE.get(), GrenadeRenderer::new);
         // The night vision tint is drawn by GuiMixin under the HUD; the flash goes over everything.

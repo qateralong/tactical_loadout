@@ -41,7 +41,7 @@ public final class DeviceEvents {
         if (nvg.kind().usesCharge() && player.tickCount % 20 == 0) {
             ItemStack head = player.getItemBySlot(EquipmentSlot.HEAD);
             MountedDevice drained = nvg.withCharge(nvg.clampedCharge() - 20);
-            head.set(ModDataComponents.NVG.get(), drained);
+            ModDataComponents.NVG.set(head, drained);
             if (!drained.hasCharge()) {
                 Devices.toggleNvg(player);
             } else {
@@ -56,7 +56,7 @@ public final class DeviceEvents {
 
     /** Whether a gas mask stops the effect; spends filter only on effects that would otherwise apply. */
     public static boolean blocksEffect(LivingEntity entity, MobEffectInstance instance) {
-        Holder<MobEffect> effect = instance.getEffect();
+        var effect = instance.getEffect();
         if (entity.level().isClientSide || !(effect.equals(MobEffects.POISON) || effect.equals(MobEffects.WITHER))
                 || !entity.canBeAffected(instance)) {
             return false;
@@ -70,12 +70,12 @@ public final class DeviceEvents {
 
     private static boolean consumeFilter(LivingEntity entity, int cost) {
         ItemStack head = entity.getItemBySlot(EquipmentSlot.HEAD);
-        MountedDevice mask = head.get(ModDataComponents.GAS_MASK.get());
+        MountedDevice mask = ModDataComponents.GAS_MASK.get(head);
         if (mask == null || !mask.hasCharge()) {
             return false;
         }
         MountedDevice used = mask.withCharge(mask.clampedCharge() - cost);
-        head.set(ModDataComponents.GAS_MASK.get(), used);
+        ModDataComponents.GAS_MASK.set(head, used);
         if (entity instanceof Player player) {
             warnIfLow(player, mask, used, used.hasCharge() ? "filter_low" : "filter_empty");
         }

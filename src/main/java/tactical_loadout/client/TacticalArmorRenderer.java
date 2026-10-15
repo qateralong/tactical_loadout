@@ -31,14 +31,20 @@ public class TacticalArmorRenderer extends GeoArmorRenderer<TacticalArmorItem> {
     @Override
     public void preRender(PoseStack poseStack, TacticalArmorItem animatable, BakedGeoModel model,
                           @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender,
+                          //? if >=1.21 {
                           float partialTick, int packedLight, int packedOverlay, int colour) {
         super.preRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, colour);
+        //?} else {
+                          /*float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+        super.preRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay,
+                red, green, blue, alpha);
+        *///?}
         for (GeoBone bone : model.topLevelBones()) {
             applyTier(bone, animatable.tier());
         }
         ItemStack stack = getCurrentStack();
-        MountedDevice nvg = stack == null ? null : stack.get(ModDataComponents.NVG.get());
-        boolean mask = stack != null && stack.has(ModDataComponents.GAS_MASK.get());
+        MountedDevice nvg = stack == null ? null : ModDataComponents.NVG.get(stack);
+        boolean mask = stack != null && ModDataComponents.GAS_MASK.has(stack);
         setVisible(model, "nvg_mount", nvg != null);
         setVisible(model, "nvg_pvs14", nvg != null && nvg.kind() == DeviceKind.PVS14);
         setVisible(model, "nvg_gpnvg18", nvg != null && nvg.kind() == DeviceKind.GPNVG18);
@@ -49,7 +55,7 @@ public class TacticalArmorRenderer extends GeoArmorRenderer<TacticalArmorItem> {
                 || nvg.kind() == DeviceKind.THERMAL_PANO));
         setVisible(model, "gas_mask", mask);
         if (nvg != null) {
-            boolean down = stack.getOrDefault(ModDataComponents.NVG_DOWN.get(), false);
+            boolean down = ModDataComponents.NVG_DOWN.getOrDefault(stack, false);
             nvgAngle = animateNvg(getCurrentEntity(), down ? 0.0F : NVG_STOWED);
         }
     }
@@ -83,13 +89,21 @@ public class TacticalArmorRenderer extends GeoArmorRenderer<TacticalArmorItem> {
     @Override
     public void renderRecursively(PoseStack poseStack, TacticalArmorItem animatable, GeoBone bone, RenderType renderType,
                                   MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick,
+                                  //? if >=1.21 {
                                   int packedLight, int packedOverlay, int colour) {
+        //?} else {
+                                  /*int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+        *///?}
         String name = bone.getName();
         if (name.startsWith("nvg_") && !name.equals("nvg_mount") && !name.equals("nvg_battery")) {
             bone.setRotX(nvgAngle);
         }
         super.renderRecursively(poseStack, animatable, bone, renderType, bufferSource, buffer, isReRender, partialTick,
+                //? if >=1.21 {
                 packedLight, packedOverlay, colour);
+                //?} else {
+                /*packedLight, packedOverlay, red, green, blue, alpha);
+                *///?}
     }
 
     // Tier detail bones are named "medium_*" / "heavy_*" and nested under the slot bones.

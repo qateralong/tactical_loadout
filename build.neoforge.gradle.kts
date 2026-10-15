@@ -23,7 +23,7 @@ java {
 // Loader-specific code lives in its own package; the other loaders' packages are left out of this build.
 sourceSets.main {
     java {
-        exclude("$modId/fabric/**", "$modId/forge/**")
+        exclude("$modId/fabric/**", "$modId/forge/**", "$modId/legacyforge/**")
     }
     resources {
         srcDir(rootProject.file("src/generated/resources"))

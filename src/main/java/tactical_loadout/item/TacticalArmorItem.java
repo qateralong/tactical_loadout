@@ -2,20 +2,16 @@ package tactical_loadout.item;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.component.ItemAttributeModifiers;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoItem;
-import software.bernie.geckolib.animatable.client.GeoRenderProvider;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.util.GeckoLibUtil;
@@ -30,6 +26,17 @@ import tactical_loadout.registry.ModArmorMaterials;
 
 import java.util.List;
 import java.util.function.Consumer;
+//? if >=1.21 {
+import net.minecraft.world.entity.EquipmentSlotGroup;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
+import software.bernie.geckolib.animatable.client.GeoRenderProvider;
+//?} else {
+/*import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
+import java.util.UUID;
+import java.util.function.Supplier;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+*///?}
 
 public class TacticalArmorItem extends ArmorItem implements GeoItem {
     private final ArmorSet set;
@@ -39,7 +46,7 @@ public class TacticalArmorItem extends ArmorItem implements GeoItem {
 
     public TacticalArmorItem(ArmorSet set, ArmorTier tier, ArmorPiece piece, Properties properties) {
         super(ModArmorMaterials.get(tier), piece.type(),
-                properties.durability(piece.type().getDurability(tier.durabilityMultiplier())));
+                properties.durability(piece.durability(tier.durabilityMultiplier())));
         this.set = set;
         this.tier = tier;
         this.piece = piece;
@@ -57,6 +64,7 @@ public class TacticalArmorItem extends ArmorItem implements GeoItem {
         return piece;
     }
 
+    //? if >=1.21 {
     @Override
     public ItemAttributeModifiers getDefaultAttributeModifiers() {
         ItemAttributeModifiers modifiers = super.getDefaultAttributeModifiers();
@@ -72,6 +80,25 @@ public class TacticalArmorItem extends ArmorItem implements GeoItem {
                 AttributeModifier.Operation.ADD_MULTIPLIED_BASE);
         return modifiers.withModifierAdded(Attributes.MOVEMENT_SPEED, modifier, EquipmentSlotGroup.bySlot(getEquipmentSlot()));
     }
+    //?} else {
+    /*@Override
+    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
+        Multimap<Attribute, AttributeModifier> modifiers = super.getDefaultAttributeModifiers(slot);
+        if (tier != ArmorTier.HEAVY || slot != getEquipmentSlot()) {
+            return modifiers;
+        }
+        double slowdown = ServerConfig.heavySlowdownPerPiece();
+        if (slowdown <= 0) {
+            return modifiers;
+        }
+        UUID id = UUID.nameUUIDFromBytes(TacticalLoadout.id("heavy_slowdown_" + piece.id()).toString().getBytes());
+        ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
+        builder.putAll(modifiers);
+        builder.put(Attributes.MOVEMENT_SPEED, new AttributeModifier(id, "Heavy armor slowdown", -slowdown,
+                AttributeModifier.Operation.MULTIPLY_BASE));
+        return builder.build();
+    }
+    *///?}
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
@@ -91,6 +118,7 @@ public class TacticalArmorItem extends ArmorItem implements GeoItem {
         }
     }
 
+    //? if >=1.21 {
     @Override
     public void createGeoRenderer(Consumer<GeoRenderProvider> consumer) {
         consumer.accept(new GeoRenderProvider() {
@@ -106,6 +134,48 @@ public class TacticalArmorItem extends ArmorItem implements GeoItem {
             }
         });
     }
+    //?} elif fabric {
+    /*private final Supplier<Object> renderProvider = GeoItem.makeRenderer(this);
+
+    @Override
+    public void createRenderer(Consumer<Object> consumer) {
+        consumer.accept(new software.bernie.geckolib.animatable.client.RenderProvider() {
+            private TacticalArmorRenderer renderer;
+
+            @Override
+            public HumanoidModel<LivingEntity> getHumanoidArmorModel(LivingEntity entity, ItemStack stack, EquipmentSlot slot,
+                                                                     HumanoidModel<LivingEntity> original) {
+                if (renderer == null) {
+                    renderer = new TacticalArmorRenderer();
+                }
+                renderer.prepForRender(entity, stack, slot, original);
+                return renderer;
+            }
+        });
+    }
+
+    @Override
+    public Supplier<Object> getRenderProvider() {
+        return renderProvider;
+    }
+    *///?} else {
+    /*@Override
+    public void initializeClient(Consumer<net.minecraftforge.client.extensions.common.IClientItemExtensions> consumer) {
+        consumer.accept(new net.minecraftforge.client.extensions.common.IClientItemExtensions() {
+            private TacticalArmorRenderer renderer;
+
+            @Override
+            public HumanoidModel<?> getHumanoidArmorModel(LivingEntity entity, ItemStack stack, EquipmentSlot slot,
+                                                          HumanoidModel<?> original) {
+                if (renderer == null) {
+                    renderer = new TacticalArmorRenderer();
+                }
+                renderer.prepForRender(entity, stack, slot, original);
+                return renderer;
+            }
+        });
+    }
+    *///?}
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
@@ -119,8 +189,8 @@ public class TacticalArmorItem extends ArmorItem implements GeoItem {
     private static void appendDevices(ItemStack stack, List<Component> tooltip) {
         String prefix = "tooltip." + TacticalLoadout.MOD_ID + ".helmet.";
         boolean any = false;
-        for (DataComponentType<MountedDevice> type : List.of(ModDataComponents.NVG.get(), ModDataComponents.GAS_MASK.get())) {
-            MountedDevice device = stack.get(type);
+        for (ModDataComponents.Key<MountedDevice> key : List.of(ModDataComponents.NVG, ModDataComponents.GAS_MASK)) {
+            MountedDevice device = key.get(stack);
             if (device == null) {
                 continue;
             }

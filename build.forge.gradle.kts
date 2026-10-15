@@ -22,7 +22,7 @@ java {
 // Loader-specific code lives in its own package; the other loaders' packages and the NeoForge data generators stay out.
 sourceSets.main {
     java {
-        exclude("$modId/fabric/**", "$modId/neoforge/**", "$modId/datagen/**")
+        exclude("$modId/fabric/**", "$modId/neoforge/**", "$modId/legacyforge/**", "$modId/datagen/**")
     }
     resources {
         srcDir(rootProject.file("src/generated/resources"))
@@ -86,7 +86,19 @@ val metadataProps = mapOf(
     "mod_license" to property("mod.license"),
     "mod_version" to version.toString(),
     "minecraft_version_range" to property("mod.mc_compat"),
+    "forge_major" to (property("deps.forge_loader") as String).substringBefore('.'),
     "forge_version_range" to property("deps.forge_compat"),
+    "jei_major" to (property("deps.jei") as String).substringBefore('.'),
+    // The shared config classes use NeoForge's config API, which Forge gets from Forge Config API Port.
+    "config_dependency" to """
+
+[[dependencies.$modId]]
+    modId="forgeconfigapiport"
+    mandatory=true
+    versionRange="*"
+    ordering="NONE"
+    side="BOTH"
+""",
     "geckolib_version" to property("deps.geckolib"),
     "resource_pack_format" to property("mod.resource_pack_format"),
     "data_pack_format" to property("mod.data_pack_format"),

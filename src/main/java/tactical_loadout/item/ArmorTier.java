@@ -1,6 +1,8 @@
 package tactical_loadout.item;
 
+//? if >=1.21 {
 import net.minecraft.core.Holder;
+//?}
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 
@@ -13,9 +15,15 @@ public enum ArmorTier {
     private final int[] defenseByPiece;
     private final int durabilityMultiplier;
     private final int enchantmentValue;
+    //? if >=1.21 {
     private final Holder<SoundEvent> equipSound;
 
     ArmorTier(String id, int[] defenseByPiece, int durabilityMultiplier, int enchantmentValue, Holder<SoundEvent> equipSound) {
+    //?} else {
+    /*private final SoundEvent equipSound;
+
+    ArmorTier(String id, int[] defenseByPiece, int durabilityMultiplier, int enchantmentValue, SoundEvent equipSound) {
+    *///?}
         this.id = id;
         this.defenseByPiece = defenseByPiece;
         this.durabilityMultiplier = durabilityMultiplier;
@@ -39,7 +47,11 @@ public enum ArmorTier {
         return enchantmentValue;
     }
 
+    //? if >=1.21 {
     public Holder<SoundEvent> equipSound() {
+    //?} else {
+    /*public SoundEvent equipSound() {
+    *///?}
         return equipSound;
     }
 }

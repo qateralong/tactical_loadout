@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "F": {
+      "item": "tactical_loadout:emr_fabric"
+    },
+    "K": {
+      "item": "tactical_loadout:kevlar_insert"
+    }
+  },
+  "pattern": [
+    "F F",
+    "FKF",
+    "FFF"
+  ],
+  "result": {
+    "count": 1,
+    "item": "tactical_loadout:ru_emr_light_plate_carrier"
+  }
+}

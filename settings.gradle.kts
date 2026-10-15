@@ -22,6 +22,9 @@ stonecutter {
         }
 
         // Planned matrix: 1.20.1 forge/fabric; 1.21.1, 1.21.4, 1.21.8, 1.21.11 neoforge/fabric/forge.
+        match("1.20.1", "fabric")
+        // Forge before 1.20.5 runs on SRG names, so it needs ModDevGradle's reobfuscating legacy plugin.
+        version("1.20.1-forge", "1.20.1").buildscript("build.legacyforge.gradle.kts")
         match("1.21.1", "neoforge", "fabric", "forge")
         vcsVersion = "1.21.1-neoforge"
     }

@@ -23,7 +23,7 @@ public class DeviceItem extends Item {
     }
 
     public int charge(ItemStack stack) {
-        return Math.min(stack.getOrDefault(ModDataComponents.CHARGE.get(), kind.maxCharge()), kind.maxCharge());
+        return Math.min(ModDataComponents.CHARGE.getOrDefault(stack, kind.maxCharge()), kind.maxCharge());
     }
 
     @Override

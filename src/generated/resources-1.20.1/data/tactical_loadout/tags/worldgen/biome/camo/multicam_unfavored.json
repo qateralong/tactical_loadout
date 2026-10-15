@@ -1,0 +1,28 @@
+{
+  "values": [
+    {
+      "id": "#c:is_snowy",
+      "required": false
+    },
+    {
+      "id": "#c:snowy",
+      "required": false
+    },
+    {
+      "id": "#forge:is_snowy",
+      "required": false
+    },
+    {
+      "id": "#c:is_icy",
+      "required": false
+    },
+    {
+      "id": "#c:icy",
+      "required": false
+    },
+    {
+      "id": "#forge:is_icy",
+      "required": false
+    }
+  ]
+}

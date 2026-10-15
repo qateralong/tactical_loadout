@@ -1,0 +1,27 @@
+{
+  "parent": "tactical_loadout:main/flash_mob",
+  "criteria": {
+    "done": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.tactical_loadout.extinguish.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "item": "tactical_loadout:smoke_grenade"
+    },
+    "title": {
+      "translate": "advancement.tactical_loadout.extinguish.title"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

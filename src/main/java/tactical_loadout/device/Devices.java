@@ -1,7 +1,6 @@
 package tactical_loadout.device;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -25,8 +24,8 @@ public final class Devices {
     private Devices() {
     }
 
-    public static DataComponentType<MountedDevice> component(DeviceKind kind) {
-        return kind.isNvg() ? ModDataComponents.NVG.get() : ModDataComponents.GAS_MASK.get();
+    public static ModDataComponents.Key<MountedDevice> component(DeviceKind kind) {
+        return kind.isNvg() ? ModDataComponents.NVG : ModDataComponents.GAS_MASK;
     }
 
     public static boolean isHelmet(ItemStack stack) {
@@ -40,14 +39,14 @@ public final class Devices {
         if (kind.isNvg() && !NVG_FORMS.contains(armor.set().form())) {
             return false;
         }
-        return !helmet.has(component(kind));
+        return !component(kind).has(helmet);
     }
 
     @Nullable
     public static MountedDevice activeNvg(LivingEntity entity) {
         ItemStack head = entity.getItemBySlot(EquipmentSlot.HEAD);
-        MountedDevice nvg = head.get(ModDataComponents.NVG.get());
-        if (nvg == null || !head.getOrDefault(ModDataComponents.NVG_DOWN.get(), false) || !nvg.hasCharge()) {
+        MountedDevice nvg = ModDataComponents.NVG.get(head);
+        if (nvg == null || !ModDataComponents.NVG_DOWN.getOrDefault(head, false) || !nvg.hasCharge()) {
             return null;
         }
         return nvg;
@@ -55,16 +54,16 @@ public final class Devices {
 
     public static void toggleNvg(Player player) {
         ItemStack head = player.getItemBySlot(EquipmentSlot.HEAD);
-        MountedDevice nvg = head.get(ModDataComponents.NVG.get());
+        MountedDevice nvg = ModDataComponents.NVG.get(head);
         if (nvg == null) {
             return;
         }
-        boolean down = head.getOrDefault(ModDataComponents.NVG_DOWN.get(), false);
+        boolean down = ModDataComponents.NVG_DOWN.getOrDefault(head, false);
         if (!down && !nvg.hasCharge()) {
             player.displayClientMessage(Component.translatable("message." + TacticalLoadout.MOD_ID + ".nvg_empty"), true);
             return;
         }
-        head.set(ModDataComponents.NVG_DOWN.get(), !down);
+        ModDataComponents.NVG_DOWN.set(head, !down);
         player.level().playSound(null, player.getX(), player.getEyeY(), player.getZ(),
                 down ? SoundEvents.SPYGLASS_STOP_USING : SoundEvents.SPYGLASS_USE, SoundSource.PLAYERS, 1.0F, 1.0F);
     }

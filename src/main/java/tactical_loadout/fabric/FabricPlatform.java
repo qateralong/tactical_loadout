@@ -7,7 +7,6 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.CreativeModeTab;
@@ -18,6 +17,13 @@ import tactical_loadout.platform.Platform;
 import tactical_loadout.platform.RegistryEntry;
 
 import java.util.function.Supplier;
+//? if >=1.20.5 {
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+//?} else {
+/*import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.minecraft.network.FriendlyByteBuf;
+import tactical_loadout.network.CustomPacketPayload;
+*///?}
 
 /** Fabric registers immediately, so every entry is bound as soon as it is declared. */
 public final class FabricPlatform implements Platform {
@@ -49,6 +55,7 @@ public final class FabricPlatform implements Platform {
         return FabricItemGroup.builder();
     }
 
+    //? if >=1.20.5 {
     @Override
     public void sendToPlayer(ServerPlayer player, CustomPacketPayload payload) {
         ServerPlayNetworking.send(player, payload);
@@ -58,4 +65,21 @@ public final class FabricPlatform implements Platform {
     public void sendToServer(CustomPacketPayload payload) {
         ClientPlayNetworking.send(payload);
     }
+    //?} else {
+    /*@Override
+    public void sendToPlayer(ServerPlayer player, CustomPacketPayload payload) {
+        ServerPlayNetworking.send(player, payload.id(), encode(payload));
+    }
+
+    @Override
+    public void sendToServer(CustomPacketPayload payload) {
+        ClientPlayNetworking.send(payload.id(), encode(payload));
+    }
+
+    private static FriendlyByteBuf encode(CustomPacketPayload payload) {
+        FriendlyByteBuf buf = PacketByteBufs.create();
+        payload.write(buf);
+        return buf;
+    }
+    *///?}
 }

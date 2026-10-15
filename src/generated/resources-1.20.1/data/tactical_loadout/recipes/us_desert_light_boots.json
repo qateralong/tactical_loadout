@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "F": {
+      "item": "tactical_loadout:sand_fabric"
+    },
+    "K": {
+      "item": "tactical_loadout:kevlar_insert"
+    }
+  },
+  "pattern": [
+    "F F",
+    "K K"
+  ],
+  "result": {
+    "count": 1,
+    "item": "tactical_loadout:us_desert_light_boots"
+  }
+}

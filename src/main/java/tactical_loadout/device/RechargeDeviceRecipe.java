@@ -1,20 +1,32 @@
 package tactical_loadout.device;
 
-import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
-import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import tactical_loadout.registry.ModDataComponents;
 import tactical_loadout.registry.ModItems;
 import tactical_loadout.registry.ModRecipes;
+//? if >=1.21 {
+import net.minecraft.core.HolderLookup;
+import net.minecraft.world.item.crafting.CraftingInput;
+//?} else {
+/*import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.CraftingContainer;
+*///?}
 
 public class RechargeDeviceRecipe extends CustomRecipe {
+    //? if >=1.21 {
     public RechargeDeviceRecipe(CraftingBookCategory category) {
         super(category);
     }
+    //?} else {
+    /*public RechargeDeviceRecipe(ResourceLocation id, CraftingBookCategory category) {
+        super(id, category);
+    }
+    *///?}
 
     private static ItemStack target(CraftingInput input) {
         ItemStack target = ItemStack.EMPTY;
@@ -50,7 +62,7 @@ public class RechargeDeviceRecipe extends CustomRecipe {
             return item.kind().isNvg() == battery ? MountedDevice.of(stack) : null;
         }
         if (Devices.isHelmet(stack)) {
-            return stack.get(battery ? ModDataComponents.NVG.get() : ModDataComponents.GAS_MASK.get());
+            return (battery ? ModDataComponents.NVG : ModDataComponents.GAS_MASK).get(stack);
         }
         return null;
     }
@@ -68,13 +80,13 @@ public class RechargeDeviceRecipe extends CustomRecipe {
         }
         ItemStack result = target.copyWithCount(1);
         if (result.getItem() instanceof DeviceItem item) {
-            result.set(ModDataComponents.CHARGE.get(), item.kind().maxCharge());
+            ModDataComponents.CHARGE.set(result, item.kind().maxCharge());
         } else {
             for (DeviceKind kind : new DeviceKind[]{DeviceKind.PVS14, DeviceKind.GAS_MASK}) {
-                MountedDevice device = result.get(Devices.component(kind));
+                MountedDevice device = Devices.component(kind).get(result);
                 boolean refillMatches = input.items().stream().anyMatch(s -> s.is(kind.isNvg() ? ModItems.BATTERY.get() : ModItems.GAS_FILTER.get()));
                 if (device != null && refillMatches) {
-                    result.set(Devices.component(kind), device.withCharge(device.kind().maxCharge()));
+                    Devices.component(kind).set(result, device.withCharge(device.kind().maxCharge()));
                 }
             }
         }

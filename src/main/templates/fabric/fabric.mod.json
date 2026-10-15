@@ -21,7 +21,7 @@
   "depends": {
     "fabricloader": ">=0.16.10",
     "minecraft": "${minecraft_version_range}",
-    "java": ">=21",
+    "java": ">=${java_version}",
     "fabric-api": "*",
     "geckolib": ">=${geckolib_version}",
     "forgeconfigapiport": "*"

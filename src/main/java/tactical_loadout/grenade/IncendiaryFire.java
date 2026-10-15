@@ -196,7 +196,11 @@ public final class IncendiaryFire {
             for (int i = 0; i < lit; i++) {
                 if (cells.get(i).box().intersects(box)) {
                     if (entity.hurt(source, damage) || entity.isOnFire()) {
+                        //? if >=1.20.5 {
                         entity.igniteForTicks(20);
+                        //?} else {
+                        /*entity.setSecondsOnFire(1);
+                        *///?}
                     }
                     break;
                 }

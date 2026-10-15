@@ -11,7 +11,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
+//? if >=1.21 {
 import net.minecraft.world.item.crafting.RecipeHolder;
+//?}
 import net.minecraft.world.item.crafting.ShapelessRecipe;
 import tactical_loadout.TacticalLoadout;
 import tactical_loadout.config.ServerConfig;
@@ -107,8 +109,13 @@ public class JeiCompat implements IModPlugin {
         return Math.round(value * 100);
     }
 
+    //? if >=1.21 {
     private static List<RecipeHolder<CraftingRecipe>> deviceRecipes() {
         List<RecipeHolder<CraftingRecipe>> recipes = new ArrayList<>();
+    //?} else {
+    /*private static List<CraftingRecipe> deviceRecipes() {
+        List<CraftingRecipe> recipes = new ArrayList<>();
+    *///?}
         ItemStack helmet = new ItemStack(ModItems.armor(ArmorSet.US_WOODLAND, ArmorTier.MEDIUM, ArmorPiece.HELMET).get());
         Ingredient nvgHelmets = Ingredient.of(ModItems.allArmor().stream().map(h -> h.get())
                 .filter(i -> i.piece() == ArmorPiece.HELMET && Devices.NVG_FORMS.contains(i.set().form()))
@@ -118,11 +125,11 @@ public class JeiCompat implements IModPlugin {
         for (DeviceKind kind : DeviceKind.values()) {
             ItemStack device = new ItemStack(ModItems.device(kind).get());
             ItemStack mounted = helmet.copy();
-            mounted.set(Devices.component(kind), MountedDevice.of(device));
+            Devices.component(kind).set(mounted, MountedDevice.of(device));
             recipes.add(shapeless("attach_" + kind.id(), mounted, kind.isNvg() ? nvgHelmets : allHelmets, Ingredient.of(device)));
             recipes.add(shapeless("detach_" + kind.id(), helmet, Ingredient.of(mounted)));
             ItemStack empty = device.copy();
-            empty.set(ModDataComponents.CHARGE.get(), 0);
+            ModDataComponents.CHARGE.set(empty, 0);
             ItemStack refill = new ItemStack(kind.isNvg() ? ModItems.BATTERY.get() : ModItems.GAS_FILTER.get());
             if (kind.usesCharge()) {
                 recipes.add(shapeless("recharge_" + kind.id(), device, Ingredient.of(empty), Ingredient.of(refill)));
@@ -131,9 +138,17 @@ public class JeiCompat implements IModPlugin {
         return recipes;
     }
 
+    //? if >=1.21 {
     private static RecipeHolder<CraftingRecipe> shapeless(String name, ItemStack result, Ingredient... ingredients) {
+    //?} else {
+    /*private static CraftingRecipe shapeless(String name, ItemStack result, Ingredient... ingredients) {
+    *///?}
         NonNullList<Ingredient> list = NonNullList.of(Ingredient.EMPTY, ingredients);
+        //? if >=1.21 {
         return new RecipeHolder<>(TacticalLoadout.id("jei/" + name),
                 new ShapelessRecipe("", CraftingBookCategory.EQUIPMENT, result, list));
+        //?} else {
+        /*return new ShapelessRecipe(TacticalLoadout.id("jei/" + name), "", CraftingBookCategory.EQUIPMENT, result, list);
+        *///?}
     }
 }

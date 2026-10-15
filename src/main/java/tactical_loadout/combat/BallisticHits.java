@@ -99,7 +99,11 @@ public final class BallisticHits {
         ItemStack stack = target.getItemBySlot(slot);
         if (stack.getItem() instanceof TacticalArmorItem) {
             int wear = Math.max(1, Math.round(damage * (float) ServerConfig.durabilityPerDamage()));
+            //? if >=1.21 {
             stack.hurtAndBreak(wear, target, slot);
+            //?} else {
+            /*stack.hurtAndBreak(wear, target, entity -> entity.broadcastBreakEvent(slot));
+            *///?}
         }
     }
 
@@ -159,7 +163,11 @@ public final class BallisticHits {
     public static float armorAbsorptionWithoutOwn(LivingEntity target, float damage, DamageSource source) {
         float armor = Math.max(0.0F, target.getArmorValue() - ownArmor(target));
         float toughness = (float) target.getAttributeValue(Attributes.ARMOR_TOUGHNESS);
+        //? if >=1.21 {
         return damage - CombatRules.getDamageAfterAbsorb(target, damage, source, armor, toughness);
+        //?} else {
+        /*return damage - CombatRules.getDamageAfterAbsorb(damage, armor, toughness);
+        *///?}
     }
 
     /** Called once damage was actually dealt, after shields and invulnerability frames. */

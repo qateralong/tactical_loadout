@@ -22,11 +22,13 @@ java {
 // Loader-specific code lives in its own package; the other loaders' packages and the NeoForge data generators stay out.
 sourceSets.main {
     java {
-        exclude("$modId/neoforge/**", "$modId/forge/**", "$modId/datagen/**")
+        exclude("$modId/neoforge/**", "$modId/forge/**", "$modId/legacyforge/**", "$modId/datagen/**")
     }
     resources {
         srcDir(rootProject.file("src/generated/resources"))
         exclude("**/*.bbmodel", ".cache/**")
+        // Before 1.21 data packs use the old folder layout, converted by tools/backport_data.py and added in processResources.
+        if (sc.current.parsed < "1.21") exclude("data/**")
     }
 }
 
@@ -70,12 +72,14 @@ dependencies {
     implementation("com.electronwill.night-config:toml:3.8.0")
     modCompileOnly("mezz.jei:jei-$minecraft-fabric-api:${property("deps.jei")}")
     modRuntimeOnly("mezz.jei:jei-$minecraft-fabric:${property("deps.jei")}")
-    modRuntimeOnly("net.mezzdev.config:mezz_config-$minecraft-fabric:${property("deps.mezz_config")}")
+    if (hasProperty("deps.mezz_config")) {
+        modRuntimeOnly("net.mezzdev.config:mezz_config-$minecraft-fabric:${property("deps.mezz_config")}")
+    }
 }
 
 loom {
     runs.configureEach {
-        runDir = "../../run/fabric"
+        runDir = if (sc.current.parsed >= "1.21") "../../run/fabric" else "../../run/fabric-${sc.current.version}"
         ideConfigGenerated(false)
     }
 }
@@ -86,6 +90,7 @@ val metadataProps = mapOf(
     "mod_license" to property("mod.license"),
     "mod_version" to version.toString(),
     "minecraft_version_range" to property("mod.mc_compat"),
+    "java_version" to requiredJava.majorVersion,
     "geckolib_version" to property("deps.geckolib"),
 )
 
@@ -101,9 +106,22 @@ tasks {
     processResources {
         val mixinJava = "JAVA_${requiredJava.majorVersion}"
         inputs.property("mixin_java", mixinJava)
-        filesMatching("*.mixins.json") { expand("java" to mixinJava) }
+        // Before 1.21 armor wear and the HUD work differently, so a few mixins only join the configs there.
+        val extraMixins = if (sc.current.parsed < "1.21") {
+            mapOf("LivingEntityArmorMixin" to "InventoryArmorMixin", "MinecraftMixin" to "GameRendererMixin")
+        } else {
+            emptyMap()
+        }
+        inputs.property("extra_mixins", extraMixins)
+        filesMatching("*.mixins.json") {
+            expand("java" to mixinJava)
+            for ((anchor, extra) in extraMixins) {
+                filter { line -> line.replace("\"$anchor\"", "\"$anchor\",\n    \"$extra\"") }
+            }
+        }
         // NeoForge loot modifiers; Fabric adds the same supply tables from code.
         exclude("data/neoforge/**", "data/$modId/loot_modifiers/**")
+        if (sc.current.parsed < "1.21") from(rootProject.file("src/generated/resources-1.20.1"))
     }
 
     jar {

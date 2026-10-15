@@ -24,6 +24,14 @@ abstract class LivingEntityMixin {
         return BallisticHits.onIncomingDamage((LivingEntity) (Object) this, source, amount);
     }
 
+    //? if <1.21 {
+    /*// Fabric API for these versions has no after-damage event; hurt returns false when shields or invulnerability stopped the hit.
+    @Inject(method = "hurt", at = @At("RETURN"))
+    private void tactical_loadout$afterDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+        BallisticHits.onDamageDealt((LivingEntity) (Object) this, source, cir.getReturnValueZ() ? 0.0F : 1.0F);
+    }
+
+    *///?}
     @Inject(method = "addEffect(Lnet/minecraft/world/effect/MobEffectInstance;Lnet/minecraft/world/entity/Entity;)Z",
             at = @At("HEAD"), cancellable = true)
     private void tactical_loadout$gasMask(MobEffectInstance effect, @Nullable Entity source, CallbackInfoReturnable<Boolean> cir) {

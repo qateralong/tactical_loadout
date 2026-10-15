@@ -1,9 +1,10 @@
 package tactical_loadout.item;
 
 import net.minecraft.ChatFormatting;
+//? if >=1.20.5 {
 import net.minecraft.core.component.DataComponents;
+//?}
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.StringUtil;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -39,13 +40,24 @@ public class RepairKitItem extends Item {
         ItemStack result = armor.copy();
         result.setDamageValue(Math.max(0, armor.getDamageValue() - used * perKit));
         int cost = used;
-        if (name == null || StringUtil.isBlank(name)) {
+        if (name == null || name.isBlank()) {
+            //? if >=1.20.5 {
             if (armor.has(DataComponents.CUSTOM_NAME)) {
                 result.remove(DataComponents.CUSTOM_NAME);
                 cost++;
             }
+            //?} else {
+            /*if (armor.hasCustomHoverName()) {
+                result.resetHoverName();
+                cost++;
+            }
+            *///?}
         } else if (!name.equals(armor.getHoverName().getString())) {
+            //? if >=1.20.5 {
             result.set(DataComponents.CUSTOM_NAME, Component.literal(name));
+            //?} else {
+            /*result.setHoverName(Component.literal(name));
+            *///?}
             cost++;
         }
         return new AnvilResult(result, cost, used);

@@ -1,0 +1,26 @@
+{
+  "parent": "tactical_loadout:main/root",
+  "criteria": {
+    "done": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.tactical_loadout.ghillie.description"
+    },
+    "icon": {
+      "count": 1,
+      "item": "tactical_loadout:ghillie_light_helmet"
+    },
+    "title": {
+      "translate": "advancement.tactical_loadout.ghillie.title"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

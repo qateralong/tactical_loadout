@@ -1,20 +1,32 @@
 package tactical_loadout.device;
 
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
-import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import tactical_loadout.registry.ModDataComponents;
 import tactical_loadout.registry.ModRecipes;
+//? if >=1.21 {
+import net.minecraft.core.HolderLookup;
+import net.minecraft.world.item.crafting.CraftingInput;
+//?} else {
+/*import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.CraftingContainer;
+*///?}
 
 public class DetachDeviceRecipe extends CustomRecipe {
+    //? if >=1.21 {
     public DetachDeviceRecipe(CraftingBookCategory category) {
         super(category);
     }
+    //?} else {
+    /*public DetachDeviceRecipe(ResourceLocation id, CraftingBookCategory category) {
+        super(id, category);
+    }
+    *///?}
 
     private static int helmetIndex(CraftingInput input) {
         int index = -1;
@@ -24,7 +36,7 @@ public class DetachDeviceRecipe extends CustomRecipe {
                 continue;
             }
             if (index >= 0 || !Devices.isHelmet(stack)
-                    || (!stack.has(ModDataComponents.NVG.get()) && !stack.has(ModDataComponents.GAS_MASK.get()))) {
+                    || (!ModDataComponents.NVG.has(stack) && !ModDataComponents.GAS_MASK.has(stack))) {
                 return -1;
             }
             index = i;
@@ -33,8 +45,8 @@ public class DetachDeviceRecipe extends CustomRecipe {
     }
 
     private static MountedDevice removed(ItemStack helmet) {
-        MountedDevice nvg = helmet.get(ModDataComponents.NVG.get());
-        return nvg != null ? nvg : helmet.get(ModDataComponents.GAS_MASK.get());
+        MountedDevice nvg = ModDataComponents.NVG.get(helmet);
+        return nvg != null ? nvg : ModDataComponents.GAS_MASK.get(helmet);
     }
 
     @Override
@@ -50,9 +62,9 @@ public class DetachDeviceRecipe extends CustomRecipe {
         }
         ItemStack result = input.getItem(index).copyWithCount(1);
         MountedDevice device = removed(result);
-        result.remove(Devices.component(device.kind()));
+        Devices.component(device.kind()).remove(result);
         if (device.kind().isNvg()) {
-            result.remove(ModDataComponents.NVG_DOWN.get());
+            ModDataComponents.NVG_DOWN.remove(result);
         }
         return result;
     }

@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[52,)"
+loaderVersion="[${forge_major},)"
 license="${mod_license}"
 
 [[mods]]
@@ -46,13 +46,7 @@ Works on its own; TaCZ adds exact headshot detection and armor-piercing ammo sup
 [[dependencies.${mod_id}]]
     modId="jei"
     mandatory=false
-    versionRange="[19,)"
+    versionRange="[${jei_major},)"
     ordering="NONE"
     side="BOTH"
-
-[[dependencies.${mod_id}]]
-    modId="forgeconfigapiport"
-    mandatory=true
-    versionRange="*"
-    ordering="NONE"
-    side="BOTH"
+${config_dependency}
