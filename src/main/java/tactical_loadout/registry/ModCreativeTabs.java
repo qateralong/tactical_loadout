@@ -26,6 +26,7 @@ public final class ModCreativeTabs {
                             output.accept(ModItems.RAW_CERAMIC_PLATE);
                             output.accept(ModItems.CERAMIC_PLATE);
                             output.accept(ModItems.ARMOR_REPAIR_KIT);
+                            output.accept(ModItems.RIOT_SHIELD);
                             output.accept(ModItems.MEDKIT);
                             output.accept(ModItems.TOURNIQUET);
                             output.accept(ModItems.ZIP_TIES);

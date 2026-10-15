@@ -289,6 +289,9 @@ public abstract class ModLanguageProvider extends LanguageProvider {
             add("tactical_loadout.configuration.eodBlastReduction", "Explosion damage blocked by a full suit");
             add("tactical_loadout.configuration.eodSlowdown", "Speed lost in a full suit");
             add("tactical_loadout.configuration.eodJumpReduction", "Jump strength lost in a full suit");
+            add(ModItems.RIOT_SHIELD.get(), "Ballistic Shield");
+            add("tooltip.tactical_loadout.riot_shield", "Hold right-click to raise: stops bullets from the front");
+            add("jei.tactical_loadout.riot_shield", "Hold right-click to raise it: like a shield, it stops bullets, arrows and blows from the front, and a window lets you see where you are going. It lasts far longer than a wooden shield; repair it with ceramic plates in an anvil. Works in either hand.");
             add(ModItems.ZIP_TIES.get(), "Zip Ties");
             add("tooltip.tactical_loadout.zip_ties", "Right-click a player %s times quickly to tie them up; they need %s key presses to break free");
             add("jei.tactical_loadout.zip_ties", "Right-click another player %1$s times in a row to tie them up. A tied player can't move, jump, attack, shoot or use anything. To break free they press the jump key %2$s times; anyone can also cut them loose with shears, %1$s clicks in a row. Respawning frees them too.");
@@ -587,6 +590,9 @@ public abstract class ModLanguageProvider extends LanguageProvider {
             add("tactical_loadout.configuration.eodBlastReduction", "Защита полного костюма от взрывов");
             add("tactical_loadout.configuration.eodSlowdown", "Замедление полного костюма");
             add("tactical_loadout.configuration.eodJumpReduction", "Снижение прыжка в полном костюме");
+            add(ModItems.RIOT_SHIELD.get(), "Штурмовой щит");
+            add("tooltip.tactical_loadout.riot_shield", "Удерживайте ПКМ, чтобы поднять: держит пули спереди");
+            add("jei.tactical_loadout.riot_shield", "Удерживайте ПКМ, чтобы поднять щит: как обычный щит, он останавливает пули, стрелы и удары спереди, а через окошко видно, куда идёте. Служит гораздо дольше деревянного щита, чинится керамическими пластинами в наковальне. Работает в любой руке.");
             add(ModItems.ZIP_TIES.get(), "Стяжки");
             add("tooltip.tactical_loadout.zip_ties", "Быстро кликните ПКМ по игроку %s раза, чтобы связать; чтобы освободиться, ему нужно %s нажатий");
             add("jei.tactical_loadout.zip_ties", "Кликните ПКМ по другому игроку %1$s раза подряд, чтобы связать его. Связанный не может ходить, прыгать, бить, стрелять и пользоваться предметами. Чтобы освободиться, он жмёт клавишу прыжка %2$s раз; любой может разрезать стяжки ножницами, тоже %1$s клика подряд. Возрождение тоже освобождает.");

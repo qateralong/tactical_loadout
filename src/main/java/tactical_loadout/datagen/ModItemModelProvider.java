@@ -23,6 +23,6 @@ public class ModItemModelProvider extends ItemModelProvider {
     // These items use 3D element models written by tools/items.py into the main resources.
     private static boolean hasBlockModel(Item item) {
         return item instanceof TacticalArmorItem || item instanceof GrenadeItem || item instanceof DeviceItem
-                || item == ModItems.BATTERY.get() || item == ModItems.GAS_FILTER.get();
+                || item == ModItems.BATTERY.get() || item == ModItems.GAS_FILTER.get() || item == ModItems.RIOT_SHIELD.get();
     }
 }

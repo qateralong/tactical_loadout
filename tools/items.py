@@ -44,7 +44,7 @@ SWATCHES = [
     "frag_side", "frag_top", "fuze", "spoon", "ring", "he_side", "he_band", "flash_side",
     "flash_top", "smoke_side", "smoke_top", "battery_side", "battery_top", "battery_bottom", "filter_side", "filter_top",
     "metal_dark", "glass", "glass_top", "rag", "incendiary_side", "incendiary_top", "decoy_side", "decoy_top",
-    "impact_side", "impact_top", "can_side", "can_top",
+    "impact_side", "impact_top", "can_side", "can_top", "shield_face", "shield_edge", "shield_window",
 ]
 
 
@@ -151,6 +151,16 @@ def paint_swatch(name, rng):
         rgb = flat("bcc0c3")
         rgb[1:7, 1:7] *= 0.85
         rgb[3:5, 3:5] *= 0.8
+    elif name == "shield_face":
+        rgb = flat("222426")
+        rgb[(xs + ys) % 4 == 0] *= 1.12
+    elif name == "shield_edge":
+        rgb = flat("141516")
+        rgb[ys % 2 == 0] *= 1.2
+    elif name == "shield_window":
+        rgb = flat("1c3038")
+        rgb[1:3, 1:3] = hex_rgb("7fa6b3")
+        rgb[-2:] *= 0.75
     elif name == "metal_dark":
         rgb = flat("3a3c3e")
         rgb[ys % 2 == 0] *= 1.25
@@ -415,10 +425,46 @@ def tripwire_alarm_model(size):
     path.write_text(json.dumps(model, indent=2) + "\n")
 
 
+# A ballistic shield laid out like the vanilla shield's entity model, so the vanilla shield display transforms fit it.
+def riot_shield_models(size):
+    g = Gear(size)
+    g.box((-7, -12, 1), (7, 14, 2.5), "shield_face", "shield_edge")
+    g.box((-7.4, -12.4, 0.8), (7.4, -11.6, 2.7), "shield_edge")
+    g.box((-7.4, 13.6, 0.8), (7.4, 14.4, 2.7), "shield_edge")
+    g.box((-7.4, -12, 0.8), (-6.6, 14, 2.7), "shield_edge")
+    g.box((6.6, -12, 0.8), (7.4, 14, 2.7), "shield_edge")
+    g.box((-3.5, 7.5, 0.7), (3.5, 10.5, 2.8), "shield_window")
+    g.box((-1, -3, -4), (1, 3, 1), "metal_dark")
+    g.box((-5, -1, -1), (5, 1, 1), "metal_dark")
+    textures = {"0": f"{NS}:item/gear_parts", "particle": f"{NS}:item/gear_parts"}
+    held = {
+        "thirdperson_righthand": {"rotation": [0, 90, 0], "translation": [10, 6, -4], "scale": [1, 1, 1]},
+        "thirdperson_lefthand": {"rotation": [0, 90, 0], "translation": [10, 6, 12], "scale": [1, 1, 1]},
+        "firstperson_righthand": {"rotation": [0, 180, 5], "translation": [-10, 2, -10], "scale": [1.25, 1.25, 1.25]},
+        "firstperson_lefthand": {"rotation": [0, 180, 5], "translation": [10, 0, -10], "scale": [1.25, 1.25, 1.25]},
+        "gui": {"rotation": [15, -25, -5], "translation": [2, 3, 0], "scale": [0.55, 0.55, 0.55]},
+        "fixed": {"rotation": [0, 180, 0], "translation": [-4.5, 4.5, -5], "scale": [0.5, 0.5, 0.5]},
+        "ground": {"rotation": [0, 0, 0], "translation": [2, 4, 2], "scale": [0.25, 0.25, 0.25]},
+    }
+    blocking = dict(held)
+    blocking.update({
+        "thirdperson_righthand": {"rotation": [45, 135, 0], "translation": [3.51, 11, -2], "scale": [1, 1, 1]},
+        "thirdperson_lefthand": {"rotation": [45, 135, 0], "translation": [13.51, 3, 5], "scale": [1, 1, 1]},
+        "firstperson_righthand": {"rotation": [0, 180, -5], "translation": [-15, 5, -11], "scale": [1.25, 1.25, 1.25]},
+        "firstperson_lefthand": {"rotation": [0, 180, -5], "translation": [5, 5, -11], "scale": [1.25, 1.25, 1.25]},
+    })
+    write_model("riot_shield_blocking", {"textures": textures, "gui_light": "front", "elements": g.elements, "display": blocking})
+    write_model("riot_shield", {
+        "textures": textures, "gui_light": "front", "elements": g.elements, "display": held,
+        "overrides": [{"predicate": {"minecraft:blocking": 1}, "model": f"{NS}:item/riot_shield_blocking"}],
+    })
+
+
 def main():
     size = gear_texture()
     gear_models(size)
     tripwire_alarm_model(size)
+    riot_shield_models(size)
     print(f"wrote {armor_models() + 9} item models")
 
 

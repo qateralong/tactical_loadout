@@ -223,6 +223,15 @@ public class ModRecipeProvider extends RecipeProvider {
                 .define('I', Tags.Items.INGOTS_IRON)
                 .unlockedBy("has_kevlar_insert", has(ModItems.KEVLAR_INSERT))
                 .save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.RIOT_SHIELD)
+                .pattern("CGC")
+                .pattern("KCK")
+                .pattern("CKC")
+                .define('C', ModItems.CERAMIC_PLATE)
+                .define('K', ModItems.KEVLAR_INSERT)
+                .define('G', Tags.Items.GLASS_PANES)
+                .unlockedBy("has_ceramic_plate", has(ModItems.CERAMIC_PLATE))
+                .save(output);
         ShapelessRecipeBuilder.shapeless(RecipeCategory.COMBAT, ModItems.MEDKIT)
                 .requires(Items.PAPER)
                 .requires(Items.PAPER)

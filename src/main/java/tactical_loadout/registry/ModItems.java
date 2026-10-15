@@ -5,6 +5,7 @@ import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.Nullable;
 import tactical_loadout.device.DeviceItem;
 import tactical_loadout.device.DeviceKind;
+import tactical_loadout.gear.RiotShieldItem;
 import tactical_loadout.gear.ZipTiesItem;
 import tactical_loadout.medical.MedicalItem;
 import tactical_loadout.grenade.GrenadeItem;
@@ -37,6 +38,7 @@ public final class ModItems {
             register("medkit", () -> new MedicalItem(MedicalItem.Kind.MEDKIT, new Item.Properties()));
     public static final ItemEntry<MedicalItem> TOURNIQUET =
             register("tourniquet", () -> new MedicalItem(MedicalItem.Kind.TOURNIQUET, new Item.Properties()));
+    public static final ItemEntry<RiotShieldItem> RIOT_SHIELD = register("riot_shield", () -> new RiotShieldItem(new Item.Properties()));
     public static final ItemEntry<ZipTiesItem> ZIP_TIES = register("zip_ties", () -> new ZipTiesItem(new Item.Properties()));
     public static final ItemEntry<BlockItem> TRIPWIRE_ALARM =
             register("tripwire_alarm", () -> new BlockItem(ModBlocks.TRIPWIRE_ALARM.get(), new Item.Properties()));
