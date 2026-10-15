@@ -169,6 +169,14 @@ public class ModRecipeProvider extends RecipeProvider {
                 .define('B', ModItems.BATTERY)
                 .unlockedBy("has_battery", has(ModItems.BATTERY))
                 .save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.device(DeviceKind.THERMAL_PANO))
+                .pattern("TIT")
+                .pattern(" B ")
+                .define('T', ModItems.device(DeviceKind.THERMAL))
+                .define('I', Tags.Items.INGOTS_IRON)
+                .define('B', ModItems.BATTERY)
+                .unlockedBy("has_thermal", has(ModItems.device(DeviceKind.THERMAL)))
+                .save(output);
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.device(DeviceKind.GAS_MASK))
                 .pattern(" L ")
                 .pattern("GIG")

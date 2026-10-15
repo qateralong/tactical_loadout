@@ -30,7 +30,7 @@ public final class ThermalVision {
             return false;
         }
         MountedDevice device = Devices.activeNvg(mc.player);
-        return device != null && device.kind() == DeviceKind.THERMAL;
+        return device != null && device.kind().isThermal();
     }
 
     public static boolean shouldGlow(Entity entity) {

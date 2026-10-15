@@ -34,6 +34,7 @@ DEVICES = {
     "nvg_gpnvg18": ["nvg_gpnvg18"],
     "nvg_gpnvg18_green": ["nvg_gpnvg18_green"],
     "nvg_thermal": ["nvg_thermal"],
+    "nvg_thermal_pano": ["nvg_thermal_pano"],
     "gas_mask": ["gas_mask"],
 }
 ANGLES = [-45.0, -22.5, 0.0, 22.5, 45.0]

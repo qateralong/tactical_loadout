@@ -147,6 +147,8 @@ public abstract class ModLanguageProvider extends LanguageProvider {
             add(ModItems.device(DeviceKind.GPNVG18_GREEN).get(), "GPNVG-18 Panoramic NVG (Green Phosphor)");
             add("jei.tactical_loadout.gpnvg18_green", "Four green-phosphor tubes with a wide panoramic view.");
             add(ModItems.device(DeviceKind.THERMAL).get(), "Thermal Imaging Monocular");
+            add(ModItems.device(DeviceKind.THERMAL_PANO).get(), "Panoramic Thermal Imager");
+            add("jei.tactical_loadout.thermal_pano", "Four-tube thermal goggles with a wide panoramic view. Made from two thermal monoculars.");
             add("jei.tactical_loadout.thermal", "White-hot thermal imager: living creatures in your line of sight glow, even through camouflage.");
             add(ModItems.device(DeviceKind.GAS_MASK).get(), "Gas Mask");
             add("key.tactical_loadout.nvg", "Flip NVG");
@@ -378,6 +380,8 @@ public abstract class ModLanguageProvider extends LanguageProvider {
             add(ModItems.device(DeviceKind.GPNVG18_GREEN).get(), "Панорамный ПНВ GPNVG-18 (зелёный фосфор)");
             add("jei.tactical_loadout.gpnvg18_green", "Четыре трубки с зелёным люминофором и широким панорамным обзором.");
             add(ModItems.device(DeviceKind.THERMAL).get(), "Тепловизионный монокуляр");
+            add(ModItems.device(DeviceKind.THERMAL_PANO).get(), "Панорамный тепловизор");
+            add("jei.tactical_loadout.thermal_pano", "Четырёхтрубный тепловизор с широким панорамным обзором. Собирается из двух тепловизионных монокуляров.");
             add("jei.tactical_loadout.thermal", "Тепловизор в режиме «белое — горячее»: живые существа в прямой видимости подсвечиваются, даже в камуфляже.");
             add(ModItems.device(DeviceKind.GAS_MASK).get(), "Противогаз");
             add("key.tactical_loadout.nvg", "Опустить/поднять ПНВ");

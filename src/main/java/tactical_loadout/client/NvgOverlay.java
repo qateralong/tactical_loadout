@@ -37,7 +37,7 @@ public final class NvgOverlay {
         int height = graphics.guiHeight();
 
         RenderSystem.enableBlend();
-        if (nvg.kind() != DeviceKind.THERMAL) {
+        if (!nvg.kind().isThermal()) {
             RenderSystem.blendFunc(GlStateManager.SourceFactor.DST_COLOR, GlStateManager.DestFactor.ZERO);
             if (nvg.kind() == DeviceKind.GPNVG18) {
                 RenderSystem.setShaderColor(0.82F, 0.95F, 1.0F, 1.0F);
@@ -48,7 +48,7 @@ public final class NvgOverlay {
             RenderSystem.defaultBlendFunc();
         }
 
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, nvg.kind() == DeviceKind.THERMAL ? 0.07F : 0.12F);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, nvg.kind().isThermal() ? 0.07F : 0.12F);
         graphics.blit(NOISE, 0, 0, width, height, RANDOM.nextInt(128), RANDOM.nextInt(128), 128, 128, 256, 256);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
@@ -58,10 +58,10 @@ public final class NvgOverlay {
         }
         switch (nvg.kind()) {
             case GPNVG18, GPNVG18_GREEN -> {
-                int w = Math.round(width * 1.4F);
+                int w = Math.round(width * 2.1F);
                 vignette(graphics, PANO, width, height, w, w / 2);
             }
-            case THERMAL -> vignette(graphics, THERMAL, width, height, Math.round(width * 1.12F), Math.round(height * 1.12F));
+            case THERMAL_PANO -> vignette(graphics, THERMAL, width, height, Math.round(width * 1.68F), Math.round(height * 1.68F));
             default -> {
                 int size = Math.round(height * 1.7F);
                 vignette(graphics, MONO, width, height, size, size);

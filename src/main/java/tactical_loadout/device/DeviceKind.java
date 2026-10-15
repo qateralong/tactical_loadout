@@ -7,6 +7,7 @@ public enum DeviceKind {
     GPNVG18("nvg_gpnvg18", true),
     GPNVG18_GREEN("nvg_gpnvg18_green", true),
     THERMAL("nvg_thermal", true),
+    THERMAL_PANO("nvg_thermal_pano", true),
     GAS_MASK("gas_mask", false);
 
     private final String id;
@@ -23,6 +24,10 @@ public enum DeviceKind {
 
     public boolean isNvg() {
         return nvg;
+    }
+
+    public boolean isThermal() {
+        return this == THERMAL || this == THERMAL_PANO;
     }
 
     /** NVG charge is in ticks, gas mask filter in seconds of blocked effects. */

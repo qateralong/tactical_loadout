@@ -48,7 +48,7 @@ public final class Flashbang {
             }
             // Night vision tubes amplify the flash; a thermal imager does not.
             MountedDevice nvg = Devices.activeNvg(entity);
-            double amplification = nvg != null && nvg.kind() != DeviceKind.THERMAL ? NVG_AMPLIFICATION : 1.0;
+            double amplification = nvg != null && !nvg.kind().isThermal() ? NVG_AMPLIFICATION : 1.0;
             strength = Math.min(1.0, strength * amplification);
             int ticks = (int) Math.round(strength * ServerConfig.flashSeconds() * 20 * amplification);
             if (entity instanceof ServerPlayer player) {

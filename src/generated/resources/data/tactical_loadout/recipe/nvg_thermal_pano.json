@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "B": {
+      "item": "tactical_loadout:battery"
+    },
+    "I": {
+      "tag": "c:ingots/iron"
+    },
+    "T": {
+      "item": "tactical_loadout:nvg_thermal"
+    }
+  },
+  "pattern": [
+    "TIT",
+    " B "
+  ],
+  "result": {
+    "count": 1,
+    "id": "tactical_loadout:nvg_thermal_pano"
+  }
+}

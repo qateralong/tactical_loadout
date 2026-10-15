@@ -44,7 +44,9 @@ public class TacticalArmorRenderer extends GeoArmorRenderer<TacticalArmorItem> {
         setVisible(model, "nvg_gpnvg18", nvg != null && nvg.kind() == DeviceKind.GPNVG18);
         setVisible(model, "nvg_gpnvg18_green", nvg != null && nvg.kind() == DeviceKind.GPNVG18_GREEN);
         setVisible(model, "nvg_thermal", nvg != null && nvg.kind() == DeviceKind.THERMAL);
-        setVisible(model, "nvg_battery", nvg != null && (nvg.kind() == DeviceKind.GPNVG18 || nvg.kind() == DeviceKind.GPNVG18_GREEN));
+        setVisible(model, "nvg_thermal_pano", nvg != null && nvg.kind() == DeviceKind.THERMAL_PANO);
+        setVisible(model, "nvg_battery", nvg != null && (nvg.kind() == DeviceKind.GPNVG18 || nvg.kind() == DeviceKind.GPNVG18_GREEN
+                || nvg.kind() == DeviceKind.THERMAL_PANO));
         setVisible(model, "gas_mask", mask);
         if (nvg != null) {
             boolean down = stack.getOrDefault(ModDataComponents.NVG_DOWN.get(), false);
