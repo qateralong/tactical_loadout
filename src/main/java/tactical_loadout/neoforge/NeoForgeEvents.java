@@ -218,8 +218,12 @@ public final class NeoForgeEvents {
     // A player who would die goes down instead when the downed state is on.
     @SubscribeEvent(priority = EventPriority.LOWEST)
     static void onDeath(LivingDeathEvent event) {
-        if (event.getEntity() instanceof ServerPlayer player && Downed.tryGoDown(player, event.getSource())) {
-            event.setCanceled(true);
+        if (event.getEntity() instanceof ServerPlayer player) {
+            if (Downed.tryGoDown(player, event.getSource())) {
+                event.setCanceled(true);
+            } else {
+                Downed.onDeath(player);
+            }
         }
     }
 

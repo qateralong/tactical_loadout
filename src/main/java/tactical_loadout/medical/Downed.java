@@ -122,7 +122,8 @@ public final class Downed {
     }
 
     public static void tick(ServerPlayer player) {
-        if (!isDowned(player)) {
+        // A dead player keeps ticking on the death screen; the timer must not roll a self-revive for them.
+        if (!isDowned(player) || player.isDeadOrDying()) {
             return;
         }
         applyPose(player);
@@ -193,6 +194,15 @@ public final class Downed {
         player.setForcedPose(null);
         modify(player, Attributes.JUMP_STRENGTH, false);
         sync(player);
+    }
+
+    /** A downed player who actually died: the state ends here, not at respawn. */
+    public static void onDeath(ServerPlayer player) {
+        if (isDowned(player)) {
+            player.removeTag(TAG);
+            TICKS_LEFT.remove(player.getUUID());
+            sync(player);
+        }
     }
 
     /** A player who logged out while down bleeds out right after joining again. */

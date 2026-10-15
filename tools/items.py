@@ -513,9 +513,9 @@ def riot_shield_models(size):
         "thirdperson_lefthand": {"rotation": [0, 90, 90], "translation": [7.5, -8.4, 7], "scale": [0.8, 0.8, 0.8]},
         "firstperson_righthand": {"rotation": [0, 180, 0], "translation": [-4.96, 1.72, -6.63], "scale": [0.6, 0.6, 0.6]},
         "firstperson_lefthand": {"rotation": [0, 180, 0], "translation": [4.64, 1.72, -6.63], "scale": [0.6, 0.6, 0.6]},
-        "gui": {"rotation": [0, 160, 0], "translation": [0, -0.5, 0], "scale": [0.4, 0.4, 0.4]},
-        "fixed": {"rotation": [0, 180, 0], "translation": [0, 0, -5], "scale": [0.38, 0.38, 0.38]},
-        "ground": {"rotation": [0, 0, 0], "translation": [2, 3, 2], "scale": [0.2, 0.2, 0.2]},
+        "gui": {"rotation": [0, -20, 0], "translation": [2.15, 2.0, 0], "scale": [0.4, 0.4, 0.4]},
+        "fixed": {"rotation": [0, 180, 0], "translation": [-3.04, 1.9, -1], "scale": [0.38, 0.38, 0.38]},
+        "ground": {"rotation": [0, 0, 0], "translation": [1.6, 3.0, 0], "scale": [0.2, 0.2, 0.2]},
     }
     # Raised in first person: the viewport sits right in front of the eye. The item origin is 0.56 to the side and 0.52 below the eye,
     # the model's corner offset lands half a block to the right after the half turn, and the left hand mirrors the x translation. In third person the values put the shield upright in front of the body, solved for the blocking arm pose.
