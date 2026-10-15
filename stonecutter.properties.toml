@@ -1,7 +1,7 @@
 mod.id = "tactical_loadout"
 mod.name = "Tactical Loadout"
 mod.group = "tactical_loadout"
-mod.version = "1.1.0-alpha.1"
+mod.version = "1.1.0"
 mod.license = "All Rights Reserved"
 
 ["1.21.1"]
