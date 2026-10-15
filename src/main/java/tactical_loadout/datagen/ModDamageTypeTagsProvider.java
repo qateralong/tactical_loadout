@@ -27,7 +27,9 @@ public class ModDamageTypeTagsProvider extends TagsProvider<DamageType> {
                 .addOptional(ResourceLocation.fromNamespaceAndPath("thepa", "pulse"))
                 .addOptional(ResourceLocation.fromNamespaceAndPath("gbg", "bullet_light"))
                 .addOptional(ResourceLocation.fromNamespaceAndPath("gbg", "bullet_standard"))
-                .addOptional(ResourceLocation.fromNamespaceAndPath("gbg", "bullet_heavy"));
+                .addOptional(ResourceLocation.fromNamespaceAndPath("gbg", "bullet_heavy"))
+                .addOptional(ResourceLocation.fromNamespaceAndPath("superbwarfare", "gunfire"))
+                .addOptional(ResourceLocation.fromNamespaceAndPath("superbwarfare", "gunfire_headshot"));
         tag(DamageTypeTags.IS_FIRE).add(IncendiaryFire.DAMAGE);
         tag(DamageTypeTags.NO_KNOCKBACK).add(IncendiaryFire.DAMAGE);
         tag(DamageTypeTags.BURNS_ARMOR_STANDS).add(IncendiaryFire.DAMAGE);

@@ -20,6 +20,14 @@
     {
       "id": "gbg:bullet_heavy",
       "required": false
+    },
+    {
+      "id": "superbwarfare:gunfire",
+      "required": false
+    },
+    {
+      "id": "superbwarfare:gunfire_headshot",
+      "required": false
     }
   ]
 }
