@@ -10,6 +10,7 @@ import org.lwjgl.glfw.GLFW;
 import tactical_loadout.TacticalLoadout;
 import tactical_loadout.config.ClientConfig;
 import tactical_loadout.gear.Restraints;
+import tactical_loadout.gear.RiotShieldItem;
 import tactical_loadout.medical.Downed;
 import tactical_loadout.grenade.GrenadeItem;
 import tactical_loadout.network.StrugglePayload;
@@ -39,6 +40,10 @@ public final class ClientHooks {
         if (grenadeCharge(player) > 0.0F) {
             input.forwardImpulse *= 3.5F;
             input.leftImpulse *= 3.5F;
+        } else if (player.isUsingItem() && player.getUseItem().getItem() instanceof RiotShieldItem) {
+            // Walking behind a raised ballistic shield at half speed instead of the shield's crawl.
+            input.forwardImpulse *= 2.5F;
+            input.leftImpulse *= 2.5F;
         }
     }
 

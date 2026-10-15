@@ -425,37 +425,111 @@ def tripwire_alarm_model(size):
     path.write_text(json.dumps(model, indent=2) + "\n")
 
 
-# A ballistic shield laid out like the vanilla shield's entity model, so the vanilla shield display transforms fit it.
+# A full-height SWAT ballistic shield with an open viewport at eye level. Raised in first person, the viewport sits in the
+# middle of the screen; in third person the shield stands upright in front of the body. It has its own texture for the lettering.
+SHIELD_SLIT = (-4.5, 4.5, 10, 15)
+SHIELD_X = (-9, 9)
+SHIELD_Y = (-15, 21)
+SHIELD_TEXELS = 2
+SHIELD_TEX = 128
+LETTERS = {
+    "S": ["01111", "10000", "10000", "01110", "00001", "00001", "11110"],
+    "W": ["10001", "10001", "10001", "10101", "10101", "11011", "10001"],
+    "A": ["01110", "10001", "10001", "11111", "10001", "10001", "10001"],
+    "T": ["11111", "00100", "00100", "00100", "00100", "00100", "00100"],
+}
+
+
+def shield_texture():
+    width = (SHIELD_X[1] - SHIELD_X[0]) * SHIELD_TEXELS
+    height = (SHIELD_Y[1] - SHIELD_Y[0]) * SHIELD_TEXELS
+    rng = np.random.default_rng(21)
+    img = np.zeros((SHIELD_TEX, SHIELD_TEX, 4))
+    face = np.ones((height, width, 3)) * hex_rgb("1c1d1f") * (1.0 + (rng.random((height, width)) - 0.5) * 0.08)[..., None]
+    back = face * 0.85
+    text_top = (SHIELD_Y[1] - 4) * SHIELD_TEXELS
+    x = (width - (len("SWAT") * 6 - 1)) // 2
+    for letter in "SWAT":
+        for row, bits in enumerate(LETTERS[letter]):
+            for col, bit in enumerate(bits):
+                if bit == "1":
+                    face[text_top + row * 2:text_top + row * 2 + 2, x + col] = hex_rgb("e8e8e8")
+        x += 6
+    stripe = (SHIELD_Y[1] - 8) * SHIELD_TEXELS
+    face[stripe:stripe + 1, 4:width - 4] = hex_rgb("c9c9c9")
+    img[:height, :width, :3] = face
+    img[:height, width:width * 2, :3] = back
+    img[:height, :width * 2, 3] = 255
+    img[height:height + 8, :8, :3] = hex_rgb("111213")
+    img[height:height + 8, :8, 3] = 255
+    Image.fromarray(np.clip(img, 0, 255).astype(np.uint8), "RGBA").save(TEX_DIR / "item/riot_shield.png")
+    return width, height
+
+
+def shield_plate(lo, hi, size):
+    width, height = size
+    scale = 16 / SHIELD_TEX * SHIELD_TEXELS
+    (x0, y0, z0), (x1, y1, z1) = lo, hi
+    u0, u1 = (x0 - SHIELD_X[0]) * scale, (x1 - SHIELD_X[0]) * scale
+    v0, v1 = (SHIELD_Y[1] - y1) * scale, (SHIELD_Y[1] - y0) * scale
+    back = width / SHIELD_TEXELS * scale
+    edge = [0, height / SHIELD_TEX * 16, 1, height / SHIELD_TEX * 16 + 1]
+    faces = {
+        "south": {"uv": [round(u0, 4), round(v0, 4), round(u1, 4), round(v1, 4)], "texture": "#1"},
+        "north": {"uv": [round(back + back - u1, 4), round(v0, 4), round(back + back - u0, 4), round(v1, 4)], "texture": "#1"},
+    }
+    for face in ("east", "west", "up", "down"):
+        faces[face] = {"uv": [round(v, 4) for v in edge], "texture": "#1"}
+    return {"from": list(lo), "to": list(hi), "faces": faces}
+
+
 def riot_shield_models(size):
+    plate_size = shield_texture()
     g = Gear(size)
-    g.box((-7, -12, 1), (7, 14, 2.5), "shield_face", "shield_edge")
-    g.box((-7.4, -12.4, 0.8), (7.4, -11.6, 2.7), "shield_edge")
-    g.box((-7.4, 13.6, 0.8), (7.4, 14.4, 2.7), "shield_edge")
-    g.box((-7.4, -12, 0.8), (-6.6, 14, 2.7), "shield_edge")
-    g.box((6.6, -12, 0.8), (7.4, 14, 2.7), "shield_edge")
-    g.box((-3.5, 7.5, 0.7), (3.5, 10.5, 2.8), "shield_window")
+    x0, x1, y0, y1 = SHIELD_SLIT
+    z0, z1 = 1, 2.5
+    left, right = SHIELD_X
+    bottom, top = SHIELD_Y
+    plates = [
+        ((left, bottom, z0), (right, y0, z1)),
+        ((left, y1, z0), (right, top - 1, z1)),
+        ((left + 1, top - 1, z0), (right - 1, top, z1)),
+        ((left, y0, z0), (x0, y1, z1)),
+        ((x1, y0, z0), (right, y1, z1)),
+    ]
+    elements = [shield_plate(lo, hi, plate_size) for lo, hi in plates]
+    g.box((x0 - 0.6, y0 - 0.6, 0.6), (x1 + 0.6, y0, 2.9), "shield_edge")
+    g.box((x0 - 0.6, y1, 0.6), (x1 + 0.6, y1 + 0.6, 2.9), "shield_edge")
+    g.box((x0 - 0.6, y0, 0.6), (x0, y1, 2.9), "shield_edge")
+    g.box((x1, y0, 0.6), (x1 + 0.6, y1, 2.9), "shield_edge")
     g.box((-1, -3, -4), (1, 3, 1), "metal_dark")
     g.box((-5, -1, -1), (5, 1, 1), "metal_dark")
-    textures = {"0": f"{NS}:item/gear_parts", "particle": f"{NS}:item/gear_parts"}
+    g.box((-6, 3, -1.5), (6, 4.5, 1), "metal_dark")
+    elements += g.elements
+    textures = {"0": f"{NS}:item/gear_parts", "1": f"{NS}:item/riot_shield", "particle": f"{NS}:item/riot_shield"}
     held = {
-        "thirdperson_righthand": {"rotation": [0, 90, 0], "translation": [10, 6, -4], "scale": [1, 1, 1]},
-        "thirdperson_lefthand": {"rotation": [0, 90, 0], "translation": [10, 6, 12], "scale": [1, 1, 1]},
-        "firstperson_righthand": {"rotation": [0, 180, 5], "translation": [-10, 2, -10], "scale": [1.25, 1.25, 1.25]},
-        "firstperson_lefthand": {"rotation": [0, 180, 5], "translation": [10, 0, -10], "scale": [1.25, 1.25, 1.25]},
-        "gui": {"rotation": [15, -25, -5], "translation": [2, 3, 0], "scale": [0.55, 0.55, 0.55]},
-        "fixed": {"rotation": [0, 180, 0], "translation": [-4.5, 4.5, -5], "scale": [0.5, 0.5, 0.5]},
-        "ground": {"rotation": [0, 0, 0], "translation": [2, 4, 2], "scale": [0.25, 0.25, 0.25]},
+        "thirdperson_righthand": {"rotation": [0, 90, 0], "translation": [10, 6, -4], "scale": [0.8, 0.8, 0.8]},
+        "thirdperson_lefthand": {"rotation": [0, 90, 0], "translation": [10, 6, 12], "scale": [0.8, 0.8, 0.8]},
+        "firstperson_righthand": {"rotation": [0, 180, 5], "translation": [-6, -2, -10], "scale": [0.7, 0.7, 0.7]},
+        "firstperson_lefthand": {"rotation": [0, 180, 5], "translation": [6, -4, -10], "scale": [0.7, 0.7, 0.7]},
+        "gui": {"rotation": [0, 160, 0], "translation": [0, -0.5, 0], "scale": [0.4, 0.4, 0.4]},
+        "fixed": {"rotation": [0, 180, 0], "translation": [0, 0, -5], "scale": [0.38, 0.38, 0.38]},
+        "ground": {"rotation": [0, 0, 0], "translation": [2, 3, 2], "scale": [0.2, 0.2, 0.2]},
     }
+    # Raised in first person: the viewport sits right in front of the eye (the item origin is 0.56 to the side and 0.52 below;
+    # the left hand mirrors x). In third person the values put the shield upright in front of the body, solved for the blocking arm pose.
+    slit_y = ((y0 + y1) / 2) / 16 - 0.5
+    lift = round((0.52 - slit_y) * 16, 2)
     blocking = dict(held)
     blocking.update({
-        "thirdperson_righthand": {"rotation": [45, 135, 0], "translation": [3.51, 11, -2], "scale": [1, 1, 1]},
-        "thirdperson_lefthand": {"rotation": [45, 135, 0], "translation": [13.51, 3, 5], "scale": [1, 1, 1]},
-        "firstperson_righthand": {"rotation": [0, 180, -5], "translation": [-15, 5, -11], "scale": [1.25, 1.25, 1.25]},
-        "firstperson_lefthand": {"rotation": [0, 180, -5], "translation": [5, 5, -11], "scale": [1.25, 1.25, 1.25]},
+        "thirdperson_righthand": {"rotation": [-144, 30, -180], "translation": [-5.63, 9.37, -3.95], "scale": [1, 1, 1]},
+        "thirdperson_lefthand": {"rotation": [-144, 30, 180], "translation": [8.22, 4.67, 2.52], "scale": [1, 1, 1]},
+        "firstperson_righthand": {"rotation": [0, 180, 0], "translation": [-0.96, lift, -3.5], "scale": [1, 1, 1]},
+        "firstperson_lefthand": {"rotation": [0, 180, 0], "translation": [-0.96, lift, -3.5], "scale": [1, 1, 1]},
     })
-    write_model("riot_shield_blocking", {"textures": textures, "gui_light": "front", "elements": g.elements, "display": blocking})
+    write_model("riot_shield_blocking", {"textures": textures, "gui_light": "front", "elements": elements, "display": blocking})
     write_model("riot_shield", {
-        "textures": textures, "gui_light": "front", "elements": g.elements, "display": held,
+        "textures": textures, "gui_light": "front", "elements": elements, "display": held,
         "overrides": [{"predicate": {"minecraft:blocking": 1}, "model": f"{NS}:item/riot_shield_blocking"}],
     })
 
