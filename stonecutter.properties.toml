@@ -1,7 +1,7 @@
 mod.id = "tacz_camo_armor"
 mod.name = "Tactical Camo Armor"
 mod.group = "tacz_camo_armor"
-mod.version = "0.15.0-alpha.3"
+mod.version = "1.0.0"
 mod.license = "All Rights Reserved"
 
 ["1.21.1"]
